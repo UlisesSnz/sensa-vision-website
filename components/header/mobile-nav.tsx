@@ -10,9 +10,11 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { NavItem } from "@/types";
-import Logo from "@/components/logo";
 import { useState } from "react";
 import { TextAlignRightIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
+import logo from "../../public/logo.png";
+
 
 export default function MobileNav({ navItems }: { navItems: NavItem[] }) {
   const [open, setOpen] = useState(false);
@@ -30,7 +32,14 @@ export default function MobileNav({ navItems }: { navItems: NavItem[] }) {
       <SheetContent>
         <SheetHeader>
           <div className="mr-6 ml-auto">
-            <Logo />
+          <Link href="/" aria-label="Home page">
+            <Image
+              src={logo}
+              alt="Creativa Innova Tech"
+              priority
+              width={30}
+            />
+        </Link>
           </div>
           <div className="sr-only">
             <SheetTitle>Main Navigation</SheetTitle>
