@@ -12,13 +12,28 @@ const navItems = [
     target: false,
   },
   {
-    label: "Blog",
-    href: "/blog",
+    label: "Precios",
+    href: "/pricing",
+    target: false,
+  },
+  {
+    label: "Características",
+    href: "/features",
+    target: false,
+  },
+  {
+    label: "Casos de Uso",
+    href: "/use-cases",
     target: false,
   },
   {
     label: "Contactar",
     href: "/contact",
+    target: false,
+  },
+  {
+    label: "Blog",
+    href: "/blog",
     target: false,
   },
 ];
