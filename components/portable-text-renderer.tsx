@@ -1,20 +1,22 @@
 import { PortableText, PortableTextProps } from "@portabletext/react";
 import Image from "next/image";
 import Link from "next/link";
+import { urlFor } from "@/sanity/lib/image";
 
 const portableTextComponents: PortableTextProps["components"] = {
   types: {
     image: ({ value }) => {
-      const { url, metadata } = value.asset;
-      const { lqip, dimensions } = metadata;
+      const { url, metadata } = value.asset ?? {};
+      const { lqip, dimensions } = metadata ?? {};
+      const imageUrl = url || urlFor(value)?.url();
+      if (!imageUrl) return null;
       return (
         <Image
-          src={url}
+          src={imageUrl}
           alt={value.alt || "Image"}
-          width={dimensions.width}
-          height={dimensions.height}
-          placeholder="blur"
-          blurDataURL={lqip}
+          width={dimensions?.width ?? 800}
+          height={dimensions?.height ?? 600}
+          {...(lqip ? { placeholder: "blur", blurDataURL: lqip } : {})}
           style={{
             borderRadius: "1rem",
             marginLeft: "auto",
