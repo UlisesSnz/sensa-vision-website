@@ -56,9 +56,7 @@ export default function Cta1({
           className={cn(color === "primary" ? "text-background" : undefined)}
         >
           {tagLine && (
-            <h1 className="leading-[0] mb-4">
-              <span className="text-base font-semibold">{tagLine}</span>
-            </h1>
+            <span className="block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4">{tagLine}</span>
           )}
           <h2 className="mb-4">{title}</h2>
           {body && <PortableTextRenderer value={body} />}
@@ -72,9 +70,9 @@ export default function Cta1({
           >
             {links &&
               links.length > 0 &&
-              links.map((link) => (
+              links.map((link, index) => (
                 <Button
-                  key={link.title}
+                  key={`${link.title}-${index}`}
                   variant={stegaClean(link?.buttonVariant)}
                   asChild
                 >

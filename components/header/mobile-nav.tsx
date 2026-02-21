@@ -32,13 +32,14 @@ export default function MobileNav({ navItems }: { navItems: NavItem[] }) {
       <SheetContent>
         <SheetHeader>
           <div className="mr-6 ml-auto">
-          <Link href="/" aria-label="Home page">
+          <Link href="/" aria-label="Home page" className="flex items-center gap-2">
             <Image
               src={logo}
-              alt="Creativa Innova Tech"
+              alt="Sensa"
               priority
               width={30}
             />
+            <span className="font-pixel text-sm font-bold tracking-tight">Sensa</span>
         </Link>
           </div>
           <div className="sr-only">

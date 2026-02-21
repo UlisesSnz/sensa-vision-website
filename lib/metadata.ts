@@ -22,7 +22,7 @@ export function generatePageMetadata({
           height: page?.ogImage?.asset?.metadata?.dimensions?.height || 630,
         },
       ],
-      locale: "en_US",
+      locale: "es_MX",
       type: "website",
     },
     robots: !isProduction

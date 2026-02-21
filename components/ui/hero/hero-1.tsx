@@ -36,21 +36,19 @@ export default function Hero1({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div className="flex flex-col justify-center">
           {tagLine && (
-            <h1 className="leading-[0] font-sans">
-              <span className="text-base font-semibold">{tagLine}</span>
-            </h1>
+            <span className="text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground">{tagLine}</span>
           )}
-          {title && <h2 className="mt-6 font-bold leading-[1.1]">{title}</h2>}
+          {title && <h1 className="mt-4 font-bold leading-[1.1]">{title}</h1>}
           {body && (
-            <div className="text-lg mt-6">
+            <div className="text-lg text-muted-foreground mt-6 leading-relaxed">
               <PortableTextRenderer value={body} />
             </div>
           )}
           {links && links.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-4">
-              {links.map((link) => (
+              {links.map((link, index) => (
                 <Button
-                  key={link.title}
+                  key={`${link.title}-${index}`}
                   variant={stegaClean(link?.buttonVariant)}
                   asChild
                 >

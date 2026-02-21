@@ -50,7 +50,6 @@ export default function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      key={title}
       className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
     >
       <div className="flex w-full flex-col justify-between border rounded-3xl p-8">
@@ -73,15 +72,15 @@ export default function PricingCard({
           )}
           {list && list.length > 0 && (
             <ul className="flex flex-col gap-2 my-8">
-              {list.map((item) => (
-                <li key={item} className="flex items-center gap-2">
+              {list.map((item, index) => (
+                <li key={`${item}-${index}`} className="flex items-center gap-2">
                   <Check size={16} />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           )}
-          {excerpt && <p>{excerpt}</p>}
+          {excerpt && <p className="text-muted-foreground">{excerpt}</p>}
         </div>
         <Button
           className="mt-6"

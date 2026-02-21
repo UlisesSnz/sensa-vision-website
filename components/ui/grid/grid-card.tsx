@@ -42,7 +42,6 @@ export default function GridCard({
 }: GridCardProps) {
   return (
     <Link
-      key={title}
       className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
       href={link?.href ? link.href : "#"}
       target={link.target ? "_blank" : undefined}
@@ -82,7 +81,7 @@ export default function GridCard({
                 <h3 className="font-bold text-2xl">{title}</h3>
               </div>
             )}
-            {excerpt && <p>{excerpt}</p>}
+            {excerpt && <p className="text-muted-foreground leading-relaxed">{excerpt}</p>}
           </div>
         </div>
         <Button

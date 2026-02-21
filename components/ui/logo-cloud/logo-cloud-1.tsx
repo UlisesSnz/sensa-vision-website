@@ -38,9 +38,9 @@ export default function LogoCloud1({
       className="overflow-hidden"
     >
       {title && (
-        <h2 className="text-lg font-medium tracking-tighter text-center mb-4">
+        <p className="text-sm font-medium tracking-wide uppercase text-muted-foreground text-center mb-6">
           {title}
-        </h2>
+        </p>
       )}
       <div
         className="flex relative overflow-hidden 

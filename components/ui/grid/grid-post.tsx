@@ -31,7 +31,6 @@ export default function GridPost({
 }: GridPostProps) {
   return (
     <Link
-      key={title}
       className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
       href={slug.current ? `/blog/${slug.current}` : "#"}
     >

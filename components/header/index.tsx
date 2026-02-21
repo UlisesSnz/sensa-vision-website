@@ -40,16 +40,17 @@ const navItems = [
 
 export default function Header() {
   return (
-    <header className="sticky top-0 w-full border-border/40 bg-background/95 z-50">
-      <div className="container flex items-center justify-between h-14">
-        <Link href="/" aria-label="Home page">
+    <header className="sticky top-0 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm z-50">
+      <div className="container flex items-center justify-between h-16">
+        <Link href="/" aria-label="Home page" className="flex items-center gap-2.5">
           <Image
             src={logo}
-            alt="Creativa Innova Tech"
+            alt="Sensa"
             priority
             width={30}
           />
-        </Link>
+          <span className="font-pixel text-lg font-bold">Sensa</span>
+          </Link>
         <div className="hidden xl:flex gap-7 items-center justify-between">
           <DesktopNav navItems={navItems} />
           <ModeToggle />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
+import { GeistPixelSquare } from "geist/font/pixel";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -11,8 +12,8 @@ const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
   title: {
-    template: "Creativa Innova Tech | %s",
-    default: "Creativa Innova Tech | Marketing",
+    template: "Sensa Tech | %s",
+    default: "Sensa Tech | Marketing",
   },
   openGraph: {
     images: [
@@ -34,6 +35,8 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 
+const fontPixel = GeistPixelSquare;
+
 export default function RootLayout({
   children,
 }: {
@@ -44,7 +47,8 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased overscroll-none",
-          fontSans.variable
+          fontSans.variable,
+          fontPixel.variable
         )}
       >
         <ThemeProvider

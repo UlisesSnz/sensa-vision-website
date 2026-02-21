@@ -39,8 +39,8 @@ export default function FAQs({
     <SectionContainer color={color} padding={padding}>
       {faqs && faqs?.length > 0 && (
         <Accordion className="space-y-4" type="multiple">
-          {faqs.map((faq) => (
-            <AccordionItem key={faq.title} value={`item-${faq._id}`}>
+          {faqs.map((faq, index) => (
+            <AccordionItem key={`${faq._id}-${index}`} value={`item-${faq._id}-${index}`}>
               <AccordionTrigger>{faq.title}</AccordionTrigger>
               <AccordionContent>
                 <PortableTextRenderer value={faq.body} />

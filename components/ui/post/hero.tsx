@@ -83,7 +83,7 @@ export default function PostHero({
             </a>
             <a
               className="hover:opacity-70"
-              href={`mailto:?subject=$title}&body=${title}%0A%0A${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug?.current}`}
+              href={`mailto:?subject=${title}&body=${title}%0A%0A${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug?.current}`}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Share via email"

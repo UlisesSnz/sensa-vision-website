@@ -72,9 +72,7 @@ export default function SplitColumn({
             className={cn(color === "primary" ? "text-background" : undefined)}
           >
             {tagLine && (
-              <h2 className="leading-[0] mb-4">
-                <span className="text-base font-semibold">{tagLine}</span>
-              </h2>
+              <span className="block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4">{tagLine}</span>
             )}
             <h3 className="mb-4 font-semibold">{title}</h3>
             {body && <PortableTextRenderer value={body} />}

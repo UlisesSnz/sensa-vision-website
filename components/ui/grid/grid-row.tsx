@@ -39,7 +39,7 @@ export default function GridRow({
   const color = stegaClean(colorVariant);
 
   return (
-    <SectionContainer key='grid-row' color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding}>
       {columns && columns?.length > 0 && (
         <div
           className={cn(

@@ -31,7 +31,8 @@ const config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
-        heading: ["var(--font-sans)", ...fontFamily.sans],
+        pixel: ["var(--font-geist-pixel-square)", "monospace"],
+        heading: ["var(--font-geist-pixel-square)", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -127,51 +128,61 @@ const config = {
       });
       addBase({
         h1: {
-          fontFamily: "var(--font-sans)",
-          fontSize: "2.5rem",
-          lineHeight: "1.2",
-          fontWeight: "bold",
+          fontFamily: "var(--font-geist-pixel-square)",
+          fontSize: "1.75rem",
+          lineHeight: "1.3",
+          fontWeight: "700",
           "@screen md": {
-            fontSize: "3.5rem",
+            fontSize: "2.25rem",
+          },
+          "@screen lg": {
+            fontSize: "2.75rem",
           },
         },
         h2: {
           fontFamily: "var(--font-sans)",
-          fontSize: "2rem",
-          lineHeight: "1.2",
-          fontWeight: "bold",
+          fontSize: "1.375rem",
+          lineHeight: "1.35",
+          fontWeight: "700",
           "@screen md": {
-            fontSize: "2.5rem",
+            fontSize: "1.75rem",
+          },
+          "@screen lg": {
+            fontSize: "2rem",
           },
         },
         h3: {
           fontFamily: "var(--font-sans)",
-          fontSize: "1.5rem",
-          lineHeight: "1.2",
-          "@screen md": {
-            fontSize: "2rem",
-          },
-        },
-        h4: {
-          fontFamily: "var(--font-sans)",
           fontSize: "1.25rem",
           lineHeight: "1.3",
+          fontWeight: "600",
           "@screen md": {
             fontSize: "1.5rem",
           },
         },
-        h5: {
+        h4: {
           fontFamily: "var(--font-sans)",
           fontSize: "1.125rem",
           lineHeight: "1.4",
+          fontWeight: "600",
           "@screen md": {
             fontSize: "1.25rem",
           },
         },
-        h6: {
+        h5: {
           fontFamily: "var(--font-sans)",
           fontSize: "1rem",
           lineHeight: "1.4",
+          fontWeight: "600",
+          "@screen md": {
+            fontSize: "1.125rem",
+          },
+        },
+        h6: {
+          fontFamily: "var(--font-sans)",
+          fontSize: "0.875rem",
+          lineHeight: "1.5",
+          fontWeight: "600",
           "@screen md": {
             fontSize: "1rem",
           },
