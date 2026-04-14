@@ -25,7 +25,7 @@ export default function Footer() {
         >
           <Image
             src={logo}
-            alt="Sensa"
+            alt="Sensa Vision Logo"
             width={40}
           />
         </Link>
@@ -45,7 +45,7 @@ export default function Footer() {
         <div className="mt-8 flex flex-col lg:flex-row gap-6 justify-center text-center lg:mt-5 text-xs border-t pt-8">
           <p className="text-foreground/60">
             &copy; {getCurrentYear()}{" "}
-            Sensa. Todos los derechos reservados.
+            Sensa Vision. Todos los derechos reservados.
           </p>
         </div>
       </div>

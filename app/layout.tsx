@@ -12,8 +12,8 @@ const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL!),
   title: {
-    template: "Sensa Tech | %s",
-    default: "Sensa Tech | Marketing",
+    template: "Sensa Vision | %s",
+    default: "Sensa Vision | Marketing",
   },
   openGraph: {
     images: [

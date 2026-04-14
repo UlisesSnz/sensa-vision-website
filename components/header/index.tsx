@@ -45,11 +45,11 @@ export default function Header() {
         <Link href="/" aria-label="Home page" className="flex items-center gap-2.5">
           <Image
             src={logo}
-            alt="Sensa"
+            alt="Sensa Vision Logo"
             priority
             width={30}
           />
-          <span className="font-pixel text-lg font-bold">Sensa</span>
+          <span className="font-pixel text-lg font-bold">Sensa Vision</span>
           </Link>
         <div className="hidden xl:flex gap-7 items-center justify-between">
           <DesktopNav navItems={navItems} />

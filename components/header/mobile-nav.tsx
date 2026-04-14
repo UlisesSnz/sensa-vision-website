@@ -35,7 +35,7 @@ export default function MobileNav({ navItems }: { navItems: NavItem[] }) {
           <Link href="/" aria-label="Home page" className="flex items-center gap-2">
             <Image
               src={logo}
-              alt="Sensa"
+              alt="Sensa Vision Logo"
               priority
               width={30}
             />
