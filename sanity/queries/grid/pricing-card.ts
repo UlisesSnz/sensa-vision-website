@@ -6,7 +6,18 @@ export const pricingCardQuery = groq`
     title,
     tagLine,
     price,
+    featureGroups[]{
+      category,
+      features[],
+    },
     list[],
+    pricingTiers[]{
+      label,
+      price,
+      discount,
+      annualPrice,
+      annualDiscount,
+    },
     excerpt,
     link,
   },
