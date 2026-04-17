@@ -9,6 +9,8 @@ import Cta1 from "@/components/ui/cta/cta-1";
 import LogoCloud1 from "@/components/ui/logo-cloud/logo-cloud-1";
 import FAQs from "@/components/ui/faqs";
 import FormNewsletter from "@/components/ui/forms/newsletter";
+import Video1 from "@/components/ui/video/video-1";
+import Lottie1 from "@/components/ui/lottie/lottie-1";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
@@ -22,6 +24,8 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
   "logo-cloud-1": LogoCloud1,
   faqs: FAQs,
   "form-newsletter": FormNewsletter,
+  "video-1": Video1,
+  "lottie-1": Lottie1,
 };
 
 export default function Blocks({ blocks }: { blocks?: Sanity.Block[] }) {

@@ -30,6 +30,8 @@ import cta1 from "./schemas/blocks/cta/cta-1";
 import logoCloud1 from "./schemas/blocks/logo-cloud/logo-cloud-1";
 import faqs from "./schemas/blocks/faqs";
 import newsletter from "./schemas/blocks/forms/newsletter";
+import video1 from "./schemas/blocks/video/video-1";
+import lottie1 from "./schemas/blocks/lottie/lottie-1";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -63,5 +65,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     logoCloud1,
     faqs,
     newsletter,
+    video1,
+    lottie1,
   ],
 };

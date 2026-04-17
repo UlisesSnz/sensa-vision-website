@@ -50,6 +50,8 @@ export default defineType({
         { type: "logo-cloud-1" },
         { type: "faqs" },
         { type: "form-newsletter" },
+        { type: "video-1" },
+        { type: "lottie-1" },
       ],
     }),
     defineField({
