@@ -45,9 +45,9 @@ export default function GridCard({
   const hasButtonTitle =
     typeof link?.title === "string" && link.title.trim().length > 0;
 
-  const hasExcerpt = Array.isArray(excerpt)
-    ? excerpt.length > 0
-    : typeof excerpt === "string" && excerpt.trim().length > 0;
+  const excerptBlocks = Array.isArray(excerpt) ? excerpt : undefined;
+  const excerptText = typeof excerpt === "string" ? excerpt.trim() : "";
+  const hasExcerpt = (excerptBlocks?.length ?? 0) > 0 || excerptText.length > 0;
 
   return (
     <Link
@@ -92,11 +92,7 @@ export default function GridCard({
             )}
             {hasExcerpt && (
               <div className="text-muted-foreground leading-relaxed">
-                {Array.isArray(excerpt) ? (
-                  <PortableTextRenderer value={excerpt} />
-                ) : (
-                  <p>{excerpt}</p>
-                )}
+                {excerptBlocks ? <PortableTextRenderer value={excerptBlocks} /> : <p>{excerptText}</p>}
               </div>
             )}
           </div>
