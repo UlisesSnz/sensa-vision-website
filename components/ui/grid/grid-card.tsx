@@ -1,8 +1,10 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import PortableTextRenderer from "@/components/portable-text-renderer";
 import { stegaClean } from "next-sanity";
 import Link from "next/link";
 import Image from "next/image";
+import type { PortableTextProps } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
 
 interface GridCardProps {
@@ -15,11 +17,11 @@ interface GridCardProps {
     | "background"
     | "transparent";
   title: string;
-  excerpt: string;
+  excerpt?: PortableTextProps["value"] | string;
   image: Sanity.Image;
-  link: {
-    title: string;
-    href: string;
+  link?: {
+    title?: string;
+    href?: string;
     target?: boolean;
     buttonVariant:
       | "default"
@@ -40,11 +42,18 @@ export default function GridCard({
   image,
   link,
 }: GridCardProps) {
+  const hasButtonTitle =
+    typeof link?.title === "string" && link.title.trim().length > 0;
+
+  const hasExcerpt = Array.isArray(excerpt)
+    ? excerpt.length > 0
+    : typeof excerpt === "string" && excerpt.trim().length > 0;
+
   return (
     <Link
       className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
       href={link?.href ? link.href : "#"}
-      target={link.target ? "_blank" : undefined}
+      target={link?.target ? "_blank" : undefined}
     >
       <div
         className={cn(
@@ -81,17 +90,27 @@ export default function GridCard({
                 <h3 className="font-bold text-2xl">{title}</h3>
               </div>
             )}
-            {excerpt && <p className="text-muted-foreground leading-relaxed">{excerpt}</p>}
+            {hasExcerpt && (
+              <div className="text-muted-foreground leading-relaxed">
+                {Array.isArray(excerpt) ? (
+                  <PortableTextRenderer value={excerpt} />
+                ) : (
+                  <p>{excerpt}</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
-        <Button
-          className="mt-6"
-          size="lg"
-          variant={stegaClean(link.buttonVariant)}
-          asChild
-        >
-          <div>{link.title}</div>
-        </Button>
+        {hasButtonTitle && (
+          <Button
+            className="mt-6"
+            size="lg"
+            variant={stegaClean(link?.buttonVariant)}
+            asChild
+          >
+            <div>{link?.title}</div>
+          </Button>
+        )}
       </div>
     </Link>
   );

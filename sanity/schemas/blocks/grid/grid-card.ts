@@ -12,7 +12,7 @@ export default defineType({
     }),
     defineField({
       name: "excerpt",
-      type: "text",
+      type: "block-content",
     }),
     defineField({
       name: "image",
