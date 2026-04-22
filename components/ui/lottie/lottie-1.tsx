@@ -25,6 +25,8 @@ const LOTTIE_MIN_HEIGHTS: Record<string, number> = {
   full: 450,
 };
 
+type LottieFitMode = "hybrid" | "contain" | "cover";
+
 export default function Lottie1({
   padding,
   colorVariant,
@@ -34,6 +36,7 @@ export default function Lottie1({
   lottieSize = "md",
   lottieLoop = true,
   lottieAutoplay = true,
+  lottieFit = "hybrid",
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
@@ -49,6 +52,7 @@ export default function Lottie1({
   lottieSize: "sm" | "md" | "lg" | "full";
   lottieLoop: boolean;
   lottieAutoplay: boolean;
+  lottieFit: LottieFitMode;
 }>) {
   const color = stegaClean(colorVariant);
   const position = stegaClean(textPosition);
@@ -63,15 +67,24 @@ export default function Lottie1({
   const isCenter = position === "center";
   const lottieFirst =
     position === "right" || position === "bottom" || position === "center";
+  const fitMode = (stegaClean(lottieFit) as LottieFitMode | undefined) || "hybrid";
+  const fit: "contain" | "cover" =
+    fitMode === "cover"
+      ? "cover"
+      : fitMode === "contain"
+        ? "contain"
+        : isHorizontal
+          ? "contain"
+          : "cover";
 
   if (!fileUrl) return null;
 
-  // cover eliminates internal whitespace in lottie animations
+  // Hybrid uses contain for side-by-side layouts to avoid clipping portrait assets.
   const lottieCommon = {
     src: fileUrl,
     loop: loop !== false,
     autoplay: autoplay !== false,
-    layout: { fit: "cover" as const, align: [0.5, 0.5] as [number, number] },
+    layout: { fit, align: [0.5, 0.5] as [number, number] },
   };
 
   const textBlock = body ? (

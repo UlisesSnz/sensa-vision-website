@@ -15,6 +15,7 @@ export const lottie1Query = groq`
       }
     },
     lottieSize,
+    lottieFit,
     lottieLoop,
     lottieAutoplay,
   },

@@ -16,6 +16,12 @@ const LOTTIE_SIZES = [
   { title: "Full Width", value: "full" },
 ];
 
+const LOTTIE_FIT_MODES = [
+  { title: "Hybrid (Recommended)", value: "hybrid" },
+  { title: "Contain (No Crop)", value: "contain" },
+  { title: "Cover (Fill Container)", value: "cover" },
+];
+
 export default defineType({
   name: "lottie-1",
   title: "Lottie Block",
@@ -70,6 +76,18 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "md",
+    }),
+    defineField({
+      name: "lottieFit",
+      title: "Lottie Fit Mode",
+      type: "string",
+      description:
+        "Control how the animation fits the frame. Hybrid avoids clipping in side-by-side layouts.",
+      options: {
+        list: LOTTIE_FIT_MODES.map(({ title, value }) => ({ title, value })),
+        layout: "radio",
+      },
+      initialValue: "hybrid",
     }),
     defineField({
       name: "lottieLoop",
