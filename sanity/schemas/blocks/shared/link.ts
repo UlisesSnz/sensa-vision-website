@@ -12,7 +12,12 @@ export default defineType({
     defineField({
       name: "href",
       title: "href",
-      type: "string",
+      type: "url",
+      validation: (Rule) =>
+        Rule.uri({
+          allowRelative: true,
+          scheme: ["http", "https", "mailto", "tel"],
+        }),
     }),
     defineField({
       name: "target",
