@@ -208,7 +208,7 @@ export default function PricingCard({
               {featureGroups.map((group, groupIndex) => (
                 <div key={`group-${groupIndex}`}>
                   {group.category && (
-                    <h4 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-3 pb-1.5 border-b border-border/40">
+                    <h4 className="text-[11px] font-bold tracking-widest text-muted-foreground mb-3 pb-1.5 border-b border-border/40">
                       {group.category}
                     </h4>
                   )}
