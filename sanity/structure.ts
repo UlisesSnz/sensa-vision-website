@@ -1,10 +1,17 @@
 import { orderableDocumentListDeskItem } from "@sanity/orderable-document-list";
-import { Files, BookA, User, ListCollapse, Quote } from "lucide-react";
+import { Files, BookA, User, ListCollapse, Quote, Navigation } from "lucide-react";
 
 export const structure = (S: any, context: any) =>
   S.list()
     .title("Content")
     .items([
+      S.listItem()
+        .title("Site Settings")
+        .icon(Navigation)
+        .child(
+          S.document().schemaType("siteSettings").documentId("siteSettings")
+        ),
+      S.divider(),
       orderableDocumentListDeskItem({
         type: "page",
         title: "Pages",
