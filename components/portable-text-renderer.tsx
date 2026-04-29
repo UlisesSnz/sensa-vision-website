@@ -3,6 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { urlFor } from "@/sanity/lib/image";
 
+const listBaseStyles = {
+  paddingLeft: "1.5rem",
+  marginBottom: "1rem",
+  listStylePosition: "outside" as const,
+};
+
 const portableTextComponents: PortableTextProps["components"] = {
   types: {
     image: ({ value }) => {
@@ -70,10 +76,8 @@ const portableTextComponents: PortableTextProps["components"] = {
     bullet: ({ children }) => (
       <ul
         style={{
-          paddingLeft: "1.5rem",
-          marginBottom: "1rem",
+          ...listBaseStyles,
           listStyleType: "disc",
-          listStylePosition: "inside",
         }}
       >
         {children}
@@ -82,10 +86,8 @@ const portableTextComponents: PortableTextProps["components"] = {
     number: ({ children }) => (
       <ol
         style={{
-          paddingLeft: "1.5rem",
-          marginBottom: "1rem",
+          ...listBaseStyles,
           listStyleType: "decimal",
-          listStylePosition: "inside",
         }}
       >
         {children}
