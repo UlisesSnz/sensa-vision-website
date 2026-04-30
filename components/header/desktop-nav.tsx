@@ -22,7 +22,7 @@ export default function DesktopNav({ navItems }: { navItems: NavItem[] }) {
               href={navItem.href}
               target={navItem.target ? "_blank" : undefined}
               rel={navItem.target ? "noopener noreferrer" : undefined}
-              className="transition-colors hover:text-foreground/80 text-foreground/60 text-sm font-medium"
+              className="text-foreground/60 text-sm font-medium transition-colors hover:text-foreground/80 focus:outline-none focus-visible:text-foreground/80"
             >
               {navItem.label}
             </Link>
@@ -45,7 +45,7 @@ export default function DesktopNav({ navItems }: { navItems: NavItem[] }) {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-1 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring data-[state=open]:text-foreground/80 [&[data-state=open]>svg]:rotate-180"
+                className="inline-flex items-center gap-1 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 focus:outline-none focus-visible:text-foreground/80 data-[state=open]:text-foreground/80 [&[data-state=open]>svg]:rotate-180"
                 aria-label={`Open ${navItem.label} submenu`}
               >
                 {navItem.label}
@@ -71,7 +71,7 @@ export default function DesktopNav({ navItems }: { navItems: NavItem[] }) {
                     href={subLink.href}
                     target={subLink.target ? "_blank" : undefined}
                     rel={subLink.target ? "noopener noreferrer" : undefined}
-                    className="block w-full rounded-lg px-3 py-2 text-sm text-foreground/70 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="block w-full rounded-lg px-3 py-2 text-sm text-foreground/70 transition-colors hover:bg-accent hover:text-foreground focus:outline-none focus-visible:bg-accent focus-visible:text-foreground"
                   >
                     {subLink.label}
                   </Link>

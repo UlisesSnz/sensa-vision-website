@@ -84,7 +84,7 @@ export default function MobileNav({ navItems }: { navItems: NavItem[] }) {
                           onClick={() => handleDropdownToggle(navKey)}
                           aria-expanded={isExpanded}
                           aria-controls={`${navKey}-submenu`}
-                          className="ml-auto inline-flex items-center gap-2 text-lg hover:opacity-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          className="ml-auto inline-flex items-center gap-2 text-lg hover:opacity-50 focus:outline-none focus-visible:opacity-80"
                         >
                           {navItem.label}
                           <ChevronDownIcon
