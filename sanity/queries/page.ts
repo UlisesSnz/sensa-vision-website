@@ -10,6 +10,7 @@ import { cta1Query } from "./cta/cta-1";
 import { logoCloud1Query } from "./logo-cloud/logo-cloud-1";
 import { faqsQuery } from "./faqs";
 import { formNewsletterQuery } from "./forms/newsletter";
+import { formEmailJsQuery } from "./forms/emailjs";
 import { video1Query } from "./video/video-1";
 import { lottie1Query } from "./lottie/lottie-1";
 
@@ -27,6 +28,7 @@ export const PAGE_QUERY = groq`
       ${logoCloud1Query}
       ${faqsQuery}
       ${formNewsletterQuery}
+      ${formEmailJsQuery}
       ${video1Query}
       ${lottie1Query}
     },

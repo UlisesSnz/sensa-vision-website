@@ -72,3 +72,64 @@ All environment variables:
 - `RESEND_API_KEY` - your RESEND api key for the newsletter form.
 
 - `RESEND_AUDIENCE_ID` - your RESEND audience id for the newsletter form to store contacts.
+
+- `EMAILJS_SERVICE_ID` - your EmailJS service id for the reusable EmailJS form block.
+
+- `EMAILJS_PUBLIC_KEY` - your EmailJS public key (`user_id`) for API requests.
+
+- `EMAILJS_PRIVATE_KEY` - optional EmailJS private key (`accessToken`) for stronger API authentication.
+
+- `EMAILJS_TEMPLATE_CONTACT` - template id used when `templateKey` is set to `contact` in Sanity.
+
+- `EMAILJS_TEMPLATE_QUOTE` - template id used when `templateKey` is set to `quote` in Sanity.
+
+- `EMAILJS_TEMPLATE_SUPPORT` - template id used when `templateKey` is set to `support` in Sanity.
+
+## EmailJS Template Starter
+
+Use this as a base template in EmailJS for your `contact`, `quote`, or `support` forms.
+You can point all three environment variables to the same template ID, or create one template per key.
+
+Recommended subject:
+
+```txt
+New submission - {{form_name}}
+```
+
+Recommended HTML content:
+
+```html
+<h2>New form submission</h2>
+<p><strong>Form:</strong> {{form_name}}</p>
+<p><strong>Page:</strong> {{page_path}}</p>
+<p><strong>Submitted at:</strong> {{submitted_at}}</p>
+
+<hr />
+
+<p><strong>Name:</strong> {{name}}</p>
+<p><strong>Email:</strong> {{email}}</p>
+<p><strong>Phone:</strong> {{phone}}</p>
+<p><strong>Message:</strong></p>
+<p>{{message}}</p>
+
+<hr />
+
+<p><strong>All fields:</strong></p>
+<pre>{{all_fields}}</pre>
+```
+
+Available variables from the API route:
+
+- `form_name`
+- `page_path`
+- `submitted_at`
+- `all_fields`
+- Every field configured in Sanity (examples: `name`, `email`, `phone`, `message`)
+
+Example using one template for all keys:
+
+```env
+EMAILJS_TEMPLATE_CONTACT=template_xxxxxxx
+EMAILJS_TEMPLATE_QUOTE=template_xxxxxxx
+EMAILJS_TEMPLATE_SUPPORT=template_xxxxxxx
+```
