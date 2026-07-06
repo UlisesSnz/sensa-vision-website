@@ -7,6 +7,7 @@ export const sectionHeaderQuery = groq`
     colorVariant,
     sectionWidth,
     stackAlign,
+    uid,
     tagLine,
     title,
     description,

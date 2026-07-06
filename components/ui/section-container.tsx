@@ -21,6 +21,7 @@ export interface ISectionContainer {
     | "transparent";
   children: React.ReactNode;
   className?: string;
+  id?: string;
   padding?: ISectionPadding | null | undefined;
 }
 
@@ -29,9 +30,11 @@ export default function SectionContainer({
   padding,
   children,
   className,
+  id,
 }: ISectionContainer) {
   return (
     <div
+      id={id}
       className={cn(
         `bg-${color} relative`,
         padding?.top ? "pt-16 xl:pt-20" : undefined,

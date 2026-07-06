@@ -40,6 +40,25 @@ export default defineType({
       initialValue: "left",
     }),
     defineField({
+      name: "uid",
+      type: "string",
+      title: "Anchor ID",
+      description:
+        "Optional section anchor for links. Use a clean value like servicios, without #.",
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          if (!value) {
+            return true;
+          }
+
+          if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)) {
+            return true;
+          }
+
+          return "Use lowercase letters, numbers, and hyphens only. Do not include # or spaces.";
+        }),
+    }),
+    defineField({
       name: "tagLine",
       type: "string",
     }),

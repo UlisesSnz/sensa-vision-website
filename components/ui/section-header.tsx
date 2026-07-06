@@ -13,6 +13,7 @@ export default function SectionHeader({
   tagLine,
   title,
   description,
+  uid,
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
@@ -21,13 +22,20 @@ export default function SectionHeader({
   tagLine: string;
   title: string;
   description: string;
+  uid: string;
 }>) {
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
+  const sectionId = uid ? stegaClean(uid).trim() : undefined;
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer
+      id={sectionId}
+      color={color}
+      padding={padding}
+      className={sectionId ? "scroll-mt-20" : undefined}
+    >
       <div
         className={cn(
           align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,
