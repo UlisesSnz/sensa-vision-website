@@ -7,6 +7,7 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import { stegaClean } from "next-sanity";
+import type { Locale } from "@/i18n/config";
 
 function extractYouTubeId(url: string): string | null {
   try {
@@ -43,6 +44,12 @@ export default function Video1({
   videoAspectRatio = "16/9",
   videoLoop = false,
   videoControls = true,
+  locale = "es",
+  mediaMessages = {
+    youtubeTitle: "Video de YouTube",
+    unsupportedVideo: "Tu navegador no admite la etiqueta de video.",
+    missingVideo: "No hay un video configurado",
+  },
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
@@ -60,6 +67,12 @@ export default function Video1({
   videoAspectRatio: string;
   videoLoop: boolean;
   videoControls: boolean;
+  locale: Locale;
+  mediaMessages: {
+    youtubeTitle: string;
+    unsupportedVideo: string;
+    missingVideo: string;
+  };
 }>) {
   const color = stegaClean(colorVariant);
   const position = stegaClean(textPosition);
@@ -83,31 +96,34 @@ export default function Video1({
         ? "aspect-square"
         : "aspect-video";
 
-  const videoInner = type === "youtube" && youtubeId ? (
-    <iframe
-      src={`https://www.youtube-nocookie.com/embed/${youtubeId}?loop=${loopVideo ? 1 : 0}${loopVideo ? `&playlist=${youtubeId}` : ""}${showControls === false ? "&controls=0" : ""}`}
-      title="YouTube video"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-      className="w-full h-full border-0"
-      loading="lazy"
-    />
-  ) : type === "upload" && videoUrl ? (
-    <video
-      src={videoUrl}
-      controls={showControls !== false}
-      loop={loopVideo === true}
-      playsInline
-      preload="metadata"
-      className="w-full h-full object-cover"
-    >
-      Your browser does not support the video tag.
-    </video>
-  ) : (
-    <div className="w-full h-full bg-muted flex items-center justify-center">
-      <span className="text-muted-foreground text-sm">No video configured</span>
-    </div>
-  );
+  const videoInner =
+    type === "youtube" && youtubeId ? (
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${youtubeId}?loop=${loopVideo ? 1 : 0}${loopVideo ? `&playlist=${youtubeId}` : ""}${showControls === false ? "&controls=0" : ""}`}
+        title={mediaMessages.youtubeTitle}
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-full border-0"
+        loading="lazy"
+      />
+    ) : type === "upload" && videoUrl ? (
+      <video
+        src={videoUrl}
+        controls={showControls !== false}
+        loop={loopVideo === true}
+        playsInline
+        preload="metadata"
+        className="w-full h-full object-cover"
+      >
+        {mediaMessages.unsupportedVideo}
+      </video>
+    ) : (
+      <div className="w-full h-full bg-muted flex items-center justify-center">
+        <span className="text-muted-foreground text-sm">
+          {mediaMessages.missingVideo}
+        </span>
+      </div>
+    );
 
   const videoBlock = (
     <div className={cn("w-full rounded-lg overflow-hidden", aspectClass)}>
@@ -117,7 +133,7 @@ export default function Video1({
 
   const textBlock = body ? (
     <div className={cn(color === "primary" ? "text-background" : undefined)}>
-      <PortableTextRenderer value={body} />
+      <PortableTextRenderer value={body} locale={locale} />
     </div>
   ) : null;
 
@@ -141,7 +157,9 @@ export default function Video1({
               position === "left" ? "lg:order-1" : undefined,
             )}
           >
-            <div className={cn("w-full rounded-lg overflow-hidden", aspectClass)}>
+            <div
+              className={cn("w-full rounded-lg overflow-hidden", aspectClass)}
+            >
               {videoInner}
             </div>
           </div>

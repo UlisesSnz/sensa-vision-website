@@ -8,9 +8,16 @@ import { cn } from "@/lib/utils";
 type CopyLinkButtonProps = {
   className?: string;
   url: string;
+  copyLabel: string;
+  copiedLabel: string;
 };
 
-export default function CopyLinkButton({ className, url }: CopyLinkButtonProps) {
+export default function CopyLinkButton({
+  className,
+  url,
+  copyLabel,
+  copiedLabel,
+}: CopyLinkButtonProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -49,10 +56,10 @@ export default function CopyLinkButton({ className, url }: CopyLinkButtonProps) 
 
   return (
     <button
-      aria-label={copied ? "Enlace copiado" : "Copiar enlace"}
+      aria-label={copied ? copiedLabel : copyLabel}
       className={cn(className)}
       onClick={copyUrl}
-      title={copied ? "Enlace copiado" : "Copiar enlace"}
+      title={copied ? copiedLabel : copyLabel}
       type="button"
     >
       {copied ? <Check size={24} /> : <Copy size={24} />}

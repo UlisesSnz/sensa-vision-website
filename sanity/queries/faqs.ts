@@ -5,8 +5,10 @@ export const faqsQuery = groq`
     _type,
     padding,
     colorVariant,
-    faqs[]->{
+    faqs[@->language == $locale][]->{
       _id,
+      _type,
+      language,
       title,
       body,
     },

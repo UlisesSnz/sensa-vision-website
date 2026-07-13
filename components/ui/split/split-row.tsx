@@ -4,15 +4,18 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import { stegaClean } from "next-sanity";
 import SplitColumn, { ISplitColumn } from "@/components/ui/split/split-column";
+import type { Locale } from "@/i18n/config";
 
 export default function SplitRow({
   padding,
   colorVariant,
   splitColumns,
+  locale = "es",
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
-  splitColumns: ISplitColumn[];
+  splitColumns: Array<Omit<ISplitColumn, "locale">>;
+  locale: Locale;
 }>) {
   const color = stegaClean(colorVariant);
 
@@ -30,6 +33,7 @@ export default function SplitRow({
               body={column.body}
               image={column.image}
               link={column.link}
+              locale={locale}
             />
           ))}
         </div>

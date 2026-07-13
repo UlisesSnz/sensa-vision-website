@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 import { useDraftModeEnvironment } from "next-sanity/hooks";
 
-export function DisableDraftMode() {
+export function DisableDraftMode({ label }: { label: string }) {
   const environment = useDraftModeEnvironment();
 
   // Only show the disable draft mode button when outside of Presentation Tool
@@ -14,7 +14,7 @@ export function DisableDraftMode() {
   return (
     <Button asChild>
       <a href="/api/draft-mode/disable" className="fixed bottom-4 right-4">
-        Disable Draft Mode
+        {label}
       </a>
     </Button>
   );

@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import type { Locale } from "@/i18n/config";
 
 interface FAQProps {
   padding: {
@@ -27,12 +28,14 @@ interface FAQProps {
     title: string;
     body: any;
   }[];
+  locale: Locale;
 }
 
 export default function FAQs({
   padding,
   colorVariant,
   faqs,
+  locale = "es",
 }: Partial<FAQProps>) {
   const color = stegaClean(colorVariant);
   return (
@@ -40,10 +43,13 @@ export default function FAQs({
       {faqs && faqs?.length > 0 && (
         <Accordion className="space-y-4" type="multiple">
           {faqs.map((faq, index) => (
-            <AccordionItem key={`${faq._id}-${index}`} value={`item-${faq._id}-${index}`}>
+            <AccordionItem
+              key={`${faq._id}-${index}`}
+              value={`item-${faq._id}-${index}`}
+            >
               <AccordionTrigger>{faq.title}</AccordionTrigger>
               <AccordionContent>
-                <PortableTextRenderer value={faq.body} />
+                <PortableTextRenderer value={faq.body} locale={locale} />
               </AccordionContent>
             </AccordionItem>
           ))}

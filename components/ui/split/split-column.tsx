@@ -6,6 +6,8 @@ import { stegaClean } from "next-sanity";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ISectionContainer } from "../section-container";
+import type { Locale } from "@/i18n/config";
+import { localizeHref } from "@/i18n/routing";
 
 export interface ISplitColumn {
   colorVariant: ISectionContainer["color"];
@@ -28,6 +30,7 @@ export interface ISplitColumn {
       | null
       | undefined;
   };
+  locale: Locale;
 }
 
 export default function SplitColumn({
@@ -38,6 +41,7 @@ export default function SplitColumn({
   body,
   image,
   link,
+  locale = "es",
 }: Partial<ISplitColumn>) {
   const color = stegaClean(colorVariant);
 
@@ -47,7 +51,7 @@ export default function SplitColumn({
         <div
           className={cn(
             "relative h-[15rem] sm:h-[20rem] md:h-[25rem] lg:h-[30rem] rounded-lg overflow-hidden",
-            position ? "lg:order-1" : undefined
+            position ? "lg:order-1" : undefined,
           )}
         >
           <Image
@@ -72,10 +76,12 @@ export default function SplitColumn({
             className={cn(color === "primary" ? "text-background" : undefined)}
           >
             {tagLine && (
-              <span className="block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4">{tagLine}</span>
+              <span className="block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4">
+                {tagLine}
+              </span>
             )}
             <h3 className="mb-4 font-semibold">{title}</h3>
-            {body && <PortableTextRenderer value={body} />}
+            {body && <PortableTextRenderer value={body} locale={locale} />}
           </div>
           {link?.href && (
             <Button
@@ -84,7 +90,7 @@ export default function SplitColumn({
               asChild
             >
               <Link
-                href={link.href}
+                href={localizeHref(link.href, locale)}
                 target={link.target ? "_blank" : undefined}
               >
                 {link.title}

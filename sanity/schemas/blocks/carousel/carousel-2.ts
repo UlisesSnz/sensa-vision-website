@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { Quote } from "lucide-react";
+import { localizedReferenceFilter } from "../../fields/language";
 
 export default defineType({
   name: "carousel-2",
@@ -26,6 +27,7 @@ export default defineType({
           name: "testimonial",
           type: "reference",
           to: [{ type: "testimonial" }],
+          options: { filter: localizedReferenceFilter },
         },
       ],
     }),

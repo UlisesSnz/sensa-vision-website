@@ -12,6 +12,8 @@ import FormNewsletter from "@/components/ui/forms/newsletter";
 import FormEmailJs from "@/components/ui/forms/emailjs";
 import Video1 from "@/components/ui/video/video-1";
 import Lottie1 from "@/components/ui/lottie/lottie-1";
+import type { Locale } from "@/i18n/config";
+import type { UiDictionary } from "@/i18n/dictionaries";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
@@ -30,7 +32,15 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
   "lottie-1": Lottie1,
 };
 
-export default function Blocks({ blocks }: { blocks?: Sanity.Block[] }) {
+export default function Blocks({
+  blocks,
+  locale,
+  dictionary,
+}: {
+  blocks?: Sanity.Block[];
+  locale: Locale;
+  dictionary: UiDictionary;
+}) {
   return (
     <>
       {blocks?.map((block: Sanity.Block) => {
@@ -39,7 +49,16 @@ export default function Blocks({ blocks }: { blocks?: Sanity.Block[] }) {
           // Fallback for unknown block types to debug
           return <div data-type={block._type} key={block._key} />;
         }
-        return <Component {...block} key={block._key} />;
+        return (
+          <Component
+            {...block}
+            key={block._key}
+            locale={locale}
+            formMessages={dictionary.forms}
+            pricingMessages={dictionary.pricing}
+            mediaMessages={dictionary.media}
+          />
+        );
       })}
     </>
   );

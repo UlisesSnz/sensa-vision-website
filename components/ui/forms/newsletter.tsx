@@ -33,6 +33,12 @@ interface FormNewsletterProps {
   consentText: string;
   buttonText: string;
   successMessage: string;
+  formMessages: {
+    emailPlaceholder: string;
+    emailRequired: string;
+    invalidEmail: string;
+    newsletterError: string;
+  };
 }
 
 export default function FormNewsletter({
@@ -41,16 +47,22 @@ export default function FormNewsletter({
   consentText,
   buttonText,
   successMessage,
+  formMessages = {
+    emailPlaceholder: "Ingresa tu correo electrónico",
+    emailRequired: "Ingresa tu correo electrónico",
+    invalidEmail: "Ingresa un correo electrónico válido",
+    newsletterError: "No pudimos completar la suscripción. Inténtalo de nuevo.",
+  },
 }: Partial<FormNewsletterProps>) {
   // form validation schema
   const formSchema = z.object({
     email: z
       .string()
       .min(1, {
-        message: "Please enter your email",
+        message: formMessages.emailRequired,
       })
       .email({
-        message: "Please enter a valid email",
+        message: formMessages.invalidEmail,
       }),
   });
 
@@ -76,20 +88,19 @@ export default function FormNewsletter({
           }),
         });
 
-        const result = await response.json();
+        await response.json().catch(() => ({}));
 
         if (response.ok) {
           toast(successMessage);
           form.reset();
         } else {
-          toast.error(result.error);
+          toast.error(formMessages.newsletterError);
         }
-      } catch (error: any) {
-        toast.error(error.message);
-        throw new Error(error.message);
+      } catch {
+        toast.error(formMessages.newsletterError);
       }
     },
-    [form]
+    [form, formMessages.newsletterError, successMessage],
   );
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -112,7 +123,7 @@ export default function FormNewsletter({
                     <Input
                       {...field}
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={formMessages.emailPlaceholder}
                       autoComplete="off"
                       // ignore 1 Password autofill
                       data-1p-ignore

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { stegaClean } from "next-sanity";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import type { Locale } from "@/i18n/config";
+import { localizeHref } from "@/i18n/routing";
 
 export default function Hero1({
   tagLine,
@@ -11,6 +13,7 @@ export default function Hero1({
   body,
   image,
   links,
+  locale = "es",
 }: Partial<{
   tagLine: string;
   title: string;
@@ -30,18 +33,21 @@ export default function Hero1({
       | null
       | undefined;
   }[];
+  locale: Locale;
 }>) {
   return (
     <div className="container dark:bg-background py-20 lg:pt-40">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div className="flex flex-col justify-center">
           {tagLine && (
-            <span className="text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground">{tagLine}</span>
+            <span className="text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground">
+              {tagLine}
+            </span>
           )}
           {title && <h1 className="mt-4 font-bold leading-[1.1]">{title}</h1>}
           {body && (
             <div className="text-lg text-muted-foreground mt-6 leading-relaxed">
-              <PortableTextRenderer value={body} />
+              <PortableTextRenderer value={body} locale={locale} />
             </div>
           )}
           {links && links.length > 0 && (
@@ -53,7 +59,7 @@ export default function Hero1({
                   asChild
                 >
                   <Link
-                    href={link.href as string}
+                    href={localizeHref(link.href as string, locale)}
                     target={link.target ? "_blank" : undefined}
                     rel={link.target ? "noopener" : undefined}
                   >

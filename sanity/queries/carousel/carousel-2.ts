@@ -5,8 +5,10 @@ export const carousel2Query = groq`
     _type,
     padding,
     colorVariant,
-    testimonial[]->{
+    testimonial[@->language == $locale][]->{
       _id,
+      _type,
+      language,
       name,
       title,
       image{

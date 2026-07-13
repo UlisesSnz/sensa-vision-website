@@ -4,6 +4,8 @@ import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "../badge";
+import type { Locale } from "@/i18n/config";
+import { toPublicPath } from "@/i18n/routing";
 
 interface GridPostProps {
   color:
@@ -19,6 +21,7 @@ interface GridPostProps {
   categories: Sanity.Category[];
   excerpt: string;
   image: Sanity.Image;
+  locale?: Locale;
 }
 
 export default function GridPost({
@@ -28,18 +31,19 @@ export default function GridPost({
   excerpt,
   image,
   categories,
+  locale = "es",
 }: GridPostProps) {
   return (
     <Link
       className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
-      href={slug.current ? `/blog/${slug.current}` : "#"}
+      href={slug.current ? toPublicPath(locale, `/blog/${slug.current}`) : "#"}
     >
       <div
         className={cn(
           "flex w-full flex-col justify-between overflow-hidden transition ease-in-out group border rounded-3xl p-4 hover:border-primary",
           color === "primary"
             ? "group-hover:border-primary-foreground/50"
-            : "group-hover:border-primary"
+            : "group-hover:border-primary",
         )}
       >
         <div className="flex flex-col">

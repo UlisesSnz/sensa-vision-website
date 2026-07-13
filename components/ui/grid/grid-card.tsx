@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import type { PortableTextProps } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
+import type { Locale } from "@/i18n/config";
+import { localizeHref } from "@/i18n/routing";
 
 interface GridCardProps {
   color:
@@ -33,6 +35,7 @@ interface GridCardProps {
       | null
       | undefined;
   };
+  locale?: Locale;
 }
 
 export default function GridCard({
@@ -41,6 +44,7 @@ export default function GridCard({
   excerpt,
   image,
   link,
+  locale = "es",
 }: GridCardProps) {
   const linkHref = typeof link?.href === "string" ? link.href.trim() : "";
   const hasLink = linkHref.length > 0;
@@ -59,7 +63,7 @@ export default function GridCard({
           ? color === "primary"
             ? "group-hover:border-primary-foreground/50"
             : "group-hover:border-primary"
-          : undefined
+          : undefined,
       )}
     >
       <div>
@@ -91,7 +95,11 @@ export default function GridCard({
           )}
           {hasExcerpt && (
             <div className="text-muted-foreground leading-relaxed">
-              {excerptBlocks ? <PortableTextRenderer value={excerptBlocks} /> : <p>{excerptText}</p>}
+              {excerptBlocks ? (
+                <PortableTextRenderer value={excerptBlocks} locale={locale} />
+              ) : (
+                <p>{excerptText}</p>
+              )}
             </div>
           )}
         </div>
@@ -113,7 +121,7 @@ export default function GridCard({
     return (
       <Link
         className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
-        href={linkHref}
+        href={localizeHref(linkHref, locale)}
         target={link?.target ? "_blank" : undefined}
       >
         {cardContent}

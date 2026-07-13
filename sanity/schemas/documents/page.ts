@@ -1,6 +1,8 @@
 import { defineField, defineType } from "sanity";
 import { Files } from "lucide-react";
 import { orderRankField } from "@sanity/orderable-document-list";
+import { languageField } from "../fields/language";
+import { isUniqueWithinLanguage } from "../fields/localized-slug";
 
 export default defineType({
   name: "page",
@@ -22,6 +24,7 @@ export default defineType({
     },
   ],
   fields: [
+    languageField,
     defineField({ name: "title", type: "string", group: "content" }),
     defineField({
       name: "slug",
@@ -31,6 +34,7 @@ export default defineType({
       options: {
         source: "title",
         maxLength: 96,
+        isUnique: isUniqueWithinLanguage,
       },
       validation: (Rule) => Rule.required(),
     }),

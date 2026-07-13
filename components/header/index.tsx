@@ -1,10 +1,14 @@
-import Link from "next/link";
 import Image from "next/image";
-import MobileNav from "@/components/header/mobile-nav";
+import Link from "next/link";
+
 import DesktopNav from "@/components/header/desktop-nav";
+import MobileNav from "@/components/header/mobile-nav";
+import LanguageSwitcher from "@/components/language-switcher";
 import { ModeToggle } from "@/components/menu-toggle";
-import { sanityFetch } from "@/sanity/lib/live";
-import { SITE_SETTINGS_QUERY } from "@/sanity/queries/site-settings";
+import type { Locale } from "@/i18n/config";
+import type { UiDictionary } from "@/i18n/dictionaries";
+import type { LocaleAlternates } from "@/i18n/routing";
+import { localizeHref, toPublicPath } from "@/i18n/routing";
 import type { NavChildItem, NavItem } from "@/types";
 import logo from "../../public/logo.png";
 
@@ -18,109 +22,96 @@ type RawNavItem = RawNavLink & {
   subLinks?: RawNavLink[] | null;
 };
 
-type SiteSettingsQueryResult = {
-  headerNavigation?: RawNavItem[] | null;
-};
-
-const normalizeLink = (link: RawNavLink): NavChildItem | null => {
+const normalizeLink = (
+  link: RawNavLink,
+  locale: Locale,
+): NavChildItem | null => {
   const label = link.label?.trim();
   const href = link.href?.trim();
 
-  if (!label || !href) {
-    return null;
-  }
+  if (!label || !href) return null;
 
   return {
     label,
-    href,
+    href: localizeHref(href, locale),
     target: Boolean(link.target),
   };
 };
 
-const normalizeNavigation = (items: RawNavItem[] | null | undefined): NavItem[] => {
-  if (!Array.isArray(items)) {
-    return [];
-  }
+const normalizeNavigation = (
+  items: RawNavItem[] | null | undefined,
+  locale: Locale,
+): NavItem[] => {
+  if (!Array.isArray(items)) return [];
 
   return items
     .map<NavItem | null>((item) => {
       const label = item.label?.trim();
+      if (!label) return null;
 
-      if (!label) {
-        return null;
-      }
-
-      const href = item.href?.trim() || undefined;
+      const href = item.href?.trim()
+        ? localizeHref(item.href.trim(), locale)
+        : undefined;
       const target = Boolean(item.target);
-
       const subLinks = item.subLinks
-        ?.map((subLink) => normalizeLink(subLink))
+        ?.map((subLink) => normalizeLink(subLink, locale))
         .filter((subLink): subLink is NavChildItem => Boolean(subLink));
 
-      if (subLinks && subLinks.length > 0) {
-        return {
-          label,
-          href,
-          target,
-          subLinks,
-        };
-      }
-
-      if (!href) {
-        return null;
-      }
-
-      return {
-        label,
-        href,
-        target,
-      };
+      if (subLinks?.length) return { label, href, target, subLinks };
+      if (!href) return null;
+      return { label, href, target };
     })
     .filter((item): item is NavItem => item !== null);
 };
 
-async function getHeaderNavigation(): Promise<NavItem[]> {
-  try {
-    const { data } = await sanityFetch({
-      query: SITE_SETTINGS_QUERY,
-    });
+type HeaderProps = {
+  locale: Locale;
+  alternates: LocaleAlternates;
+  dictionary: UiDictionary;
+  siteSettings?: Sanity.SiteSettings | null;
+};
 
-    const cmsNavigation = normalizeNavigation(
-      (data as SiteSettingsQueryResult | null)?.headerNavigation
-    );
-
-    if (cmsNavigation.length > 0) {
-      return cmsNavigation;
-    }
-  } catch {
-    return [];
-  }
-
-  return [];
-}
-
-export default async function Header() {
-  const navItems = await getHeaderNavigation();
+export default function Header({
+  locale,
+  alternates,
+  dictionary,
+  siteSettings,
+}: HeaderProps) {
+  const navItems = normalizeNavigation(siteSettings?.headerNavigation, locale);
+  const homePath = toPublicPath(locale, "/");
 
   return (
-    <header className="sticky top-0 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm z-50">
-      <div className="container flex items-center justify-between h-16">
-        <Link href="/" aria-label="Home page" className="flex items-center gap-2.5">
-          <Image
-            src={logo}
-            alt="Sensa Vision Logo"
-            priority
-            width={30}
-          />
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm">
+      <div className="container flex h-16 items-center justify-between">
+        <Link
+          href={homePath}
+          aria-label={dictionary.navigation.home}
+          className="flex items-center gap-2.5"
+        >
+          <Image src={logo} alt="Sensa Vision Logo" priority width={30} />
           <span className="font-pixel text-lg font-bold">Sensa Vision</span>
-          </Link>
-        <div className="hidden xl:flex gap-7 items-center justify-between">
-          <DesktopNav navItems={navItems} />
-          <ModeToggle />
+        </Link>
+        <div className="hidden items-center justify-between gap-7 xl:flex">
+          <DesktopNav
+            navItems={navItems}
+            openSubmenuLabel={dictionary.navigation.openSubmenu}
+          />
+          <LanguageSwitcher
+            locale={locale}
+            alternates={alternates}
+            ariaLabel={dictionary.navigation.changeLanguage}
+            labels={dictionary.language}
+          />
+          <ModeToggle messages={dictionary.theme} />
         </div>
         <div className="flex items-center xl:hidden">
-          <ModeToggle />
-          <MobileNav navItems={navItems} />
+          <ModeToggle messages={dictionary.theme} />
+          <MobileNav
+            navItems={navItems}
+            locale={locale}
+            alternates={alternates}
+            dictionary={dictionary}
+          />
         </div>
       </div>
     </header>

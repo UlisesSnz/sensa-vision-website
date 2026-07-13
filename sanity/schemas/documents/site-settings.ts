@@ -1,11 +1,13 @@
 import { Navigation } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { languageField } from "../fields/language";
 
 const navigationSubItem = defineArrayMember({
   name: "navigationSubItem",
   title: "Sub Link",
   type: "object",
   fields: [
+    languageField,
     defineField({
       name: "label",
       title: "Label",

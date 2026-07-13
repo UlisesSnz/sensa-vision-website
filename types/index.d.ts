@@ -11,6 +11,10 @@ export type NavItem = {
   subLinks?: NavChildItem[];
 };
 
+export type LocaleAlternates = Partial<
+  Record<import("@/i18n/config").Locale, string>
+>;
+
 export type BreadcrumbLink = {
   label: string;
   href: string;

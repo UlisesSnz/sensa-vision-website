@@ -3,8 +3,11 @@ import { groq } from "next-sanity";
 export const SITE_SETTINGS_QUERY = groq`
   *[
     _type == "siteSettings" &&
-    _id in ["siteSettings", "drafts.siteSettings"]
+    language == $locale
   ] | order(_updatedAt desc)[0]{
+    _id,
+    _type,
+    language,
     headerNavigation[]{
       label,
       href,

@@ -3,6 +3,8 @@ import PostDate from "./date";
 import { Facebook, Linkedin, Mail } from "lucide-react";
 import { urlFor } from "@/sanity/lib/image";
 import CopyLinkButton from "./copy-link-button";
+import type { Locale } from "@/i18n/config";
+import { toPublicPath } from "@/i18n/routing";
 
 export default function PostHero({
   title,
@@ -10,6 +12,8 @@ export default function PostHero({
   image,
   slug,
   _createdAt,
+  locale = "es",
+  messages,
 }: Partial<{
   title: string;
   author: Sanity.Author;
@@ -17,9 +21,22 @@ export default function PostHero({
   image: Sanity.Image;
   slug: { current: string };
   _createdAt: string;
+  locale: Locale;
+  messages: {
+    label: string;
+    facebook: string;
+    linkedin: string;
+    x: string;
+    email: string;
+    copy: string;
+    copied: string;
+  };
 }>) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
-  const postPath = slug?.current ? `/blog/${slug.current}` : "/blog";
+  const postPath = toPublicPath(
+    locale,
+    slug?.current ? `/blog/${slug.current}` : "/blog",
+  );
   const postUrl = `${siteUrl}${postPath}`;
   const encodedPostUrl = encodeURIComponent(postUrl);
   const encodedTitle = encodeURIComponent(title ?? "");
@@ -64,18 +81,18 @@ export default function PostHero({
             {author?.name && <div>{author.name}</div>}
             <div className="hidden md:block">•</div>
           </div>
-          <PostDate date={_createdAt as string} />
+          <PostDate date={_createdAt as string} locale={locale} />
         </div>
         <div className="flex flex-col md:flex-row gap-2">
-          <div>Comparte este post</div>
+          <div>{messages?.label}</div>
           <div className="flex flex-wrap items-center gap-2">
             <a
               className={shareActionClassName}
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodedPostUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Compartir en Facebook"
-              title="Compartir en Facebook"
+              aria-label={messages?.facebook}
+              title={messages?.facebook}
             >
               <Facebook size={24} />
             </a>
@@ -84,8 +101,8 @@ export default function PostHero({
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedPostUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Compartir en LinkedIn"
-              title="Compartir en LinkedIn"
+              aria-label={messages?.linkedin}
+              title={messages?.linkedin}
             >
               <Linkedin size={24} />
             </a>
@@ -94,8 +111,8 @@ export default function PostHero({
               href={`https://twitter.com/intent/tweet?url=${encodedPostUrl}&text=${encodedTitle}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Compartir en X"
-              title="Compartir en X"
+              aria-label={messages?.x}
+              title={messages?.x}
             >
               <svg
                 aria-hidden="true"
@@ -116,12 +133,17 @@ export default function PostHero({
               href={`mailto:?subject=${encodedTitle}&body=${encodedTitle}%0A%0A${encodedPostUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Compartir por email"
-              title="Compartir por email"
+              aria-label={messages?.email}
+              title={messages?.email}
             >
               <Mail size={24} />
             </a>
-            <CopyLinkButton className={shareActionClassName} url={postUrl} />
+            <CopyLinkButton
+              className={shareActionClassName}
+              url={postUrl}
+              copyLabel={messages?.copy || "Copy link"}
+              copiedLabel={messages?.copied || "Link copied"}
+            />
           </div>
         </div>
       </div>

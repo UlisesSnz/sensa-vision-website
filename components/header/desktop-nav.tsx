@@ -8,7 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function DesktopNav({ navItems }: { navItems: NavItem[] }) {
+export default function DesktopNav({
+  navItems,
+  openSubmenuLabel,
+}: {
+  navItems: NavItem[];
+  openSubmenuLabel: string;
+}) {
   return (
     <div className="hidden xl:flex items-center gap-7 text-primary">
       {navItems.map((navItem, index) => {
@@ -46,7 +52,7 @@ export default function DesktopNav({ navItems }: { navItems: NavItem[] }) {
               <button
                 type="button"
                 className="inline-flex items-center gap-1 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground/80 focus:outline-none focus-visible:text-foreground/80 data-[state=open]:text-foreground/80 [&[data-state=open]>svg]:rotate-180"
-                aria-label={`Open ${navItem.label} submenu`}
+                aria-label={`${openSubmenuLabel} ${navItem.label}`}
               >
                 {navItem.label}
                 <ChevronDownIcon

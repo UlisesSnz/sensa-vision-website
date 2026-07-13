@@ -1,8 +1,15 @@
 import { groq } from "next-sanity";
 
-export const POST_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
+export const POST_QUERY = groq`*[
+    _type == "post" &&
+    language == $locale &&
+    slug.current == $slug
+  ][0]{
+    _id,
+    _type,
     title,
     slug,
+    language,
     image{
       asset->{
         _id,
@@ -36,7 +43,10 @@ export const POST_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
         }
       }
     },
-    author->{
+    author->select(language == $locale => {
+      _id,
+      _type,
+      language,
       name,
       image {
         asset->{
@@ -52,7 +62,13 @@ export const POST_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
           }
         },
         alt
-      }
+      },
+    }),
+    categories[@->language == $locale][]->{
+      _id,
+      _type,
+      language,
+      title
     },
     _createdAt,
     _updatedAt,
@@ -70,5 +86,13 @@ export const POST_QUERY = groq`*[_type == "post" && slug.current == $slug][0]{
           }
         }
       },
+    },
+    "translations": *[
+      _type == "translation.metadata" && references(^._id)
+    ][0].translations[].value->{
+      _id,
+      _type,
+      slug,
+      language
     }
 }`;

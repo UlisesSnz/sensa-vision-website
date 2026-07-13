@@ -1,9 +1,12 @@
 import { groq } from "next-sanity";
 
 export const gridPostQuery = groq`
-  _type == "grid-post" => {
+  _type == "grid-post" && post->language == $locale => {
     _type,
     ...post->{
+      _id,
+      _type,
+      language,
       title,
       slug,
       excerpt,
@@ -22,7 +25,7 @@ export const gridPostQuery = groq`
         },
         alt
       },
-      categories[]->{
+      categories[@->language == $locale][]->{
         title,
       },
     },

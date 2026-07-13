@@ -1,16 +1,12 @@
-"use client";
-import { useEffect, useState } from "react";
+import type { Locale } from "@/i18n/config";
 import { formatDate } from "@/lib/utils";
 
-export default function PostDate({ date }: { date: string }) {
-  const [postDate, setPostDate] = useState<string>("");
-
-  useEffect(() => {
-    if (date) {
-      const formattedDate = formatDate(date);
-      setPostDate(formattedDate);
-    }
-  }, [date]);
-
-  return <div>{postDate}</div>;
+export default function PostDate({
+  date,
+  locale,
+}: {
+  date: string;
+  locale: Locale;
+}) {
+  return <div>{date ? formatDate(date, locale) : null}</div>;
 }

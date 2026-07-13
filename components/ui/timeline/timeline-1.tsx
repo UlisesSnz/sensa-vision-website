@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import { motion, useInView } from "motion/react";
 import { useRef } from "react";
+import type { Locale } from "@/i18n/config";
 
 export interface Timeline1Props {
   color:
@@ -17,6 +18,7 @@ export interface Timeline1Props {
   tagLine: string | null;
   body: any;
   image: Sanity.Image;
+  locale: Locale;
 }
 
 export default function Timeline1({
@@ -24,6 +26,7 @@ export default function Timeline1({
   title,
   tagLine,
   body,
+  locale = "es",
 }: Partial<Timeline1Props>) {
   const ref = useRef(null);
   const isInView = useInView(ref);
@@ -98,7 +101,7 @@ export default function Timeline1({
               delay: 0.7,
             }}
           >
-            <PortableTextRenderer value={body} />
+            <PortableTextRenderer value={body} locale={locale} />
           </motion.div>
         )}
       </div>

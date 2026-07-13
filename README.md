@@ -69,6 +69,10 @@ All environment variables:
 
 - `SANITY_API_READ_TOKEN` - your Sanity read token for Next.js to fetch data.
 
+- `SANITY_API_TOKEN` - write token used only to apply the one-time localization migration.
+
+- `ENABLED_LOCALES` - comma-separated public locales. Keep `es` during translation and use `es,en` only when the English content is approved.
+
 - `RESEND_API_KEY` - your RESEND api key for the newsletter form.
 
 - `RESEND_AUDIENCE_ID` - your RESEND audience id for the newsletter form to store contacts.
@@ -133,3 +137,22 @@ EMAILJS_TEMPLATE_CONTACT=template_xxxxxxx
 EMAILJS_TEMPLATE_QUOTE=template_xxxxxxx
 EMAILJS_TEMPLATE_SUPPORT=template_xxxxxxx
 ```
+
+## Internationalization rollout
+
+Spanish uses the `/es` prefix and English uses `/en`. The root URL only detects the preferred enabled locale, while legacy unprefixed content URLs permanently redirect to their `/es` equivalent. Public Sanity queries never fall back between languages.
+
+Before applying the content migration, export a dataset backup and review the dry-run report:
+
+```bash
+npm run i18n:backup
+npm run i18n:migrate:dry
+```
+
+The apply command requires a write-enabled `SANITY_API_TOKEN`, explicit backup confirmation, and creates English documents as drafts:
+
+```bash
+npm run i18n:migrate:apply
+```
+
+Deploy with `ENABLED_LOCALES=es` while translations are prepared. Draft Mode can still preview `/en`. Once every English document, internal link, and SEO field has been reviewed, deploy with `ENABLED_LOCALES=es,en`. Rollback only requires restoring `ENABLED_LOCALES=es` and redeploying.

@@ -1,5 +1,7 @@
 import { defineField, defineType } from "sanity";
 import { FileText } from "lucide-react";
+import { languageField, localizedReferenceFilter } from "../fields/language";
+import { isUniqueWithinLanguage } from "../fields/localized-slug";
 
 export default defineType({
   name: "post",
@@ -21,6 +23,7 @@ export default defineType({
     },
   ],
   fields: [
+    languageField,
     defineField({
       name: "title",
       title: "Title",
@@ -36,6 +39,7 @@ export default defineType({
       options: {
         source: "title",
         maxLength: 96,
+        isUnique: isUniqueWithinLanguage,
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -51,6 +55,7 @@ export default defineType({
       type: "reference",
       group: "settings",
       to: { type: "author" },
+      options: { filter: localizedReferenceFilter },
     }),
     defineField({
       name: "image",
@@ -73,7 +78,13 @@ export default defineType({
       title: "Categories",
       type: "array",
       group: "settings",
-      of: [{ type: "reference", to: { type: "category" } }],
+      of: [
+        {
+          type: "reference",
+          to: { type: "category" },
+          options: { filter: localizedReferenceFilter },
+        },
+      ],
     }),
     defineField({
       name: "body",

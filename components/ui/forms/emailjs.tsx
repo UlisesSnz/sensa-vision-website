@@ -53,6 +53,14 @@ interface FormEmailJsProps {
   buttonText: string;
   successMessage: string;
   errorMessage: string;
+  formMessages: {
+    required: string;
+    invalidEmail: string;
+    invalidPhone: string;
+    sendMessage: string;
+    contactSuccess: string;
+    contactError: string;
+  };
 }
 
 const emailValidator = z.string().email();
@@ -80,7 +88,10 @@ function getFieldError(error: unknown): string | undefined {
   return undefined;
 }
 
-function buildFieldSchema(field: NormalizedFormEmailJsField): z.ZodType<string> {
+function buildFieldSchema(
+  field: NormalizedFormEmailJsField,
+  messages: FormEmailJsProps["formMessages"],
+): z.ZodType<string> {
   const label = field.label || field.name;
 
   if (field.fieldType === "email") {
@@ -88,16 +99,20 @@ function buildFieldSchema(field: NormalizedFormEmailJsField): z.ZodType<string> 
       return z
         .string()
         .trim()
-        .min(1, { message: `${label} is required` })
-        .email({ message: "Please enter a valid email" });
+        .min(1, { message: `${label} ${messages.required}` })
+        .email({ message: messages.invalidEmail });
     }
 
-    return z.string().trim().refine(
-      (value) => value.length === 0 || emailValidator.safeParse(value).success,
-      {
-        message: "Please enter a valid email",
-      }
-    );
+    return z
+      .string()
+      .trim()
+      .refine(
+        (value) =>
+          value.length === 0 || emailValidator.safeParse(value).success,
+        {
+          message: messages.invalidEmail,
+        },
+      );
   }
 
   if (field.fieldType === "tel") {
@@ -105,23 +120,23 @@ function buildFieldSchema(field: NormalizedFormEmailJsField): z.ZodType<string> 
       return z
         .string()
         .trim()
-        .min(1, { message: `${label} is required` })
-        .regex(phoneRegex, { message: "Please enter a valid phone number" });
+        .min(1, { message: `${label} ${messages.required}` })
+        .regex(phoneRegex, { message: messages.invalidPhone });
     }
 
-    return z.string().trim().refine(
-      (value) => value.length === 0 || phoneRegex.test(value),
-      {
-        message: "Please enter a valid phone number",
-      }
-    );
+    return z
+      .string()
+      .trim()
+      .refine((value) => value.length === 0 || phoneRegex.test(value), {
+        message: messages.invalidPhone,
+      });
   }
 
   if (field.required !== false) {
     return z
       .string()
       .trim()
-      .min(1, { message: `${label} is required` });
+      .min(1, { message: `${label} ${messages.required}` });
   }
 
   return z.string().trim();
@@ -140,6 +155,14 @@ export default function FormEmailJs({
   buttonText,
   successMessage,
   errorMessage,
+  formMessages = {
+    required: "es obligatorio",
+    invalidEmail: "Ingresa un correo electrónico válido",
+    invalidPhone: "Ingresa un número de teléfono válido",
+    sendMessage: "Enviar mensaje",
+    contactSuccess: "Gracias, mensaje enviado correctamente.",
+    contactError: "No pudimos enviar tu mensaje. Inténtalo de nuevo.",
+  },
 }: Partial<FormEmailJsProps>) {
   const pathname = usePathname();
   const [botField, setBotField] = useState("");
@@ -149,12 +172,11 @@ export default function FormEmailJs({
   const cleanTitle = stegaClean(title);
   const cleanDescription = stegaClean(description);
   const cleanConsentText = stegaClean(consentText);
-  const cleanButtonText = stegaClean(buttonText) || "Send message";
+  const cleanButtonText = stegaClean(buttonText) || formMessages.sendMessage;
   const cleanSuccessMessage =
-    stegaClean(successMessage) || "Gracias, mensaje enviado correctamente.";
+    stegaClean(successMessage) || formMessages.contactSuccess;
   const cleanErrorMessage =
-    stegaClean(errorMessage) ||
-    "No pudimos enviar tu mensaje. Por favor, inténtalo de nuevo.";
+    stegaClean(errorMessage) || formMessages.contactError;
   const cleanTemplateKey = stegaClean(templateKey) || "contact";
   const cleanInternalName = stegaClean(internalName) || "form-emailjs";
 
@@ -177,9 +199,7 @@ export default function FormEmailJs({
           required: field?.required !== false,
         } satisfies NormalizedFormEmailJsField;
       })
-      .filter(
-        (field): field is NormalizedFormEmailJsField => field !== null
-      );
+      .filter((field): field is NormalizedFormEmailJsField => field !== null);
 
     const uniqueByName = new Map<string, NormalizedFormEmailJsField>();
     mapped.forEach((field) => {
@@ -195,11 +215,11 @@ export default function FormEmailJs({
     const shape: Record<string, z.ZodType<string>> = {};
 
     normalizedFields.forEach((field) => {
-      shape[field.name] = buildFieldSchema(field);
+      shape[field.name] = buildFieldSchema(field, formMessages);
     });
 
     return z.object(shape);
-  }, [normalizedFields]);
+  }, [formMessages, normalizedFields]);
 
   const defaultValues = useMemo<FormValues>(() => {
     const entries = normalizedFields.map((field) => [field.name, ""] as const);
@@ -234,12 +254,10 @@ export default function FormEmailJs({
           }),
         });
 
-        const result = await response.json().catch(() => ({}));
+        await response.json().catch(() => ({}));
 
         if (!response.ok) {
-          toast.error(
-            typeof result?.error === "string" ? result.error : cleanErrorMessage
-          );
+          toast.error(cleanErrorMessage);
           return;
         }
 
@@ -259,7 +277,7 @@ export default function FormEmailJs({
       defaultValues,
       form,
       pathname,
-    ]
+    ],
   );
 
   if (normalizedFields.length === 0) {
@@ -270,13 +288,15 @@ export default function FormEmailJs({
     <SectionContainer color={color} padding={padding}>
       <div
         className={cn(
-          align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined
+          align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,
         )}
       >
         <div
           className={cn(color === "primary" ? "text-background" : undefined)}
         >
-          {cleanTitle && <h2 className="text-3xl md:text-5xl mb-4">{cleanTitle}</h2>}
+          {cleanTitle && (
+            <h2 className="text-3xl md:text-5xl mb-4">{cleanTitle}</h2>
+          )}
           {cleanDescription && (
             <p className="text-muted-foreground text-lg leading-relaxed">
               {cleanDescription}
@@ -285,7 +305,11 @@ export default function FormEmailJs({
         </div>
 
         <Form {...form}>
-          <form className="pt-8" onSubmit={form.handleSubmit(onSubmit)} noValidate>
+          <form
+            className="pt-8"
+            onSubmit={form.handleSubmit(onSubmit)}
+            noValidate
+          >
             <input
               type="text"
               name="company"
@@ -343,11 +367,17 @@ export default function FormEmailJs({
             <div
               className={cn(
                 "mt-6 flex flex-wrap gap-4",
-                align === "center" ? "justify-center" : undefined
+                align === "center" ? "justify-center" : undefined,
               )}
             >
-              <Button type="submit" disabled={isSubmitting} className="min-w-40">
-                {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="min-w-40"
+              >
+                {isSubmitting && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
                 {cleanButtonText}
               </Button>
             </div>
@@ -356,7 +386,7 @@ export default function FormEmailJs({
               <p
                 className={cn(
                   "mt-4 text-xs text-muted-foreground",
-                  align === "center" ? "text-center" : undefined
+                  align === "center" ? "text-center" : undefined,
                 )}
               >
                 {cleanConsentText}

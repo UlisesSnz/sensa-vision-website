@@ -5,6 +5,7 @@ import { stegaClean } from "next-sanity";
 import GridCard from "./grid-card";
 import PricingCard from "./pricing-card";
 import GridPost from "./grid-post";
+import type { Locale } from "@/i18n/config";
 
 interface Grid1Props {
   padding: {
@@ -21,6 +22,8 @@ interface Grid1Props {
     | "transparent";
   gridColumns: "grid-cols-2" | "grid-cols-3" | "grid-cols-4";
   columns: Sanity.Block[];
+  locale: Locale;
+  pricingMessages: { monthly: string; annual: string };
 }
 
 // map all components you need
@@ -35,6 +38,8 @@ export default function GridRow({
   colorVariant,
   gridColumns,
   columns,
+  locale = "es",
+  pricingMessages,
 }: Partial<Grid1Props>) {
   const color = stegaClean(colorVariant);
 
@@ -44,7 +49,7 @@ export default function GridRow({
         <div
           className={cn(
             `grid grid-cols-1 gap-6`,
-            `lg:${stegaClean(gridColumns)}`
+            `lg:${stegaClean(gridColumns)}`,
           )}
         >
           {columns.map((block: Sanity.Block) => {
@@ -53,7 +58,15 @@ export default function GridRow({
               // Fallback for unknown block types to debug
               return <div data-type={block._type} key={block._key} />;
             }
-            return <Component {...block} color={color} key={block._key} />;
+            return (
+              <Component
+                {...block}
+                color={color}
+                key={block._key}
+                locale={locale}
+                pricingMessages={pricingMessages}
+              />
+            );
           })}
         </div>
       )}

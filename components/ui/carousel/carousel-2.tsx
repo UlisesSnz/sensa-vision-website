@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { urlFor } from "@/sanity/lib/image";
 import { StarRating } from "@/components/ui/star-rating";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import type { Locale } from "@/i18n/config";
 
 interface Carousel2Props {
   padding: {
@@ -35,12 +36,14 @@ interface Carousel2Props {
     body: any;
     rating: number;
   }[];
+  locale: Locale;
 }
 
 export default function Carousel2({
   padding,
   colorVariant,
   testimonial,
+  locale = "es",
 }: Partial<Carousel2Props>) {
   const color = stegaClean(colorVariant);
 
@@ -79,7 +82,10 @@ export default function Carousel2({
                       <StarRating rating={item.rating} />
                       {item.body && (
                         <div className="text-sm mt-2 line-clamp-4">
-                          <PortableTextRenderer value={item.body} />
+                          <PortableTextRenderer
+                            value={item.body}
+                            locale={locale}
+                          />
                         </div>
                       )}
                     </div>

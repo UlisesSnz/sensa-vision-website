@@ -15,7 +15,12 @@ import { video1Query } from "./video/video-1";
 import { lottie1Query } from "./lottie/lottie-1";
 
 export const PAGE_QUERY = groq`
-  *[_type == "page" && slug.current == $slug][0]{
+  *[_type == "page" && language == $locale && slug.current == $slug][0]{
+    _id,
+    _type,
+    title,
+    slug,
+    language,
     blocks[]{
       ${hero1Query}
       ${sectionHeaderQuery}
@@ -46,6 +51,25 @@ export const PAGE_QUERY = groq`
           }
         }
       },
+    },
+    "translations": *[
+      _type == "translation.metadata" && references(^._id)
+    ][0].translations[].value->{
+      _id,
+      _type,
+      slug,
+      language
     }
+  }
+`;
+
+export const PAGES_SLUGS_QUERY = groq`
+  *[
+    _type == "page" &&
+    language in $locales &&
+    defined(slug.current)
+  ]{
+    slug,
+    language
   }
 `;

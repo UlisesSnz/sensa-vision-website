@@ -7,6 +7,8 @@ import { stegaClean } from "next-sanity";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
+import type { Locale } from "@/i18n/config";
+import { localizeHref } from "@/i18n/routing";
 
 interface FeatureGroup {
   category: string;
@@ -56,6 +58,8 @@ interface PricingCardProps {
       | null
       | undefined;
   };
+  locale?: Locale;
+  pricingMessages?: { monthly: string; annual: string };
 }
 
 export default function PricingCard({
@@ -68,6 +72,8 @@ export default function PricingCard({
   pricingTiers,
   list,
   link,
+  locale = "es",
+  pricingMessages = { monthly: "Mensual", annual: "Anual" },
 }: PricingCardProps) {
   const hasFeatureGroups = featureGroups && featureGroups.length > 0;
   const hasPricingTiers = pricingTiers && pricingTiers.length > 0;
@@ -79,7 +85,7 @@ export default function PricingCard({
     hasPricingTiers && pricingTiers.some((t) => t.annualPrice);
 
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">(
-    "monthly"
+    "monthly",
   );
 
   return (
@@ -87,10 +93,12 @@ export default function PricingCard({
       <div
         className={cn(
           "flex w-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-shadow duration-300 hover:shadow-lg",
-          color === "primary" && "border-primary/20 shadow-sm"
+          color === "primary" && "border-primary/20 shadow-sm",
         )}
       >
-        <div className={cn(color === "primary" ? "text-background" : undefined)}>
+        <div
+          className={cn(color === "primary" ? "text-background" : undefined)}
+        >
           {/* ── Header: title + badge ── */}
           {title && (
             <div className="flex items-start justify-between gap-3 mb-6">
@@ -110,7 +118,8 @@ export default function PricingCard({
             <div className="mb-8">
               <div className="flex items-baseline gap-1.5">
                 <span className="text-4xl font-extrabold tracking-tight tabular-nums">
-                  ${price.value.toLocaleString("es-MX")}
+                  $
+                  {price.value.toLocaleString(locale === "es" ? "es-MX" : "en")}
                 </span>
                 {price.period && (
                   <span className="text-sm text-muted-foreground font-medium">
@@ -137,10 +146,10 @@ export default function PricingCard({
                     "rounded-md px-3 py-1.5 font-medium transition-all",
                     billingPeriod === "monthly"
                       ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  Mensual
+                  {pricingMessages.monthly}
                 </button>
                 <button
                   type="button"
@@ -149,10 +158,10 @@ export default function PricingCard({
                     "rounded-md px-3 py-1.5 font-medium transition-all",
                     billingPeriod === "annual"
                       ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  Anual
+                  {pricingMessages.annual}
                 </button>
               </div>
             </div>
@@ -270,7 +279,7 @@ export default function PricingCard({
             asChild
           >
             <Link
-              href={link.href}
+              href={localizeHref(link.href, locale)}
               target={link.target ? "_blank" : undefined}
             >
               {link.title}

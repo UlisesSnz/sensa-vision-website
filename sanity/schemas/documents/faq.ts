@@ -1,6 +1,7 @@
 import { defineField, defineType } from "sanity";
 import { ListCollapse } from "lucide-react";
 import { orderRankField } from "@sanity/orderable-document-list";
+import { languageField } from "../fields/language";
 
 export default defineType({
   name: "faq",
@@ -8,6 +9,7 @@ export default defineType({
   type: "document",
   icon: ListCollapse,
   fields: [
+    languageField,
     defineField({
       name: "title",
       type: "string",

@@ -8,6 +8,7 @@ import SectionContainer, {
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import { stegaClean } from "next-sanity";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import type { Locale } from "@/i18n/config";
 
 // Standalone sizes (center, vertical, no-body) — 4:3 aspect
 const LOTTIE_STANDALONE = {
@@ -37,6 +38,7 @@ export default function Lottie1({
   lottieLoop = true,
   lottieAutoplay = true,
   lottieFit = "hybrid",
+  locale = "es",
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
@@ -53,6 +55,7 @@ export default function Lottie1({
   lottieLoop: boolean;
   lottieAutoplay: boolean;
   lottieFit: LottieFitMode;
+  locale: Locale;
 }>) {
   const color = stegaClean(colorVariant);
   const position = stegaClean(textPosition);
@@ -67,7 +70,8 @@ export default function Lottie1({
   const isCenter = position === "center";
   const lottieFirst =
     position === "right" || position === "bottom" || position === "center";
-  const fitMode = (stegaClean(lottieFit) as LottieFitMode | undefined) || "hybrid";
+  const fitMode =
+    (stegaClean(lottieFit) as LottieFitMode | undefined) || "hybrid";
   const fit: "contain" | "cover" =
     fitMode === "cover"
       ? "cover"
@@ -89,7 +93,7 @@ export default function Lottie1({
 
   const textBlock = body ? (
     <div className={cn(color === "primary" ? "text-background" : undefined)}>
-      <PortableTextRenderer value={body} />
+      <PortableTextRenderer value={body} locale={locale} />
     </div>
   ) : null;
 
@@ -142,7 +146,9 @@ export default function Lottie1({
               "overflow-hidden rounded-lg",
               position === "left" ? "lg:order-1" : undefined,
             )}
-            style={{ minHeight: LOTTIE_MIN_HEIGHTS[size] || LOTTIE_MIN_HEIGHTS.md }}
+            style={{
+              minHeight: LOTTIE_MIN_HEIGHTS[size] || LOTTIE_MIN_HEIGHTS.md,
+            }}
           >
             <DotLottieReact
               {...lottieCommon}

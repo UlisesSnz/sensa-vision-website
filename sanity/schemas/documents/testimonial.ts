@@ -1,11 +1,13 @@
 import { defineField, defineType } from "sanity";
 import { orderRankField } from "@sanity/orderable-document-list";
+import { languageField } from "../fields/language";
 
 export default defineType({
   name: "testimonial",
   title: "Testimonials",
   type: "document",
   fields: [
+    languageField,
     defineField({
       name: "name",
       type: "string",

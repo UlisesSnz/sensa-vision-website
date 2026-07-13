@@ -3,6 +3,7 @@ import type {
   SanityImageDimensions,
 } from "@sanity/image-url/lib/types/types";
 import type { SanityDocument } from "next-sanity";
+import type { Locale } from "@/i18n/config";
 
 declare global {
   namespace Sanity {
@@ -10,10 +11,12 @@ declare global {
     type PageBase = SanityDocument<{
       title?: string;
       slug: { current: string };
+      language: Locale;
       meta_title: string;
       meta_description: string;
       ogImage?: Image;
       noindex: boolean;
+      translations?: Translation[];
     }>;
 
     type Page = PageBase & {
@@ -32,13 +35,46 @@ declare global {
       }>;
 
     type Author = SanityDocument<{
+      readonly _type: "author";
+      language: Locale;
       name: string;
       slug: { current: string };
       image?: Image;
     }>;
 
     type Category = SanityDocument<{
+      readonly _type: "category";
+      language: Locale;
       title: string;
+    }>;
+
+    type Translation = {
+      _id: string;
+      _type:
+        | "page"
+        | "post"
+        | "author"
+        | "category"
+        | "faq"
+        | "testimonial"
+        | "siteSettings";
+      language: Locale;
+      slug?: { current: string };
+    };
+
+    type SiteSettings = SanityDocument<{
+      readonly _type: "siteSettings";
+      language: Locale;
+      headerNavigation?: Array<{
+        label?: string;
+        href?: string;
+        target?: boolean;
+        subLinks?: Array<{
+          label?: string;
+          href?: string;
+          target?: boolean;
+        }>;
+      }>;
     }>;
 
     type Image = SanityImageObject &

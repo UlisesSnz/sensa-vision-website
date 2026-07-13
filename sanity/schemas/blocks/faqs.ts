@@ -1,5 +1,6 @@
 import { defineType, defineField } from "sanity";
 import { ListCollapse } from "lucide-react";
+import { localizedReferenceFilter } from "../fields/language";
 
 export default defineType({
   name: "faqs",
@@ -25,6 +26,7 @@ export default defineType({
           name: "faq",
           type: "reference",
           to: [{ type: "faq" }],
+          options: { filter: localizedReferenceFilter },
         },
       ],
     }),

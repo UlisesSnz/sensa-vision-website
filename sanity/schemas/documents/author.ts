@@ -1,11 +1,14 @@
 import { defineField, defineType } from "sanity";
 import { orderRankField } from "@sanity/orderable-document-list";
+import { languageField } from "../fields/language";
+import { isUniqueWithinLanguage } from "../fields/localized-slug";
 
 export default defineType({
   name: "author",
   title: "Author",
   type: "document",
   fields: [
+    languageField,
     defineField({
       name: "name",
       title: "Name",
@@ -19,6 +22,7 @@ export default defineType({
       options: {
         source: "name",
         maxLength: 96,
+        isUnique: isUniqueWithinLanguage,
       },
       validation: (Rule) => Rule.required(),
     }),

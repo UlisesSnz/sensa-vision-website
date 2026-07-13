@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { LayoutGrid } from "lucide-react";
+import { localizedReferenceFilter } from "../../fields/language";
 
 export default defineType({
   name: "grid-post",
@@ -12,6 +13,7 @@ export default defineType({
       title: "Blog Post",
       description: "Select a blog post to link to.",
       to: [{ type: "post" }],
+      options: { filter: localizedReferenceFilter },
     }),
   ],
   preview: {
