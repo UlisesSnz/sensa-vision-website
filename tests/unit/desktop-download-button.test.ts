@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import DesktopDownloadButton from "@/components/ui/desktop-download-button";
+import { getDictionary } from "@/i18n/dictionaries";
 
 const release: Sanity.DesktopRelease = {
   version: "1.2.3",
@@ -11,7 +12,8 @@ const release: Sanity.DesktopRelease = {
   platform: "win32",
   architecture: "x64",
   installer: {
-    objectKey: "desktop/stable/win32/x64/v1.2.3/id/setup.exe",
+    objectKey:
+      "desktop/stable/win32/x64/v1.2.3/id/SensaVision-Windows-1.2.3-x64.exe",
     url: "https://downloads.example.com/SensaVision.exe",
     fileName: "SensaVision-Setup-1.2.3-x64.exe",
     sizeBytes: 100,
@@ -21,21 +23,31 @@ const release: Sanity.DesktopRelease = {
 };
 
 describe("DesktopDownloadButton", () => {
-  it.each([
-    ["Próximamente", "Descargar para Windows"],
-    ["Coming soon", "Download for Windows"],
-  ])("renders the localized unavailable state %s", (comingSoon, defaultLabel) => {
+  const defaultLabels = {
+    "win32/x64": "Descargar para Windows x64",
+    "win32/arm64": "Descargar para Windows ARM64",
+    "darwin/x64": "Descargar para macOS Intel",
+    "darwin/arm64": "Descargar para macOS Apple Silicon",
+    "darwin/universal": "Descargar para macOS Universal",
+    "linux/x64": "Descargar para Linux x64",
+    "linux/arm64": "Descargar para Linux ARM64",
+  };
+
+  it.each(["Próximamente", "Coming soon"])(
+    "renders the localized unavailable state %s",
+    (comingSoon) => {
     const html = renderToStaticMarkup(
       createElement(DesktopDownloadButton, {
         release: null,
-        title: defaultLabel,
-        messages: { comingSoon, defaultLabel },
+        target: { platform: "darwin", architecture: "arm64" },
+        messages: { comingSoon, defaultLabels },
       }),
     );
 
     expect(html).toContain("disabled");
     expect(html).toContain(comingSoon);
-  });
+    },
+  );
 
   it("renders a direct R2 download without exposing release metadata", () => {
     const html = renderToStaticMarkup(
@@ -44,7 +56,7 @@ describe("DesktopDownloadButton", () => {
         title: "Descargar SensaVision",
         messages: {
           comingSoon: "Próximamente",
-          defaultLabel: "Descargar para Windows",
+          defaultLabels,
         },
       }),
     );
@@ -53,5 +65,44 @@ describe("DesktopDownloadButton", () => {
     expect(html).toContain("Descargar SensaVision");
     expect(html).not.toContain("1.2.3");
     expect(html).not.toContain("100");
+  });
+
+  it("uses a localized default label for the selected target", () => {
+    const macRelease: Sanity.DesktopRelease = {
+      ...release,
+      platform: "darwin",
+      architecture: "arm64",
+      installer: {
+        ...release.installer,
+        url: "https://downloads.example.com/SensaVision.dmg",
+        fileName: "SensaVision-macOS-1.2.3-arm64.dmg",
+      },
+    };
+    const html = renderToStaticMarkup(
+      createElement(DesktopDownloadButton, {
+        release: macRelease,
+        target: { platform: "darwin", architecture: "arm64" },
+        messages: { comingSoon: "Próximamente", defaultLabels },
+      }),
+    );
+
+    expect(html).toContain("Descargar para macOS Apple Silicon");
+  });
+
+  it("uses the English target label when the page dictionary is English", () => {
+    const linuxRelease: Sanity.DesktopRelease = {
+      ...release,
+      platform: "linux",
+      architecture: "arm64",
+    };
+    const html = renderToStaticMarkup(
+      createElement(DesktopDownloadButton, {
+        release: linuxRelease,
+        target: { platform: "linux", architecture: "arm64" },
+        messages: getDictionary("en").downloads,
+      }),
+    );
+
+    expect(html).toContain("Download for Linux ARM64");
   });
 });

@@ -1,7 +1,23 @@
 import { Download } from "lucide-react";
 import { defineField, defineType, userHasRole } from "sanity";
 
-import { isValidDesktopReleaseVersion } from "@/lib/desktop-release";
+import {
+  assertDesktopReleaseObjectKey,
+  DESKTOP_RELEASE_ARCHITECTURES,
+  DESKTOP_RELEASE_PLATFORMS,
+  getDesktopReleaseArchitectureTitle,
+  getDesktopReleasePlatformTitle,
+  getDesktopReleaseTargetTitle,
+  isDesktopReleaseArchitecture,
+  isDesktopReleasePlatform,
+  isValidDesktopReleaseTarget,
+  isValidDesktopReleaseVersion,
+} from "@/lib/desktop-release";
+
+const targetIsLocked = ({ document }: { document?: Record<string, any> }) =>
+  Boolean(
+    (document?.installer as { objectKey?: string } | undefined)?.objectKey,
+  );
 
 export default defineType({
   name: "desktopRelease",
@@ -42,31 +58,77 @@ export default defineType({
     }),
     defineField({
       name: "platform",
-      title: "Platform",
+      title: "Operating system",
       type: "string",
       initialValue: "win32",
-      readOnly: true,
-      validation: (Rule) =>
-        Rule.required().custom((value) =>
-          value === "win32" ? true : "La plataforma debe ser win32.",
-        ),
+      readOnly: targetIsLocked,
+      options: {
+        list: DESKTOP_RELEASE_PLATFORMS.map((platform) => ({
+          title: getDesktopReleasePlatformTitle(platform),
+          value: platform,
+        })),
+        layout: "radio",
+      },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "architecture",
       title: "Architecture",
       type: "string",
       initialValue: "x64",
-      readOnly: true,
+      readOnly: targetIsLocked,
+      description:
+        "Windows y Linux aceptan x64/ARM64; macOS también acepta Universal.",
+      options: {
+        list: DESKTOP_RELEASE_ARCHITECTURES.map((architecture) => ({
+          title: getDesktopReleaseArchitectureTitle(architecture),
+          value: architecture,
+        })),
+        layout: "radio",
+      },
       validation: (Rule) =>
-        Rule.required().custom((value) =>
-          value === "x64" ? true : "La arquitectura debe ser x64.",
-        ),
+        Rule.required().custom((value, context) => {
+          const platform = context.document?.platform;
+
+          return isDesktopReleasePlatform(platform) &&
+            isDesktopReleaseArchitecture(value) &&
+            isValidDesktopReleaseTarget({ platform, architecture: value })
+            ? true
+            : "La arquitectura no es válida para el sistema operativo seleccionado.";
+        }),
     }),
     defineField({
       name: "installer",
       title: "Installer",
       type: "desktopInstaller",
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().custom((value, context) => {
+          const document = context.document;
+          const installer = value as { objectKey?: string } | undefined;
+          const version = document?.version;
+          const platform = document?.platform;
+          const architecture = document?.architecture;
+
+          if (
+            !installer?.objectKey ||
+            typeof version !== "string" ||
+            !isDesktopReleasePlatform(platform) ||
+            !isDesktopReleaseArchitecture(architecture)
+          ) {
+            return true;
+          }
+
+          try {
+            assertDesktopReleaseObjectKey(installer.objectKey, {
+              version,
+              platform,
+              architecture,
+            });
+            return true;
+          } catch {
+            return "El instalador no coincide con la versión y el destino de la release.";
+          }
+        }),
     }),
   ],
   orderings: [
@@ -80,10 +142,21 @@ export default defineType({
     select: {
       version: "version",
       releasedAt: "releasedAt",
+      platform: "platform",
+      architecture: "architecture",
     },
-    prepare({ version, releasedAt }) {
+    prepare({ version, releasedAt, platform, architecture }) {
+      const target =
+        isDesktopReleasePlatform(platform) &&
+        isDesktopReleaseArchitecture(architecture) &&
+        isValidDesktopReleaseTarget({ platform, architecture })
+          ? getDesktopReleaseTargetTitle({ platform, architecture })
+          : "Destino pendiente";
+
       return {
-        title: version ? `SensaVision ${version}` : "Nueva release",
+        title: version
+          ? `SensaVision ${version} · ${target}`
+          : "Nueva release",
         subtitle: releasedAt
           ? new Date(releasedAt).toLocaleDateString("es-MX")
           : "Sin fecha",

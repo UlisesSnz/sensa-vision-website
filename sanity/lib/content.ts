@@ -1,6 +1,10 @@
 import { cache } from "react";
 
 import type { Locale } from "@/i18n/config";
+import type {
+  DesktopReleaseArchitecture,
+  DesktopReleasePlatform,
+} from "@/lib/desktop-release";
 import { PAGE_QUERY, PAGES_SLUGS_QUERY } from "@/sanity/queries/page";
 import { POST_QUERY } from "@/sanity/queries/post";
 import { POSTS_QUERY, POSTS_SLUGS_QUERY } from "@/sanity/queries/posts";
@@ -54,9 +58,13 @@ export const fetchSiteSettings = cache(
 );
 
 export const fetchLatestDesktopRelease = cache(
-  async (): Promise<Sanity.DesktopRelease | null> => {
+  async (
+    platform: DesktopReleasePlatform,
+    architecture: DesktopReleaseArchitecture,
+  ): Promise<Sanity.DesktopRelease | null> => {
     const { data } = await sanityFetch({
       query: LATEST_DESKTOP_RELEASE_QUERY,
+      params: { platform, architecture },
       perspective: "published",
       stega: false,
     });

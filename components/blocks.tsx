@@ -15,6 +15,11 @@ import Lottie1 from "@/components/ui/lottie/lottie-1";
 import DesktopDownload from "@/components/ui/desktop-download";
 import type { Locale } from "@/i18n/config";
 import type { UiDictionary } from "@/i18n/dictionaries";
+import {
+  collectDesktopReleaseTargets,
+  type DesktopReleaseLookup,
+} from "@/lib/desktop-release-content";
+import { getDesktopReleaseTargetKey } from "@/lib/desktop-release";
 import { fetchLatestDesktopRelease } from "@/sanity/lib/content";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
@@ -44,7 +49,16 @@ export default async function Blocks({
   locale: Locale;
   dictionary: UiDictionary;
 }) {
-  const desktopRelease = await fetchLatestDesktopRelease();
+  const desktopTargets = collectDesktopReleaseTargets(blocks);
+  const releaseEntries = await Promise.all(
+    desktopTargets.map(async (target) => [
+      getDesktopReleaseTargetKey(target),
+      await fetchLatestDesktopRelease(target.platform, target.architecture),
+    ] as const),
+  );
+  const desktopReleases = Object.fromEntries(
+    releaseEntries,
+  ) as DesktopReleaseLookup;
 
   return (
     <>
@@ -62,7 +76,7 @@ export default async function Blocks({
             formMessages={dictionary.forms}
             pricingMessages={dictionary.pricing}
             mediaMessages={dictionary.media}
-            desktopRelease={desktopRelease}
+            desktopReleases={desktopReleases}
             downloadMessages={dictionary.downloads}
           />
         );

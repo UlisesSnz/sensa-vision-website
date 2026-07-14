@@ -101,9 +101,10 @@ All environment variables:
 
 ## SensaVision Desktop releases
 
-Windows x64 installers are uploaded directly from the Sanity Studio browser to
-Cloudflare R2 using administrator-only multipart Server Actions. Sanity stores
-only the metadata for manually published releases. See
+Windows, macOS, and Linux installers are uploaded directly from the Sanity Studio
+browser to Cloudflare R2 using administrator-only multipart Server Actions. Each
+Sanity release represents one operating-system/architecture target, so targets
+can be published independently and reused by Hero, CTA, or download blocks. See
 [`docs/desktop-releases-r2.md`](docs/desktop-releases-r2.md) for bucket CORS,
 lifecycle, cache, security, release workflow, and production QA.
 

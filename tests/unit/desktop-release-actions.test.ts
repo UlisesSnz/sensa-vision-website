@@ -43,7 +43,14 @@ const objectKey = buildDesktopReleaseObjectKey({
   version: "1.2.3",
   uploadId: "browser-session",
   extension: "exe",
+  platform: "win32",
+  architecture: "x64",
 });
+
+const windowsTarget = {
+  platform: "win32",
+  architecture: "x64",
+} as const;
 
 describe("desktop release Server Actions", () => {
   beforeEach(() => {
@@ -52,12 +59,44 @@ describe("desktop release Server Actions", () => {
     r2.signPart.mockReset();
   });
 
-  it("starts a multipart upload with immutable download headers", async () => {
+  it.each([
+    {
+      platform: "win32",
+      architecture: "x64",
+      fileName: "local.exe",
+      canonicalFileName: "SensaVision-Windows-1.2.3-x64.exe",
+      contentType: "application/vnd.microsoft.portable-executable",
+    },
+    {
+      platform: "darwin",
+      architecture: "arm64",
+      fileName: "local.dmg",
+      canonicalFileName: "SensaVision-macOS-1.2.3-arm64.dmg",
+      contentType: "application/x-apple-diskimage",
+    },
+    {
+      platform: "linux",
+      architecture: "x64",
+      fileName: "local.AppImage",
+      canonicalFileName: "SensaVision-Linux-1.2.3-x64.AppImage",
+      contentType: "application/octet-stream",
+    },
+  ] as const)(
+    "starts an immutable $platform/$architecture multipart upload",
+    async ({
+      platform,
+      architecture,
+      fileName,
+      canonicalFileName,
+      contentType,
+    }) => {
     r2.send.mockResolvedValueOnce({ UploadId: "r2-upload" });
 
     const result = await startDesktopReleaseUpload("administrator-token", {
       version: "1.2.3",
-      fileName: "local.exe",
+      platform,
+      architecture,
+      fileName,
       sizeBytes: DESKTOP_UPLOAD_PART_SIZE_BYTES + 1,
     });
     const command = r2.send.mock.calls[0][0];
@@ -67,15 +106,22 @@ describe("desktop release Server Actions", () => {
     expect(command.input).toMatchObject({
       Bucket: "test-releases",
       CacheControl: "public, max-age=31536000, immutable",
-      ContentDisposition:
-        'attachment; filename="SensaVision-Setup-1.2.3-x64.exe"',
-      ContentType: "application/vnd.microsoft.portable-executable",
+      ContentDisposition: `attachment; filename="${canonicalFileName}"`,
+      ContentType: contentType,
       StorageClass: "STANDARD",
+      Metadata: {
+        version: "1.2.3",
+        channel: "stable",
+        platform,
+        architecture,
+      },
     });
-    expect(command.input.Key).toMatch(
-      /^desktop\/stable\/win32\/x64\/v1\.2\.3\/[0-9a-f-]+\/SensaVision-Setup-1\.2\.3-x64\.exe$/,
+    expect(command.input.Key).toContain(
+      `desktop/stable/${platform}/${architecture}/v1.2.3/`,
     );
-  });
+    expect(command.input.Key).toContain(`/${canonicalFileName}`);
+    },
+  );
 
   it("reissues signed URLs for requested valid parts", async () => {
     r2.signPart.mockImplementation(async ({ partNumber }) =>
@@ -85,6 +131,7 @@ describe("desktop release Server Actions", () => {
     await expect(
       signDesktopReleaseUploadParts({
         token: "administrator-token",
+        ...windowsTarget,
         objectKey,
         uploadId: "r2-upload",
         partNumbers: [2, 1, 2],
@@ -106,6 +153,7 @@ describe("desktop release Server Actions", () => {
     await expect(
       listDesktopReleaseUploadParts({
         token: "administrator-token",
+        ...windowsTarget,
         objectKey,
         uploadId: "r2-upload",
       }),
@@ -115,6 +163,19 @@ describe("desktop release Server Actions", () => {
     ]);
   });
 
+  it("rejects a multipart session whose declared target was tampered with", async () => {
+    await expect(
+      listDesktopReleaseUploadParts({
+        token: "administrator-token",
+        platform: "darwin",
+        architecture: "arm64",
+        objectKey,
+        uploadId: "r2-upload",
+      }),
+    ).rejects.toThrow(/no coincide/);
+    expect(r2.send).not.toHaveBeenCalled();
+  });
+
   it("rejects incomplete part lists before asking R2 to complete", async () => {
     await expect(
       completeDesktopReleaseUpload({
@@ -122,6 +183,7 @@ describe("desktop release Server Actions", () => {
         objectKey,
         uploadId: "r2-upload",
         version: "1.2.3",
+        ...windowsTarget,
         fileName: "local.exe",
         sizeBytes: DESKTOP_UPLOAD_PART_SIZE_BYTES + 1,
         parts: [{ partNumber: 1, etag: '"one"' }],
@@ -145,13 +207,14 @@ describe("desktop release Server Actions", () => {
         objectKey,
         uploadId: "r2-upload",
         version: "1.2.3",
+        ...windowsTarget,
         fileName: "local.exe",
         sizeBytes: 8,
         parts: [{ partNumber: 1, etag: '"one"' }],
       }),
     ).resolves.toMatchObject({
       objectKey,
-      fileName: "SensaVision-Setup-1.2.3-x64.exe",
+      fileName: "SensaVision-Windows-1.2.3-x64.exe",
       sizeBytes: 8,
       etag: "final-etag",
       url: `https://downloads.example.com/${objectKey}`,
@@ -170,6 +233,7 @@ describe("desktop release Server Actions", () => {
         objectKey,
         uploadId: "r2-upload",
         version: "1.2.3",
+        ...windowsTarget,
         fileName: "local.exe",
         sizeBytes: 8,
         parts: [{ partNumber: 1, etag: '"one"' }],
@@ -192,6 +256,7 @@ describe("desktop release Server Actions", () => {
         objectKey,
         uploadId: "r2-upload",
         version: "1.2.3",
+        ...windowsTarget,
         fileName: "local.exe",
         sizeBytes: 8,
         parts: [{ partNumber: 1, etag: '"one"' }],
@@ -205,6 +270,7 @@ describe("desktop release Server Actions", () => {
     await expect(
       abortDesktopReleaseUpload({
         token: "administrator-token",
+        ...windowsTarget,
         objectKey,
         uploadId: "r2-upload",
       }),
@@ -226,6 +292,7 @@ describe("desktop release Server Actions", () => {
       await expect(
         abortDesktopReleaseUpload({
           token,
+          ...windowsTarget,
           objectKey,
           uploadId: "r2-upload",
         }),

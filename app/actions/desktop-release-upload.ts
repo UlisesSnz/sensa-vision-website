@@ -6,15 +6,16 @@ import {
   assertCompletedObjectSize,
   assertDesktopReleaseObjectKey,
   buildDesktopReleaseObjectKey,
-  DESKTOP_RELEASE_ARCHITECTURE,
+  DESKTOP_INSTALLER_MAX_SIZE_BYTES,
   DESKTOP_RELEASE_CHANNEL,
-  DESKTOP_RELEASE_PLATFORM,
   DESKTOP_UPLOAD_PART_SIZE_BYTES,
   DESKTOP_UPLOAD_URL_TTL_SECONDS,
   normalizeEtag,
   normalizeUploadedParts,
+  parseDesktopReleaseObjectKey,
   validateDesktopUploadFile,
   type DesktopInstaller,
+  type DesktopReleaseTarget,
   type DesktopUploadedPart,
   type DesktopUploadFileInput,
 } from "@/lib/desktop-release";
@@ -31,7 +32,7 @@ import {
   signUploadPart,
 } from "@/lib/r2/desktop-releases";
 
-type UploadSessionInput = {
+type UploadSessionInput = DesktopReleaseTarget & {
   token: string;
   objectKey: string;
   uploadId: string;
@@ -43,7 +44,10 @@ type CompleteUploadInput = UploadSessionInput &
   };
 
 function validateUploadSession(input: UploadSessionInput): void {
-  assertDesktopReleaseObjectKey(input.objectKey);
+  assertDesktopReleaseObjectKey(input.objectKey, {
+    platform: input.platform,
+    architecture: input.architecture,
+  });
 
   if (!input.uploadId || input.uploadId.length > 2048) {
     throw new Error("La sesión multipart no es válida.");
@@ -67,6 +71,8 @@ export async function startDesktopReleaseUpload(
     version: file.version,
     uploadId: randomUUID(),
     extension: file.extension,
+    platform: file.platform,
+    architecture: file.architecture,
   });
   const { bucketName } = getR2Configuration();
   const response = await getR2Client().send(
@@ -80,8 +86,8 @@ export async function startDesktopReleaseUpload(
       Metadata: {
         version: file.version,
         channel: DESKTOP_RELEASE_CHANNEL,
-        platform: DESKTOP_RELEASE_PLATFORM,
-        architecture: DESKTOP_RELEASE_ARCHITECTURE,
+        platform: file.platform,
+        architecture: file.architecture,
       },
     }),
   );
@@ -106,7 +112,7 @@ export async function signDesktopReleaseUploadParts(
   validateUploadSession(input);
 
   const maxPartNumber = Math.ceil(
-    (5 * 1024 * 1024 * 1024) / DESKTOP_UPLOAD_PART_SIZE_BYTES,
+    DESKTOP_INSTALLER_MAX_SIZE_BYTES / DESKTOP_UPLOAD_PART_SIZE_BYTES,
   );
   const partNumbers = [...new Set(input.partNumbers)];
 
@@ -183,12 +189,12 @@ export async function completeDesktopReleaseUpload(
     throw new Error("Faltan partes del instalador antes de completar la carga.");
   }
 
-  if (
-    !input.objectKey.includes(`/v${file.version}/`) ||
-    !input.objectKey.endsWith(`/${file.canonicalFileName}`)
-  ) {
-    throw new Error("El archivo no coincide con la sesión multipart.");
-  }
+  assertDesktopReleaseObjectKey(input.objectKey, {
+    version: file.version,
+    platform: file.platform,
+    architecture: file.architecture,
+  });
+  const parsedObjectKey = parseDesktopReleaseObjectKey(input.objectKey);
 
   const { bucketName } = getR2Configuration();
   const client = getR2Client();
@@ -230,7 +236,7 @@ export async function completeDesktopReleaseUpload(
   return {
     objectKey: input.objectKey,
     url: publicDesktopReleaseUrl(input.objectKey),
-    fileName: file.canonicalFileName,
+    fileName: parsedObjectKey.fileName,
     sizeBytes: file.sizeBytes,
     mimeType: object.ContentType || file.mimeType,
     etag,

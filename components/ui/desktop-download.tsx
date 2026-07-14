@@ -10,6 +10,12 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import type { ButtonProps } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
+import { DEFAULT_DESKTOP_RELEASE_TARGET } from "@/lib/desktop-release";
+import {
+  getDesktopReleaseFromLookup,
+  getDesktopReleaseTargetFromContent,
+  type DesktopReleaseLookup,
+} from "@/lib/desktop-release-content";
 import { cn } from "@/lib/utils";
 
 export default function DesktopDownload({
@@ -20,9 +26,11 @@ export default function DesktopDownload({
   tagLine,
   title,
   body,
+  downloadPlatform,
+  downloadArchitecture,
   buttonTitle,
   buttonVariant,
-  desktopRelease,
+  desktopReleases,
   downloadMessages,
   locale = "es",
 }: Partial<{
@@ -33,15 +41,25 @@ export default function DesktopDownload({
   tagLine: string;
   title: string;
   body: any;
+  downloadPlatform: Sanity.Link["downloadPlatform"];
+  downloadArchitecture: Sanity.Link["downloadArchitecture"];
   buttonTitle: string;
   buttonVariant: ButtonProps["variant"];
-  desktopRelease: Sanity.DesktopRelease | null;
+  desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
   locale: Locale;
 }>) {
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
+  const targetFields = { downloadPlatform, downloadArchitecture };
+  const target =
+    getDesktopReleaseTargetFromContent(targetFields) ||
+    DEFAULT_DESKTOP_RELEASE_TARGET;
+  const desktopRelease = getDesktopReleaseFromLookup(
+    desktopReleases,
+    targetFields,
+  );
 
   if (!downloadMessages) return null;
 
@@ -71,6 +89,7 @@ export default function DesktopDownload({
           <DesktopDownloadButton
             messages={downloadMessages}
             release={desktopRelease}
+            target={target}
             title={buttonTitle}
             variant={buttonVariant}
           />

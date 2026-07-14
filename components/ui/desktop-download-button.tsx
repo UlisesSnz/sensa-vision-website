@@ -3,10 +3,16 @@ import { Download } from "lucide-react";
 import { stegaClean } from "next-sanity";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
+import {
+  DEFAULT_DESKTOP_RELEASE_TARGET,
+  getDesktopReleaseTargetKey,
+  type DesktopReleaseTarget,
+  type DesktopReleaseTargetKey,
+} from "@/lib/desktop-release";
 
 export type DesktopDownloadMessages = {
   comingSoon: string;
-  defaultLabel: string;
+  defaultLabels: Record<DesktopReleaseTargetKey, string>;
 };
 
 export default function DesktopDownloadButton({
@@ -14,14 +20,17 @@ export default function DesktopDownloadButton({
   title,
   variant,
   messages,
+  target = DEFAULT_DESKTOP_RELEASE_TARGET,
 }: {
   release?: Sanity.DesktopRelease | null;
   title?: string;
   variant?: ButtonProps["variant"];
   messages: DesktopDownloadMessages;
+  target?: DesktopReleaseTarget;
 }) {
   const installerUrl = release?.installer?.url;
-  const label = stegaClean(title) || messages.defaultLabel;
+  const label =
+    stegaClean(title) || messages.defaultLabels[getDesktopReleaseTargetKey(target)];
   const buttonVariant = stegaClean(variant);
 
   if (!installerUrl) {

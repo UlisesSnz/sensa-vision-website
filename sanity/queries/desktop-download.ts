@@ -10,6 +10,8 @@ export const desktopDownloadQuery = groq`
     tagLine,
     title,
     body,
+    downloadPlatform,
+    downloadArchitecture,
     buttonTitle,
     buttonVariant,
   },

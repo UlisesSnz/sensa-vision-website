@@ -19,14 +19,25 @@ import {
   startDesktopReleaseUpload,
 } from "@/app/actions/desktop-release-upload";
 import {
+  DEFAULT_DESKTOP_RELEASE_TARGET,
+  getDesktopInstallerAccept,
+  getDesktopInstallerAllowedExtensions,
+  getDesktopReleaseTargetTitle,
+  isDesktopReleaseArchitecture,
+  isDesktopReleasePlatform,
+  isValidDesktopReleaseTarget,
   validateDesktopUploadFile,
   type DesktopInstaller,
+  type DesktopReleaseArchitecture,
+  type DesktopReleasePlatform,
 } from "@/lib/desktop-release";
 import { uploadDesktopMultipartParts } from "@/lib/desktop-upload-client";
 import { apiVersion } from "@/sanity/env";
 
 type PendingUpload = {
   version: string;
+  platform: DesktopReleasePlatform;
+  architecture: DesktopReleaseArchitecture;
   fileName: string;
   sizeBytes: number;
   lastModified: number;
@@ -36,21 +47,92 @@ type PendingUpload = {
   partCount: number;
 };
 
-const STORAGE_KEY = "sensa-desktop-release-multipart";
-function readPendingUpload(): PendingUpload | null {
+const LEGACY_STORAGE_KEY = "sensa-desktop-release-multipart";
+const STORAGE_VERSION = "v2";
+
+function pendingUploadStorageKey(documentId: string): string {
+  return `sensa-desktop-release-multipart:${STORAGE_VERSION}:${documentId}`;
+}
+
+function parsePendingUpload(value: string | null): PendingUpload | null {
+  if (!value) return null;
+
   try {
-    const value = window.localStorage.getItem(STORAGE_KEY);
-    return value ? (JSON.parse(value) as PendingUpload) : null;
+    const parsed = JSON.parse(value) as Partial<PendingUpload>;
+    const platform = isDesktopReleasePlatform(parsed.platform)
+      ? parsed.platform
+      : DEFAULT_DESKTOP_RELEASE_TARGET.platform;
+    const architecture = isDesktopReleaseArchitecture(parsed.architecture)
+      ? parsed.architecture
+      : DEFAULT_DESKTOP_RELEASE_TARGET.architecture;
+
+    if (
+      !isValidDesktopReleaseTarget({ platform, architecture }) ||
+      typeof parsed.version !== "string" ||
+      typeof parsed.fileName !== "string" ||
+      typeof parsed.sizeBytes !== "number" ||
+      typeof parsed.lastModified !== "number" ||
+      typeof parsed.uploadId !== "string" ||
+      typeof parsed.objectKey !== "string" ||
+      typeof parsed.partSizeBytes !== "number" ||
+      typeof parsed.partCount !== "number"
+    ) {
+      return null;
+    }
+
+    return {
+      version: parsed.version,
+      platform,
+      architecture,
+      fileName: parsed.fileName,
+      sizeBytes: parsed.sizeBytes,
+      lastModified: parsed.lastModified,
+      uploadId: parsed.uploadId,
+      objectKey: parsed.objectKey,
+      partSizeBytes: parsed.partSizeBytes,
+      partCount: parsed.partCount,
+    };
   } catch {
     return null;
   }
 }
 
-function savePendingUpload(upload: PendingUpload | null): void {
-  if (upload) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(upload));
-  } else {
-    window.localStorage.removeItem(STORAGE_KEY);
+function readPendingUpload(
+  storageKey: string,
+  migrateLegacyUpload: boolean,
+): PendingUpload | null {
+  try {
+    const currentUpload = parsePendingUpload(
+      window.localStorage.getItem(storageKey),
+    );
+    if (currentUpload) return currentUpload;
+    if (!migrateLegacyUpload) return null;
+
+    const legacyUpload = parsePendingUpload(
+      window.localStorage.getItem(LEGACY_STORAGE_KEY),
+    );
+    if (!legacyUpload) return null;
+
+    window.localStorage.setItem(storageKey, JSON.stringify(legacyUpload));
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    return legacyUpload;
+  } catch {
+    return null;
+  }
+}
+
+function savePendingUpload(
+  storageKey: string,
+  upload: PendingUpload | null,
+): void {
+  try {
+    if (upload) {
+      window.localStorage.setItem(storageKey, JSON.stringify(upload));
+    } else {
+      window.localStorage.removeItem(storageKey);
+    }
+  } catch {
+    // R2 remains the recovery source when browser storage is unavailable.
   }
 }
 
@@ -67,7 +149,26 @@ export default function DesktopInstallerInput(
 ) {
   const client = useClient({ apiVersion });
   const currentUser = useCurrentUser();
+  const documentId = String(useFormValue(["_id"]) || "new-release");
   const version = String(useFormValue(["version"]) || "").trim();
+  const platformValue = useFormValue(["platform"]);
+  const architectureValue = useFormValue(["architecture"]);
+  const platform = isDesktopReleasePlatform(platformValue)
+    ? platformValue
+    : null;
+  const architecture = isDesktopReleaseArchitecture(architectureValue)
+    ? architectureValue
+    : null;
+  const target =
+    platform &&
+    architecture &&
+    isValidDesktopReleaseTarget({ platform, architecture })
+      ? { platform, architecture }
+      : null;
+  const migrateLegacyUpload =
+    target?.platform === DEFAULT_DESKTOP_RELEASE_TARGET.platform &&
+    target.architecture === DEFAULT_DESKTOP_RELEASE_TARGET.architecture;
+  const storageKey = pendingUploadStorageKey(documentId);
   const token = client.config().token;
   const isAdministrator = userHasRole(currentUser, "administrator");
   const abortControllers = useRef(new Set<AbortController>());
@@ -81,17 +182,27 @@ export default function DesktopInstallerInput(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setPendingUpload(readPendingUpload());
+    setPendingUpload(readPendingUpload(storageKey, migrateLegacyUpload));
 
     return () => {
       activeRunId.current += 1;
       abortControllers.current.forEach((controller) => controller.abort());
     };
-  }, []);
+  }, [migrateLegacyUpload, storageKey]);
 
   const installer = props.value as Partial<DesktopInstaller> | undefined;
   const recoveryMessage = pendingUpload
     ? `Selecciona nuevamente ${pendingUpload.fileName} para reanudar la carga.`
+    : null;
+  const targetTitle = target
+    ? getDesktopReleaseTargetTitle(target)
+    : "el destino seleccionado";
+  const allowedExtensions = target
+    ? getDesktopInstallerAllowedExtensions(target.platform)
+        .map((extension) =>
+          extension === "appimage" ? ".AppImage" : `.${extension}`,
+        )
+        .join(", ")
     : null;
 
   const uploadFile = useCallback(
@@ -101,11 +212,18 @@ export default function DesktopInstallerInput(
         return;
       }
 
+      if (!target) {
+        setError("Selecciona primero un sistema operativo y una arquitectura.");
+        return;
+      }
+
       let validatedFile: ReturnType<typeof validateDesktopUploadFile>;
 
       try {
         validatedFile = validateDesktopUploadFile({
           version,
+          platform: target.platform,
+          architecture: target.architecture,
           fileName: file.name,
           sizeBytes: file.size,
         });
@@ -125,9 +243,14 @@ export default function DesktopInstallerInput(
         return;
       }
 
-      if (existingUpload && existingUpload.version !== validatedFile.version) {
+      if (
+        existingUpload &&
+        (existingUpload.version !== validatedFile.version ||
+          existingUpload.platform !== validatedFile.platform ||
+          existingUpload.architecture !== validatedFile.architecture)
+      ) {
         setError(
-          `La carga pendiente usa la versión ${existingUpload.version}. Restáurala o cancela la carga.`,
+          "La carga pendiente pertenece a otra versión o destino. Restáurala o cancela la carga.",
         );
         return;
       }
@@ -148,22 +271,28 @@ export default function DesktopInstallerInput(
           existingUpload ||
           ({
             version: validatedFile.version,
+            platform: validatedFile.platform,
+            architecture: validatedFile.architecture,
             fileName: file.name,
             sizeBytes: file.size,
             lastModified: file.lastModified,
             ...(await startDesktopReleaseUpload(token, {
               version: validatedFile.version,
+              platform: validatedFile.platform,
+              architecture: validatedFile.architecture,
               fileName: file.name,
               sizeBytes: file.size,
             })),
           } satisfies PendingUpload);
 
         assertActiveRun();
-        savePendingUpload(session);
+        savePendingUpload(storageKey, session);
         setPendingUpload(session);
 
         const uploadedParts = await listDesktopReleaseUploadParts({
           token,
+          platform: session.platform,
+          architecture: session.architecture,
           objectKey: session.objectKey,
           uploadId: session.uploadId,
         });
@@ -172,7 +301,7 @@ export default function DesktopInstallerInput(
 
         setMessage(
           missingPartCount > 0
-            ? "Subiendo instalador directamente a R2…"
+            ? `Subiendo instalador de ${targetTitle} directamente a R2…`
             : "Verificando carga…",
         );
 
@@ -185,6 +314,8 @@ export default function DesktopInstallerInput(
           signPart: async (partNumber) => {
             const [{ url }] = await signDesktopReleaseUploadParts({
               token,
+              platform: session.platform,
+              architecture: session.architecture,
               objectKey: session.objectKey,
               uploadId: session.uploadId,
               partNumbers: [partNumber],
@@ -211,19 +342,23 @@ export default function DesktopInstallerInput(
 
         setMessage("Finalizando y verificando el archivo…");
 
-        const installer = await completeDesktopReleaseUpload({
+        const completedInstaller = await completeDesktopReleaseUpload({
           token,
           objectKey: session.objectKey,
           uploadId: session.uploadId,
           version: validatedFile.version,
+          platform: validatedFile.platform,
+          architecture: validatedFile.architecture,
           fileName: file.name,
           sizeBytes: file.size,
           parts: completedParts,
         });
         assertActiveRun();
 
-        props.onChange(set({ _type: "desktopInstaller", ...installer }));
-        savePendingUpload(null);
+        props.onChange(
+          set({ _type: "desktopInstaller", ...completedInstaller }),
+        );
+        savePendingUpload(storageKey, null);
         setPendingUpload(null);
         setProgress(100);
         setMessage("Instalador cargado. Publica la release cuando esté lista.");
@@ -240,7 +375,15 @@ export default function DesktopInstallerInput(
         if (runId === activeRunId.current) setIsUploading(false);
       }
     },
-    [isAdministrator, props, token, version],
+    [
+      isAdministrator,
+      props,
+      storageKey,
+      target,
+      targetTitle,
+      token,
+      version,
+    ],
   );
 
   const handleFileChange = async (
@@ -260,6 +403,8 @@ export default function DesktopInstallerInput(
       try {
         await abortDesktopReleaseUpload({
           token,
+          platform: pendingUpload.platform,
+          architecture: pendingUpload.architecture,
           objectKey: pendingUpload.objectKey,
           uploadId: pendingUpload.uploadId,
         });
@@ -268,7 +413,7 @@ export default function DesktopInstallerInput(
       }
     }
 
-    savePendingUpload(null);
+    savePendingUpload(storageKey, null);
     setPendingUpload(null);
     selectedFile.current = null;
     setIsUploading(false);
@@ -282,29 +427,29 @@ export default function DesktopInstallerInput(
       <Stack space={4}>
         <Stack space={2}>
           <Text size={1} weight="semibold">
-            Instalador de Windows x64
+            Instalador de {targetTitle}
           </Text>
           <Text muted size={1}>
-            El archivo viaja directamente a R2. Se aceptan .exe, .msi y .msix
-            de hasta 5 GiB.
+            El archivo viaja directamente a R2.
+            {allowedExtensions
+              ? ` Se aceptan ${allowedExtensions} de hasta 5 GiB.`
+              : " Selecciona un destino para conocer los formatos permitidos."}
           </Text>
         </Stack>
 
-        {installer?.url && (
+        {installer?.url ? (
           <Card padding={3} radius={2} tone="positive">
-            <Text size={1}>
-              Archivo actual: {installer.fileName}
-            </Text>
+            <Text size={1}>Archivo actual: {installer.fileName}</Text>
           </Card>
-        )}
+        ) : null}
 
-        {recoveryMessage && !isUploading && (
+        {recoveryMessage && !isUploading ? (
           <Card padding={3} radius={2} tone="caution">
             <Text size={1}>{recoveryMessage}</Text>
           </Card>
-        )}
+        ) : null}
 
-        {isUploading && (
+        {isUploading ? (
           <Stack space={2}>
             <progress
               aria-label="Progreso de carga"
@@ -316,34 +461,34 @@ export default function DesktopInstallerInput(
               {progress}% · {message}
             </Text>
           </Stack>
-        )}
+        ) : null}
 
-        {!isUploading && message && (
+        {!isUploading && message ? (
           <Text aria-live="polite" muted size={1}>
             {message}
           </Text>
-        )}
+        ) : null}
 
-        {error && (
+        {error ? (
           <Card padding={3} radius={2} tone="critical">
             <Text aria-live="assertive" size={1}>
               {error}
             </Text>
           </Card>
-        )}
+        ) : null}
 
-        {!isAdministrator && (
+        {!isAdministrator ? (
           <Card padding={3} radius={2} tone="caution">
             <Text size={1}>
               Solo un administrador puede subir o cancelar instaladores.
             </Text>
           </Card>
-        )}
+        ) : null}
 
         <Flex gap={2} wrap="wrap">
           <Box>
             <Button
-              disabled={!isAdministrator || isUploading || !version}
+              disabled={!isAdministrator || isUploading || !version || !target}
               mode="ghost"
               onClick={() => fileInput.current?.click()}
               text={installer ? "Reemplazar archivo" : "Seleccionar archivo"}
@@ -351,16 +496,16 @@ export default function DesktopInstallerInput(
             />
             <input
               ref={fileInput}
-              accept=".exe,.msi,.msix"
-              aria-label="Seleccionar instalador de SensaVision"
-              disabled={!isAdministrator || isUploading || !version}
+              accept={target ? getDesktopInstallerAccept(target.platform) : undefined}
+              aria-label={`Seleccionar instalador de ${targetTitle}`}
+              disabled={!isAdministrator || isUploading || !version || !target}
               onChange={handleFileChange}
               style={{ display: "none" }}
               type="file"
             />
           </Box>
 
-          {error && selectedFile.current && !isUploading && (
+          {error && selectedFile.current && !isUploading ? (
             <Button
               mode="bleed"
               onClick={() => {
@@ -369,23 +514,26 @@ export default function DesktopInstallerInput(
               }}
               text="Reintentar"
             />
-          )}
+          ) : null}
 
-          {(pendingUpload || isUploading) && (
+          {pendingUpload || isUploading ? (
             <Button
               mode="bleed"
               onClick={cancelUpload}
               text="Cancelar carga"
               tone="critical"
             />
-          )}
+          ) : null}
         </Flex>
 
-        {!version && (
+        {!version ? (
+          <Text muted size={1}>Ingresa primero una versión SemVer.</Text>
+        ) : null}
+        {!target ? (
           <Text muted size={1}>
-            Ingresa primero una versión SemVer.
+            Selecciona primero un sistema operativo y una arquitectura válidos.
           </Text>
-        )}
+        ) : null}
       </Stack>
     </Card>
   );

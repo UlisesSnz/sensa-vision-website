@@ -4,6 +4,10 @@ import type {
 } from "@sanity/image-url/lib/types/types";
 import type { SanityDocument } from "next-sanity";
 import type { Locale } from "@/i18n/config";
+import type {
+  DesktopReleaseArchitecture,
+  DesktopReleasePlatform,
+} from "@/lib/desktop-release";
 
 declare global {
   namespace Sanity {
@@ -90,8 +94,8 @@ declare global {
       version: string;
       releasedAt: string;
       channel: "stable";
-      platform: "win32";
-      architecture: "x64";
+      platform: DesktopReleasePlatform;
+      architecture: DesktopReleaseArchitecture;
       installer: DesktopInstaller;
     };
 
@@ -101,6 +105,8 @@ declare global {
       href?: string;
       target?: boolean;
       targetType?: "url" | "desktopDownload";
+      downloadPlatform?: DesktopReleasePlatform;
+      downloadArchitecture?: DesktopReleaseArchitecture;
       buttonVariant?:
         | "default"
         | "secondary"

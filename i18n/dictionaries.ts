@@ -64,7 +64,15 @@ const dictionaries = {
     },
     downloads: {
       comingSoon: "Próximamente",
-      defaultLabel: "Descargar para Windows",
+      defaultLabels: {
+        "win32/x64": "Descargar para Windows x64",
+        "win32/arm64": "Descargar para Windows ARM64",
+        "darwin/x64": "Descargar para macOS Intel",
+        "darwin/arm64": "Descargar para macOS Apple Silicon",
+        "darwin/universal": "Descargar para macOS Universal",
+        "linux/x64": "Descargar para Linux x64",
+        "linux/arm64": "Descargar para Linux ARM64",
+      },
     },
     draftMode: {
       disable: "Desactivar modo borrador",
@@ -133,7 +141,15 @@ const dictionaries = {
     },
     downloads: {
       comingSoon: "Coming soon",
-      defaultLabel: "Download for Windows",
+      defaultLabels: {
+        "win32/x64": "Download for Windows x64",
+        "win32/arm64": "Download for Windows ARM64",
+        "darwin/x64": "Download for macOS Intel",
+        "darwin/arm64": "Download for macOS Apple Silicon",
+        "darwin/universal": "Download for macOS Universal",
+        "linux/x64": "Download for Linux x64",
+        "linux/arm64": "Download for Linux ARM64",
+      },
     },
     draftMode: {
       disable: "Disable draft mode",

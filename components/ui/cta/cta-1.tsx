@@ -12,6 +12,12 @@ import { localizeHref } from "@/i18n/routing";
 import DesktopDownloadButton, {
   type DesktopDownloadMessages,
 } from "@/components/ui/desktop-download-button";
+import { DEFAULT_DESKTOP_RELEASE_TARGET } from "@/lib/desktop-release";
+import {
+  getDesktopReleaseFromLookup,
+  getDesktopReleaseTargetFromContent,
+  type DesktopReleaseLookup,
+} from "@/lib/desktop-release-content";
 
 export default function Cta1({
   padding,
@@ -22,7 +28,7 @@ export default function Cta1({
   title,
   body,
   links,
-  desktopRelease,
+  desktopReleases,
   downloadMessages,
   locale = "es",
 }: Partial<{
@@ -34,7 +40,7 @@ export default function Cta1({
   title: string;
   body: any;
   links: Sanity.Link[];
-  desktopRelease: Sanity.DesktopRelease | null;
+  desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
   locale: Locale;
 }>) {
@@ -72,11 +78,16 @@ export default function Cta1({
               const key = link._key || `${link.title}-${index}`;
 
               if (link.targetType === "desktopDownload" && downloadMessages) {
+                const target =
+                  getDesktopReleaseTargetFromContent(link) ||
+                  DEFAULT_DESKTOP_RELEASE_TARGET;
+
                 return (
                   <DesktopDownloadButton
                     key={key}
                     messages={downloadMessages}
-                    release={desktopRelease}
+                    release={getDesktopReleaseFromLookup(desktopReleases, link)}
+                    target={target}
                     title={link.title}
                     variant={link.buttonVariant}
                   />
