@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Button, Card, Flex, Stack, Text } from "@sanity/ui";
 import {
   type ObjectInputProps,
@@ -145,7 +145,7 @@ function selectedFileMatchesUpload(file: File, upload: PendingUpload): boolean {
 }
 
 export default function DesktopInstallerInput(
-  props: ObjectInputProps<Record<string, any>>,
+  props: ObjectInputProps<Record<string, unknown>>,
 ) {
   const client = useClient({ apiVersion });
   const currentUser = useCurrentUser();
@@ -159,12 +159,15 @@ export default function DesktopInstallerInput(
   const architecture = isDesktopReleaseArchitecture(architectureValue)
     ? architectureValue
     : null;
-  const target =
-    platform &&
-    architecture &&
-    isValidDesktopReleaseTarget({ platform, architecture })
-      ? { platform, architecture }
-      : null;
+  const target = useMemo(
+    () =>
+      platform &&
+      architecture &&
+      isValidDesktopReleaseTarget({ platform, architecture })
+        ? { platform, architecture }
+        : null,
+    [architecture, platform],
+  );
   const migrateLegacyUpload =
     target?.platform === DEFAULT_DESKTOP_RELEASE_TARGET.platform &&
     target.architecture === DEFAULT_DESKTOP_RELEASE_TARGET.architecture;
@@ -182,11 +185,12 @@ export default function DesktopInstallerInput(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controllers = abortControllers.current;
     setPendingUpload(readPendingUpload(storageKey, migrateLegacyUpload));
 
     return () => {
       activeRunId.current += 1;
-      abortControllers.current.forEach((controller) => controller.abort());
+      controllers.forEach((controller) => controller.abort());
     };
   }, [migrateLegacyUpload, storageKey]);
 

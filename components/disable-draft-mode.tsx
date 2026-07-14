@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 
 import { useDraftModeEnvironment } from "next-sanity/hooks";
@@ -6,16 +8,15 @@ import { useDraftModeEnvironment } from "next-sanity/hooks";
 export function DisableDraftMode({ label }: { label: string }) {
   const environment = useDraftModeEnvironment();
 
-  // Only show the disable draft mode button when outside of Presentation Tool
   if (environment !== "live" && environment !== "unknown") {
     return null;
   }
 
   return (
     <Button asChild>
-      <a href="/api/draft-mode/disable" className="fixed bottom-4 right-4">
+      <Link href="/api/draft-mode/disable" className="fixed bottom-4 right-4">
         {label}
-      </a>
+      </Link>
     </Button>
   );
 }

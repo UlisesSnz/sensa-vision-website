@@ -1,6 +1,18 @@
-# Next.js 15 with Sanity CMS Starter Template
+# Sensa Vision website
 
-A Next.js starter template with `Next.js 15`, `Tailwind CSS`, `shadcn/ui`, and `Sanity CMS` with `Live Editing`.
+A Next.js website with Tailwind CSS, shadcn/ui, and Sanity CMS with Live Editing.
+
+## Runtime and package manager
+
+- Node.js `>=22.12 <23` (the repository `.nvmrc` pins `22.19.0`).
+- npm `10.9.3`, declared in `package.json` as the only supported package manager.
+
+Install and validate the project with:
+
+```bash
+npm ci
+npm run check
+```
 
 [Docs](https://schemaui.com/docs) | [Components](https://schemaui.com/components) | [Demo](https://schemaui-starter.vercel.app/)
 
@@ -32,19 +44,19 @@ mv example.env.local .env.local
 4. Install the dependencies:
 
 ```bash
-pnpm install
+npm install
 ```
 
-5. You can create a demo page with the following command (`produciton` is the default dataset name from Sanity):
+5. You can create a demo page with the following command (`production` is the default dataset name from Sanity):
 
 ```bash
-pnpx sanity dataset import demo.tag.gz produciton
+npx sanity dataset import demo.tag.gz production
 ```
 
 6. Start the development server:
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 6. Open the browser and go to `http://localhost:3000` to see the demo page.
