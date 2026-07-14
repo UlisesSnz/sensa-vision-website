@@ -13,6 +13,7 @@ import { formNewsletterQuery } from "./forms/newsletter";
 import { formEmailJsQuery } from "./forms/emailjs";
 import { video1Query } from "./video/video-1";
 import { lottie1Query } from "./lottie/lottie-1";
+import { desktopDownloadQuery } from "./desktop-download";
 
 export const PAGE_QUERY = groq`
   *[_type == "page" && language == $locale && slug.current == $slug][0]{
@@ -36,6 +37,7 @@ export const PAGE_QUERY = groq`
       ${formEmailJsQuery}
       ${video1Query}
       ${lottie1Query}
+      ${desktopDownloadQuery}
     },
     meta_title,
     meta_description,

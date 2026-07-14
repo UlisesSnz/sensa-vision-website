@@ -16,6 +16,8 @@
     "i18n:migrate:apply": "node --env-file=.env.local scripts/migrate-i18n.mjs --apply --backup-confirmed"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1085.0",
+    "@aws-sdk/s3-request-presigner": "^3.1085.0",
     "@hookform/resolvers": "^3.9.1",
     "@lottiefiles/dotlottie-react": "^0.19.0",
     "@portabletext/react": "^3.2.0",
@@ -31,6 +33,7 @@
     "@sanity/image-url": "^1.1.0",
     "@sanity/orderable-document-list": "^1.2.2",
     "@sanity/preview-url-secret": "^2.0.5",
+    "@sanity/ui": "^2.11.0",
     "@sanity/vision": "^3.68.3",
     "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.7.1",

@@ -62,6 +62,10 @@ const dictionaries = {
       unsupportedVideo: "Tu navegador no admite la etiqueta de video.",
       missingVideo: "No hay un video configurado",
     },
+    downloads: {
+      comingSoon: "Próximamente",
+      defaultLabel: "Descargar para Windows",
+    },
     draftMode: {
       disable: "Desactivar modo borrador",
     },
@@ -126,6 +130,10 @@ const dictionaries = {
       youtubeTitle: "YouTube video",
       unsupportedVideo: "Your browser does not support the video tag.",
       missingVideo: "No video configured",
+    },
+    downloads: {
+      comingSoon: "Coming soon",
+      defaultLabel: "Download for Windows",
     },
     draftMode: {
       disable: "Disable draft mode",

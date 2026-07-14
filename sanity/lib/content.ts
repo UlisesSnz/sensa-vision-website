@@ -5,6 +5,7 @@ import { PAGE_QUERY, PAGES_SLUGS_QUERY } from "@/sanity/queries/page";
 import { POST_QUERY } from "@/sanity/queries/post";
 import { POSTS_QUERY, POSTS_SLUGS_QUERY } from "@/sanity/queries/posts";
 import { SITE_SETTINGS_QUERY } from "@/sanity/queries/site-settings";
+import { LATEST_DESKTOP_RELEASE_QUERY } from "@/sanity/queries/desktop-release";
 
 import { sanityFetch } from "./live";
 
@@ -46,6 +47,18 @@ export const fetchSiteSettings = cache(
     const { data } = await sanityFetch({
       query: SITE_SETTINGS_QUERY,
       params: { locale },
+    });
+
+    return data;
+  },
+);
+
+export const fetchLatestDesktopRelease = cache(
+  async (): Promise<Sanity.DesktopRelease | null> => {
+    const { data } = await sanityFetch({
+      query: LATEST_DESKTOP_RELEASE_QUERY,
+      perspective: "published",
+      stega: false,
     });
 
     return data;

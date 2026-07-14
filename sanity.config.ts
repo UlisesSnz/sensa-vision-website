@@ -21,6 +21,9 @@ export default defineConfig({
   basePath: "/studio",
   projectId,
   dataset,
+  auth: {
+    loginMethod: "token",
+  },
   // Add and edit the content schema in the './sanity/schema' folder
   schema,
   plugins: [

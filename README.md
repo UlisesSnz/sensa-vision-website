@@ -71,6 +71,16 @@ All environment variables:
 
 - `SANITY_API_TOKEN` - write token used only to apply the one-time localization migration.
 
+- `R2_ACCOUNT_ID` - private Cloudflare account identifier used to sign desktop release operations.
+
+- `R2_ACCESS_KEY_ID` - private access key for an R2 object token scoped to the desktop releases bucket.
+
+- `R2_SECRET_ACCESS_KEY` - private secret for the scoped R2 object token.
+
+- `R2_BUCKET_NAME` - desktop release bucket name. Production uses `sensa-desktop-releases`.
+
+- `R2_PUBLIC_BASE_URL` - public custom-domain base URL for immutable installer downloads, without a trailing slash.
+
 - `ENABLED_LOCALES` - comma-separated public locales. Keep `es` during translation and use `es,en` only when the English content is approved.
 
 - `RESEND_API_KEY` - your RESEND api key for the newsletter form.
@@ -88,6 +98,14 @@ All environment variables:
 - `EMAILJS_TEMPLATE_QUOTE` - template id used when `templateKey` is set to `quote` in Sanity.
 
 - `EMAILJS_TEMPLATE_SUPPORT` - template id used when `templateKey` is set to `support` in Sanity.
+
+## SensaVision Desktop releases
+
+Windows x64 installers are uploaded directly from the Sanity Studio browser to
+Cloudflare R2 using administrator-only multipart Server Actions. Sanity stores
+only the metadata for manually published releases. See
+[`docs/desktop-releases-r2.md`](docs/desktop-releases-r2.md) for bucket CORS,
+lifecycle, cache, security, release workflow, and production QA.
 
 ## EmailJS Template Starter
 

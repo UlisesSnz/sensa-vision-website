@@ -57,6 +57,7 @@ export default defineType({
         { type: "form-emailjs" },
         { type: "video-1" },
         { type: "lottie-1" },
+        { type: "desktop-download" },
       ],
     }),
     defineField({

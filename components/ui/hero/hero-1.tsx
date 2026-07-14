@@ -6,6 +6,9 @@ import { stegaClean } from "next-sanity";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
+import DesktopDownloadButton, {
+  type DesktopDownloadMessages,
+} from "@/components/ui/desktop-download-button";
 
 export default function Hero1({
   tagLine,
@@ -13,26 +16,17 @@ export default function Hero1({
   body,
   image,
   links,
+  desktopRelease,
+  downloadMessages,
   locale = "es",
 }: Partial<{
   tagLine: string;
   title: string;
   body: any;
   image: Sanity.Image;
-  links: {
-    title: string;
-    href: string;
-    target?: boolean;
-    buttonVariant:
-      | "default"
-      | "secondary"
-      | "link"
-      | "destructive"
-      | "outline"
-      | "ghost"
-      | null
-      | undefined;
-  }[];
+  links: Sanity.Link[];
+  desktopRelease: Sanity.DesktopRelease | null;
+  downloadMessages: DesktopDownloadMessages;
   locale: Locale;
 }>) {
   return (
@@ -52,21 +46,39 @@ export default function Hero1({
           )}
           {links && links.length > 0 && (
             <div className="mt-10 flex flex-wrap gap-4">
-              {links.map((link, index) => (
-                <Button
-                  key={`${link.title}-${index}`}
-                  variant={stegaClean(link?.buttonVariant)}
-                  asChild
-                >
-                  <Link
-                    href={localizeHref(link.href as string, locale)}
-                    target={link.target ? "_blank" : undefined}
-                    rel={link.target ? "noopener" : undefined}
+              {links.map((link, index) => {
+                const key = link._key || `${link.title}-${index}`;
+
+                if (link.targetType === "desktopDownload" && downloadMessages) {
+                  return (
+                    <DesktopDownloadButton
+                      key={key}
+                      messages={downloadMessages}
+                      release={desktopRelease}
+                      title={link.title}
+                      variant={link.buttonVariant}
+                    />
+                  );
+                }
+
+                if (!link.href) return null;
+
+                return (
+                  <Button
+                    asChild
+                    key={key}
+                    variant={stegaClean(link.buttonVariant)}
                   >
-                    {link.title}
-                  </Link>
-                </Button>
-              ))}
+                    <Link
+                      href={localizeHref(link.href, locale)}
+                      rel={link.target ? "noopener noreferrer" : undefined}
+                      target={link.target ? "_blank" : undefined}
+                    >
+                      {link.title}
+                    </Link>
+                  </Button>
+                );
+              })}
             </div>
           )}
         </div>

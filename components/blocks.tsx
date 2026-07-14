@@ -12,8 +12,10 @@ import FormNewsletter from "@/components/ui/forms/newsletter";
 import FormEmailJs from "@/components/ui/forms/emailjs";
 import Video1 from "@/components/ui/video/video-1";
 import Lottie1 from "@/components/ui/lottie/lottie-1";
+import DesktopDownload from "@/components/ui/desktop-download";
 import type { Locale } from "@/i18n/config";
 import type { UiDictionary } from "@/i18n/dictionaries";
+import { fetchLatestDesktopRelease } from "@/sanity/lib/content";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
@@ -30,9 +32,10 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
   "form-emailjs": FormEmailJs,
   "video-1": Video1,
   "lottie-1": Lottie1,
+  "desktop-download": DesktopDownload,
 };
 
-export default function Blocks({
+export default async function Blocks({
   blocks,
   locale,
   dictionary,
@@ -41,6 +44,8 @@ export default function Blocks({
   locale: Locale;
   dictionary: UiDictionary;
 }) {
+  const desktopRelease = await fetchLatestDesktopRelease();
+
   return (
     <>
       {blocks?.map((block: Sanity.Block) => {
@@ -57,6 +62,8 @@ export default function Blocks({
             formMessages={dictionary.forms}
             pricingMessages={dictionary.pricing}
             mediaMessages={dictionary.media}
+            desktopRelease={desktopRelease}
+            downloadMessages={dictionary.downloads}
           />
         );
       })}

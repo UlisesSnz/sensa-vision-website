@@ -7,6 +7,7 @@ import category from "./schemas/documents/category";
 import faq from "./schemas/documents/faq";
 import testimonial from "./schemas/documents/testimonial";
 import siteSettings from "./schemas/documents/site-settings";
+import desktopRelease from "./schemas/documents/desktop-release";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
@@ -14,6 +15,7 @@ import link from "./schemas/blocks/shared/link";
 import { colorVariant } from "./schemas/blocks/shared/color-variant";
 import { buttonVariant } from "./schemas/blocks/shared/button-variant";
 import sectionPadding from "./schemas/blocks/shared/section-padding";
+import desktopInstaller from "./schemas/objects/desktop-installer";
 // Schema UI objects
 import hero1 from "./schemas/blocks/hero/hero-1";
 import sectionHeader from "./schemas/blocks/section-header";
@@ -34,6 +36,7 @@ import newsletter from "./schemas/blocks/forms/newsletter";
 import emailjs from "./schemas/blocks/forms/emailjs";
 import video1 from "./schemas/blocks/video/video-1";
 import lottie1 from "./schemas/blocks/lottie/lottie-1";
+import desktopDownload from "./schemas/blocks/desktop-download";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: [
@@ -45,12 +48,14 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     faq,
     testimonial,
     siteSettings,
+    desktopRelease,
     // shared objects
     blockContent,
     link,
     colorVariant,
     buttonVariant,
     sectionPadding,
+    desktopInstaller,
     // blocks
     hero1,
     sectionHeader,
@@ -71,5 +76,6 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     emailjs,
     video1,
     lottie1,
+    desktopDownload,
   ],
 };

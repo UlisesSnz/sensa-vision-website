@@ -77,6 +77,40 @@ declare global {
       }>;
     }>;
 
+    type DesktopInstaller = {
+      objectKey: string;
+      url: string;
+      fileName: string;
+      sizeBytes: number;
+      mimeType: string;
+      etag: string;
+    };
+
+    type DesktopRelease = {
+      version: string;
+      releasedAt: string;
+      channel: "stable";
+      platform: "win32";
+      architecture: "x64";
+      installer: DesktopInstaller;
+    };
+
+    type Link = {
+      _key?: string;
+      title: string;
+      href?: string;
+      target?: boolean;
+      targetType?: "url" | "desktopDownload";
+      buttonVariant?:
+        | "default"
+        | "secondary"
+        | "link"
+        | "destructive"
+        | "outline"
+        | "ghost"
+        | null;
+    };
+
     type Image = SanityImageObject &
       Partial<{
         alt: string;

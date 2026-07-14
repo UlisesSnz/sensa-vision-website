@@ -7,7 +7,9 @@ import {
   Quote,
   Navigation,
   Languages,
+  Download,
 } from "lucide-react";
+import { userHasRole } from "sanity";
 
 import { SANITY_LANGUAGES } from "./i18n";
 
@@ -85,12 +87,29 @@ function localizedContentList(
 export const structure = (S: StructureBuilder, context: StructureContext) =>
   S.list()
     .title("Content")
-    .items(
-      SANITY_LANGUAGES.map((language) =>
+    .items([
+      ...(userHasRole(context.currentUser, "administrator")
+        ? [
+            S.listItem()
+              .id("desktop-releases")
+              .title("Desktop releases")
+              .icon(Download)
+              .schemaType("desktopRelease")
+              .child(
+                S.documentTypeList("desktopRelease")
+                  .title("Desktop releases")
+                  .defaultOrdering([
+                    { field: "releasedAt", direction: "desc" },
+                  ]),
+              ),
+            S.divider(),
+          ]
+        : []),
+      ...SANITY_LANGUAGES.map((language) =>
         S.listItem()
           .id(`content-${language.id}`)
           .title(language.title)
           .icon(Languages)
           .child(localizedContentList(S, context, language)),
       ),
-    );
+    ]);
