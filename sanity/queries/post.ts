@@ -43,27 +43,29 @@ export const POST_QUERY = groq`*[
         }
       }
     },
-    author->select(language == $locale => {
-      _id,
-      _type,
-      language,
-      name,
-      image {
-        asset->{
-          _id,
-          url,
-          mimeType,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height
+    "author": select(
+      author->language == $locale => author->{
+        _id,
+        _type,
+        language,
+        name,
+        image {
+          asset->{
+            _id,
+            url,
+            mimeType,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height
+              }
             }
-          }
+          },
+          alt
         },
-        alt
-      },
-    }),
+      }
+    ),
     categories[@->language == $locale][]->{
       _id,
       _type,
