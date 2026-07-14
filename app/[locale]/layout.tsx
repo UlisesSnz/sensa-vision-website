@@ -71,6 +71,7 @@ export default async function LocalizedRootLayout({
   return (
     <html
       lang={HTML_LANG_BY_LOCALE[resolvedLocale]}
+      data-scroll-behavior="smooth"
       className={cn(fontSans.variable, fontPixel.variable)}
       suppressHydrationWarning
     >

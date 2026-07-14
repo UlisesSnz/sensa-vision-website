@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { middleware } from "@/middleware";
+import { proxy } from "@/proxy";
 
 const originalEnabledLocales = process.env.ENABLED_LOCALES;
 
@@ -21,16 +21,29 @@ function request(
   return new NextRequest(`https://sensa.example${pathname}`, { headers });
 }
 
-describe("locale middleware", () => {
+describe("locale proxy", () => {
   it("redirects the root to English when enabled and preferred", () => {
     process.env.ENABLED_LOCALES = "es,en";
-    const response = middleware(request("/", { acceptLanguage: "en-US,en" }));
+    const response = proxy(request("/", { acceptLanguage: "en-US,en" }));
+    expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe("https://sensa.example/en");
+  });
+
+  it("preserves the query string during root language detection", () => {
+    process.env.ENABLED_LOCALES = "es,en";
+    const response = proxy(
+      request("/?utm_source=campaign", { acceptLanguage: "en-US,en" }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "https://sensa.example/en?utm_source=campaign",
+    );
   });
 
   it("lets the remembered locale override the browser preference", () => {
     process.env.ENABLED_LOCALES = "es,en";
-    const response = middleware(
+    const response = proxy(
       request("/", {
         acceptLanguage: "en-US,en",
         cookie: "sensa_locale=es",
@@ -42,7 +55,7 @@ describe("locale middleware", () => {
 
   it("permanently redirects legacy unprefixed URLs to Spanish", () => {
     process.env.ENABLED_LOCALES = "es,en";
-    const response = middleware(
+    const response = proxy(
       request("/about", { cookie: "sensa_locale=en" }),
     );
     expect(response.status).toBe(308);
@@ -52,7 +65,7 @@ describe("locale middleware", () => {
   });
 
   it("preserves the query string when redirecting a legacy URL", () => {
-    const response = middleware(request("/blog/post?utm_source=legacy"));
+    const response = proxy(request("/blog/post?utm_source=legacy"));
 
     expect(response.status).toBe(308);
     expect(response.headers.get("location")).toBe(
@@ -61,10 +74,10 @@ describe("locale middleware", () => {
   });
 
   it("keeps explicit English and Spanish paths visible", () => {
-    const english = middleware(request("/en/about"));
+    const english = proxy(request("/en/about"));
     expect(english.headers.get("x-middleware-rewrite")).toBeNull();
 
-    const spanish = middleware(
+    const spanish = proxy(
       request("/es/about", { cookie: "sensa_locale=en" }),
     );
     expect(spanish.headers.get("x-middleware-rewrite")).toBeNull();
@@ -73,8 +86,16 @@ describe("locale middleware", () => {
 
   it("does not expose English detection while English is disabled", () => {
     process.env.ENABLED_LOCALES = "es";
-    const response = middleware(request("/", { acceptLanguage: "en" }));
+    const response = proxy(request("/", { acceptLanguage: "en" }));
     expect(response.status).toBe(307);
     expect(response.headers.get("location")).toBe("https://sensa.example/es");
+  });
+
+  it("does not localize API or Studio routes", () => {
+    const apiResponse = proxy(request("/api/newsletter"));
+    const studioResponse = proxy(request("/studio/structure"));
+
+    expect(apiResponse.headers.get("location")).toBeNull();
+    expect(studioResponse.headers.get("location")).toBeNull();
   });
 });

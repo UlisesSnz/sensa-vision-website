@@ -177,7 +177,7 @@ export default function DesktopInstallerInput(
   const abortControllers = useRef(new Set<AbortController>());
   const fileInput = useRef<HTMLInputElement | null>(null);
   const activeRunId = useRef(0);
-  const selectedFile = useRef<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pendingUpload, setPendingUpload] = useState<PendingUpload | null>(null);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -186,9 +186,16 @@ export default function DesktopInstallerInput(
 
   useEffect(() => {
     const controllers = abortControllers.current;
-    setPendingUpload(readPendingUpload(storageKey, migrateLegacyUpload));
+    let isActive = true;
+
+    queueMicrotask(() => {
+      if (isActive) {
+        setPendingUpload(readPendingUpload(storageKey, migrateLegacyUpload));
+      }
+    });
 
     return () => {
+      isActive = false;
       activeRunId.current += 1;
       controllers.forEach((controller) => controller.abort());
     };
@@ -262,7 +269,7 @@ export default function DesktopInstallerInput(
       setIsUploading(true);
       setError(null);
       setMessage(existingUpload ? "Recuperando partes subidas…" : "Iniciando carga…");
-      selectedFile.current = file;
+      setSelectedFile(file);
       const runId = ++activeRunId.current;
       const assertActiveRun = () => {
         if (runId !== activeRunId.current) {
@@ -419,7 +426,7 @@ export default function DesktopInstallerInput(
 
     savePendingUpload(storageKey, null);
     setPendingUpload(null);
-    selectedFile.current = null;
+    setSelectedFile(null);
     setIsUploading(false);
     setProgress(0);
     setMessage("Carga cancelada.");
@@ -509,12 +516,11 @@ export default function DesktopInstallerInput(
             />
           </Box>
 
-          {error && selectedFile.current && !isUploading ? (
+          {error && selectedFile && !isUploading ? (
             <Button
               mode="bleed"
               onClick={() => {
-                const file = selectedFile.current;
-                if (file) void uploadFile(file, pendingUpload);
+                void uploadFile(selectedFile, pendingUpload);
               }}
               text="Reintentar"
             />

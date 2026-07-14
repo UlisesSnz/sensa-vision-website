@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { draftMode } from "next/headers";
-import { VisualEditing } from "next-sanity";
+import { VisualEditing } from "next-sanity/visual-editing";
 
 import Footer from "@/components/footer";
 import Header from "@/components/header";
@@ -16,6 +16,7 @@ import {
   type DocumentWithTranslations,
 } from "@/i18n/routing";
 import { SanityLive } from "@/sanity/lib/live";
+import { sanityLiveAction } from "@/sanity/lib/live-action";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -46,7 +47,7 @@ export default async function SiteShell({
         siteSettings={siteSettings}
       />
       <main>{children}</main>
-      <SanityLive />
+      <SanityLive action={sanityLiveAction} />
       {isDraftMode ? (
         <>
           <DisableDraftMode label={dictionary.draftMode.disable} />

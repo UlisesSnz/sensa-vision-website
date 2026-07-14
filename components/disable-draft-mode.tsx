@@ -1,14 +1,15 @@
 "use client";
+import * as React from "react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-import { useDraftModeEnvironment } from "next-sanity/hooks";
+import { useIsPresentationTool } from "next-sanity/hooks";
 
 export function DisableDraftMode({ label }: { label: string }) {
-  const environment = useDraftModeEnvironment();
+  const isPresentationTool = useIsPresentationTool();
 
-  if (environment !== "live" && environment !== "unknown") {
+  if (isPresentationTool !== false) {
     return null;
   }
 

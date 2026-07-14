@@ -2,19 +2,19 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const draftEnvironment = vi.hoisted(() => ({
-  value: "checking",
+const presentationTool = vi.hoisted(() => ({
+  value: null as boolean | null,
 }));
 
 vi.mock("next-sanity/hooks", () => ({
-  useDraftModeEnvironment: () => draftEnvironment.value,
+  useIsPresentationTool: () => presentationTool.value,
 }));
 
 import { DisableDraftMode } from "@/components/disable-draft-mode";
 
 describe("DisableDraftMode", () => {
   beforeEach(() => {
-    draftEnvironment.value = "checking";
+    presentationTool.value = null;
   });
 
   it("stays hidden while the visual editing environment is unresolved", () => {
@@ -24,7 +24,7 @@ describe("DisableDraftMode", () => {
   });
 
   it("stays hidden inside Presentation Tool", () => {
-    draftEnvironment.value = "presentation-iframe";
+    presentationTool.value = true;
 
     expect(
       renderToStaticMarkup(createElement(DisableDraftMode, { label: "Salir" })),
@@ -32,7 +32,7 @@ describe("DisableDraftMode", () => {
   });
 
   it("renders only after confirming it is outside Presentation Tool", () => {
-    draftEnvironment.value = "live";
+    presentationTool.value = false;
 
     const html = renderToStaticMarkup(
       createElement(DisableDraftMode, { label: "Salir" }),

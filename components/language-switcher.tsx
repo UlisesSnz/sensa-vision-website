@@ -18,6 +18,11 @@ type LanguageSwitcherProps = {
   className?: string;
 };
 
+function rememberLocale(nextLocale: Locale) {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${LOCALE_COOKIE_NAME}=${nextLocale}; Path=/; Max-Age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
+}
+
 export default function LanguageSwitcher({
   locale,
   alternates,
@@ -30,11 +35,6 @@ export default function LanguageSwitcher({
   );
 
   if (targetLocales.length === 0) return null;
-
-  const rememberLocale = (nextLocale: Locale) => {
-    const secure = window.location.protocol === "https:" ? "; Secure" : "";
-    document.cookie = `${LOCALE_COOKIE_NAME}=${nextLocale}; Path=/; Max-Age=${LOCALE_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
-  };
 
   return (
     <nav

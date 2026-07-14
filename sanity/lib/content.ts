@@ -20,7 +20,7 @@ export const fetchSanityPageBySlug = cache(
       params: { locale, slug },
     });
 
-    return data;
+    return data as Sanity.Page | null;
   },
 );
 
@@ -31,7 +31,7 @@ export const fetchSanityPostBySlug = cache(
       params: { locale, slug },
     });
 
-    return data;
+    return data as Sanity.Post | null;
   },
 );
 
@@ -42,7 +42,7 @@ export const fetchSanityPosts = cache(
       params: { locale },
     });
 
-    return data || [];
+    return (data as Sanity.Post[] | null) || [];
   },
 );
 
@@ -53,7 +53,7 @@ export const fetchSiteSettings = cache(
       params: { locale },
     });
 
-    return data;
+    return data as Sanity.SiteSettings | null;
   },
 );
 
@@ -69,7 +69,7 @@ export const fetchLatestDesktopRelease = cache(
       stega: false,
     });
 
-    return data;
+    return data as Sanity.DesktopRelease | null;
   },
 );
 

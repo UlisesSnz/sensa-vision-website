@@ -11,7 +11,7 @@ import { detectPreferredLocale, isPublicFilePath } from "@/i18n/routing";
 const EXCLUDED_PREFIXES = ["/api", "/studio", "/_next"];
 const EXCLUDED_PATHS = new Set(["/favicon.ico", "/robots.txt", "/sitemap.xml"]);
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
