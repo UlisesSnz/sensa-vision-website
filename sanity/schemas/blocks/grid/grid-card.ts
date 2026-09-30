@@ -1,10 +1,13 @@
 import { defineField, defineType } from "sanity";
 import { LayoutGrid } from "lucide-react";
+import OptionalLinkInput from "@/sanity/components/optional-link-input";
 
 export default defineType({
   name: "grid-card",
   type: "object",
   icon: LayoutGrid,
+  // Override nested link defaults so a new card can remain unlinked.
+  initialValue: { link: undefined },
   fields: [
     defineField({
       name: "title",
@@ -28,6 +31,7 @@ export default defineType({
     defineField({
       name: "link",
       type: "link",
+      components: { input: OptionalLinkInput },
     }),
   ],
   preview: {

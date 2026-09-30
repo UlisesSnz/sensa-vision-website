@@ -7,7 +7,6 @@ const navigationSubItem = defineArrayMember({
   title: "Sub Link",
   type: "object",
   fields: [
-    languageField,
     defineField({
       name: "label",
       title: "Label",
@@ -116,6 +115,7 @@ export default defineType({
   title: "Site Settings",
   icon: Navigation,
   fields: [
+    languageField,
     defineField({
       name: "headerNavigation",
       title: "Header Navigation",
