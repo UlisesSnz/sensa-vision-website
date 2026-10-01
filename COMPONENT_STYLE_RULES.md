@@ -47,9 +47,18 @@ Rendered as a `<span className="block ...">`.
 
 ### Description (plain text)
 ```
-text-muted-foreground text-lg leading-relaxed
+text-muted-foreground text-lg leading-relaxed whitespace-pre-line
 ```
-Used in `section-header` for single-paragraph descriptions only.
+Used on each `section-header` description paragraph, inside a `space-y-4` wrapper.
+Descriptions remain plain text:
+
+- One or more blank lines separate paragraphs, including lines with spaces or tabs.
+- A single line break stays within its paragraph and renders as a line break.
+- Windows (`\r\n`) and carriage-return (`\r`) line endings normalize to `\n`.
+- Trim outer whitespace and omit empty paragraphs and empty description wrappers.
+- Render text through React; do not interpret HTML.
+- Use `vercelStegaSplit()` to normalize the visible text separately from Sanity's
+  invisible edit annotations, then append those annotations to every paragraph.
 
 ---
 

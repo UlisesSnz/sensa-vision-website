@@ -4,6 +4,7 @@ import SectionContainer, {
   ISectionPadding,
 } from "@/components/ui/section-container";
 import { stegaClean } from "next-sanity";
+import { vercelStegaSplit } from "@vercel/stega";
 
 export default function SectionHeader({
   padding,
@@ -28,6 +29,13 @@ export default function SectionHeader({
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
   const sectionId = uid ? stegaClean(uid).trim() : undefined;
+  // Keep Sanity's edit annotations on every paragraph after splitting the text.
+  const { cleaned, encoded } = vercelStegaSplit(description ?? "");
+  const paragraphs = cleaned
+    .replace(/\r\n?/g, "\n")
+    .split(/\n(?:[ \t]*\n)+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
 
   return (
     <SectionContainer
@@ -50,7 +58,18 @@ export default function SectionHeader({
           )}
           <h2 className="text-3xl md:text-5xl mb-4">{title}</h2>
         </div>
-        {description && <p className="text-muted-foreground text-lg leading-relaxed">{description}</p>}
+        {paragraphs.length > 0 && (
+          <div className="space-y-4">
+            {paragraphs.map((paragraph, index) => (
+              <p
+                key={index}
+                className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line"
+              >
+                {paragraph + encoded}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </SectionContainer>
   );
