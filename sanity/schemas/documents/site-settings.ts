@@ -117,6 +117,14 @@ export default defineType({
   fields: [
     languageField,
     defineField({
+      name: "footerPadding",
+      title: "Footer Padding",
+      type: "section-padding",
+      description:
+        "Internal footer spacing. Top: 32px (48px at xl); bottom: 20px. Unset values use enabled spacing, including existing documents. Set a switch explicitly to disable its padding.",
+      initialValue: { top: true, bottom: true },
+    }),
+    defineField({
       name: "headerNavigation",
       title: "Header Navigation",
       description:

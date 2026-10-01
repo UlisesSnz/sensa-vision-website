@@ -21,6 +21,15 @@ Every block component wraps its content in `<SectionContainer>`:
   - bottom → `pb-16 xl:pb-20`
 - The container adds `.container` which handles max-width + horizontal padding
 
+The shared footer reuses `section-padding` in Site Settings (`footerPadding`).
+Its compact spacing is internal to the full-width `<footer>` background:
+top uses `pt-8 xl:pt-12` (32/48px), bottom uses `pb-5` (20px).
+Missing/null values default to enabled; explicit `false` disables only that side.
+New Site Settings initialize both switches to `true`. Existing documents need no
+migration, but unset switches must be set explicitly to override those defaults.
+SiteShell passes the locale's settings through the existing live query in both
+published and draft mode. The standalone 404 footer uses the same defaults.
+
 ---
 
 ## 2. Typography

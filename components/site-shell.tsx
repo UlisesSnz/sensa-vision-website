@@ -54,7 +54,11 @@ export default async function SiteShell({
           <VisualEditing />
         </>
       ) : null}
-      <Footer locale={locale} dictionary={dictionary} />
+      <Footer
+        locale={locale}
+        dictionary={dictionary}
+        padding={siteSettings?.footerPadding}
+      />
     </>
   );
 }

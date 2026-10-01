@@ -69,6 +69,10 @@ declare global {
     type SiteSettings = SanityDocument<{
       readonly _type: "siteSettings";
       language: Locale;
+      footerPadding?: {
+        top?: boolean | null;
+        bottom?: boolean | null;
+      } | null;
       headerNavigation?: Array<{
         label?: string;
         href?: string;

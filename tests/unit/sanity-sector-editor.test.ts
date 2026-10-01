@@ -11,6 +11,7 @@ import gridCard from "@/sanity/schemas/blocks/grid/grid-card";
 import blockContent from "@/sanity/schemas/blocks/shared/block-content";
 import { buttonVariant } from "@/sanity/schemas/blocks/shared/button-variant";
 import link from "@/sanity/schemas/blocks/shared/link";
+import sectionPadding from "@/sanity/schemas/blocks/shared/section-padding";
 import siteSettings from "@/sanity/schemas/documents/site-settings";
 import { localizeHref } from "@/i18n/routing";
 
@@ -22,6 +23,7 @@ const schema = createSchema({
     buttonVariant,
     link,
     siteSettings,
+    sectionPadding,
     {
       name: "testPage",
       type: "document",
@@ -137,6 +139,17 @@ describe("optional grid card links", () => {
 });
 
 describe("document-level navigation language", () => {
+  it("initializes footer spacing with the existing boolean switches enabled", async () => {
+    vi.stubGlobal("window", {});
+    const value = await resolveInitialValueForType(
+      schema.get("siteSettings")!,
+      {},
+      5,
+      { schema, projectId: "test", dataset: "test", currentUser: null, getClient },
+    );
+    expect(value?.footerPadding).toMatchObject({ top: true, bottom: true });
+  });
+
   const destinations = [
     "/retail-stores",
     "/pharmacies",

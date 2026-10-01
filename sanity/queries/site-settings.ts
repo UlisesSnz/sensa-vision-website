@@ -8,6 +8,7 @@ export const SITE_SETTINGS_QUERY = groq`
     _id,
     _type,
     language,
+    footerPadding,
     headerNavigation[]{
       label,
       href,

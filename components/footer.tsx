@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { UiDictionary } from "@/i18n/dictionaries";
 import { toPublicPath } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 import logo from "../public/logo.png";
 
 const socialLinks = [
@@ -32,13 +33,21 @@ const socialLinks = [
 export default function Footer({
   locale,
   dictionary,
+  padding,
 }: {
   locale: Locale;
   dictionary: UiDictionary;
+  padding?: Sanity.SiteSettings["footerPadding"];
 }) {
   return (
-    <footer>
-      <div className="container pb-5 dark:bg-background dark:text-gray-300 xl:pb-5">
+    <footer
+      className={cn(
+        "bg-background dark:text-gray-300",
+        (padding?.top ?? true) ? "pt-8 xl:pt-12" : undefined,
+        (padding?.bottom ?? true) ? "pb-5" : undefined,
+      )}
+    >
+      <div className="container">
         <Link
           className="mx-auto flex w-fit items-center gap-2.5"
           href={toPublicPath(locale, "/")}
