@@ -1,6 +1,6 @@
 # Sensa Vision website
 
-A Next.js 16.2 website with Tailwind CSS, shadcn/ui, and Sanity CMS with Live Editing.
+A Next.js 16.3 website with Tailwind CSS, shadcn/ui, and Sanity CMS with Live Editing.
 
 ## Runtime and package manager
 
