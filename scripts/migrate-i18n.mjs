@@ -1,6 +1,11 @@
 import { createClient } from "@sanity/client";
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
+import {
+  getTranslationLanguage,
+  getTranslationReference,
+  translationItem,
+} from "./lib/translation-metadata.mjs";
 
 const TRANSLATED_TYPES = [
   "page",
@@ -117,17 +122,6 @@ function pickEffectiveDocuments(documents) {
   return [...byBaseId.values()];
 }
 
-function translationItem(language, reference) {
-  return {
-    _key: language,
-    _type: "internationalizedArrayReferenceValue",
-    value: {
-      _type: "reference",
-      _ref: reference,
-    },
-  };
-}
-
 const [documents, metadataDocuments, documentIndex] = await Promise.all([
   client.fetch(`*[_type in $types && !(_id in path("versions.**"))]{...}`, {
     types: TRANSLATED_TYPES,
@@ -137,8 +131,8 @@ const [documents, metadataDocuments, documentIndex] = await Promise.all([
       _id,
       schemaTypes,
       translations[]{
-        _key,
-        value->{_id, _type, language}
+        ...,
+        "document": value->{_id, _type, language}
       }
     }`,
   ),
@@ -155,22 +149,23 @@ const englishBySpanish = new Map();
 for (const metadata of metadataDocuments) {
   const translations = metadata.translations || [];
   const spanish = translations.find(
-    (translation) =>
-      translation.value?.language === "es" || translation._key === "es",
+    (translation) => getTranslationLanguage(translation) === "es",
   );
   const english = translations.find(
-    (translation) =>
-      translation.value?.language === "en" || translation._key === "en",
+    (translation) => getTranslationLanguage(translation) === "en",
   );
 
   for (const translation of translations) {
-    if (translation.value?._id) {
-      existingMetadataByReference.set(baseId(translation.value._id), metadata);
+    const reference = getTranslationReference(translation);
+    if (reference) {
+      existingMetadataByReference.set(baseId(reference), metadata);
     }
   }
 
-  if (spanish?.value?._id && english?.value?._id) {
-    englishBySpanish.set(baseId(spanish.value._id), baseId(english.value._id));
+  const spanishReference = getTranslationReference(spanish);
+  const englishReference = getTranslationReference(english);
+  if (spanishReference && englishReference) {
+    englishBySpanish.set(baseId(spanishReference), baseId(englishReference));
   }
 }
 
@@ -272,8 +267,8 @@ for (const source of spanishSources) {
   const existingMetadata = existingMetadataByReference.get(spanishReference);
   const metadataId = existingMetadata?._id || metadataIdFor(source);
   const translations = [
-    translationItem("es", spanishReference),
-    translationItem("en", englishReference),
+    translationItem("es", spanishReference, existingMetadata?.translations),
+    translationItem("en", englishReference, existingMetadata?.translations),
   ];
 
   if (existingMetadata) {

@@ -4,7 +4,7 @@ A Next.js 16.3 website with Tailwind CSS, shadcn/ui, and Sanity CMS with Live Ed
 
 ## Runtime and package manager
 
-- Node.js `>=22.12 <23` (the repository `.nvmrc` pins `22.19.0`).
+- Node.js `>=22.20 <23` (the repository `.nvmrc` pins `22.20.0`, required by a Sanity CLI dependency).
 - npm `10.9.3`, declared in `package.json` as the only supported package manager.
 
 Install and validate the project with:
@@ -172,6 +172,8 @@ EMAILJS_TEMPLATE_SUPPORT=template_xxxxxxx
 ## Internationalization rollout
 
 Spanish uses the `/es` prefix and English uses `/en`. The root URL only detects the preferred enabled locale, while legacy unprefixed content URLs permanently redirect to their `/es` equivalent. Public Sanity queries never fall back between languages.
+
+Sanity Studio 6 uses Document Internationalization 6. Translation metadata stores the locale in each item's `language` field; `_key` is an independent item identifier. The migration script reads both formats and preserves existing keys and references when preparing translations.
 
 Before applying the content migration, export a dataset backup and review the dry-run report:
 
