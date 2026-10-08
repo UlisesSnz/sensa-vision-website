@@ -1,0 +1,79 @@
+.qa-page {
+  min-height: 100vh;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+.qa-page > * {
+  max-width: 1080px;
+  margin-inline: auto;
+}
+.qa-page h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.qa-page h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.qa-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-block: 16px;
+}
+.qa-toolbar button,
+.qa-toolbar select {
+  border: 1px solid currentColor;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: transparent;
+}
+.qa-toolbar button:disabled {
+  opacity: 0.4;
+}
+.qa-toolbar label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.qa-toolbar input[type="checkbox"] {
+  appearance: auto;
+  width: 18px;
+  height: 18px;
+}
+.qa-editor {
+  border: 1px solid #999;
+  padding: 16px;
+  margin-block: 20px;
+}
+.qa-editor [contenteditable] {
+  min-height: 48px;
+}
+.qa-preview {
+  margin-block: 40px;
+}
+.qa-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-block: 24px;
+}
+.qa-page output {
+  display: block;
+}
+.qa-page pre {
+  max-height: 400px;
+  overflow: auto;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .qa-page {
+    padding: 16px;
+  }
+  .qa-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

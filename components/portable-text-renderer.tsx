@@ -1,6 +1,7 @@
 import { PortableText, type PortableTextProps } from "@portabletext/react";
 import Image from "next/image";
 import Link from "next/link";
+import PortableTextTable from "@/components/portable-text-table";
 
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
@@ -17,6 +18,7 @@ function createPortableTextComponents(
 ): PortableTextProps["components"] {
   return {
     types: {
+      table: ({ value }) => <PortableTextTable value={value} locale={locale} />,
       image: ({ value }) => {
         const { url, metadata } = value.asset ?? {};
         const { lqip, dimensions } = metadata ?? {};
@@ -80,6 +82,12 @@ function createPortableTextComponents(
   };
 }
 
+// Stable component types preserve focus and scroll during live preview updates.
+const componentsByLocale: Record<Locale, PortableTextProps["components"]> = {
+  es: createPortableTextComponents("es"),
+  en: createPortableTextComponents("en"),
+};
+
 export default function PortableTextRenderer({
   value,
   locale,
@@ -90,7 +98,7 @@ export default function PortableTextRenderer({
   return (
     <PortableText
       value={value}
-      components={createPortableTextComponents(locale)}
+      components={componentsByLocale[locale]}
     />
   );
 }

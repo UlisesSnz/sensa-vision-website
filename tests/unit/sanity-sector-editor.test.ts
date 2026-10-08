@@ -9,6 +9,7 @@ import {
 
 import gridCard from "@/sanity/schemas/blocks/grid/grid-card";
 import blockContent from "@/sanity/schemas/blocks/shared/block-content";
+import table, { tableCellContent } from "@/sanity/schemas/blocks/shared/table";
 import { buttonVariant } from "@/sanity/schemas/blocks/shared/button-variant";
 import link from "@/sanity/schemas/blocks/shared/link";
 import sectionPadding from "@/sanity/schemas/blocks/shared/section-padding";
@@ -20,6 +21,8 @@ const schema = createSchema({
   types: [
     gridCard,
     blockContent,
+    table,
+    tableCellContent,
     buttonVariant,
     link,
     siteSettings,

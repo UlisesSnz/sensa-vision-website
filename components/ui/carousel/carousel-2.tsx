@@ -14,6 +14,7 @@ import { urlFor } from "@/sanity/lib/image";
 import { StarRating } from "@/components/ui/star-rating";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import type { Locale } from "@/i18n/config";
+import { hasPortableTextTable } from "@/lib/portable-text-table";
 
 interface Carousel2Props {
   padding: {
@@ -81,7 +82,13 @@ export default function Carousel2({
                       </div>
                       <StarRating rating={item.rating} />
                       {item.body && (
-                        <div className="text-sm mt-2 line-clamp-4">
+                        <div
+                          className={
+                            hasPortableTextTable(item.body)
+                              ? "text-sm mt-2"
+                              : "text-sm mt-2 line-clamp-4"
+                          }
+                        >
                           <PortableTextRenderer
                             value={item.body}
                             locale={locale}

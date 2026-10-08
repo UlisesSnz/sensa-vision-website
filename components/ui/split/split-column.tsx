@@ -70,7 +70,7 @@ export default function SplitColumn({
           />
         </div>
       )}
-      <div className="px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center">
+      <div className="px-4 py-6 lg:px-16 xl:px-20 flex min-w-0 flex-col justify-center">
         <div>
           <div
             className={cn(color === "primary" ? "text-background" : undefined)}

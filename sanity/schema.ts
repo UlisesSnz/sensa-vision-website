@@ -11,6 +11,7 @@ import desktopRelease from "./schemas/documents/desktop-release";
 
 // Schema UI shared objects
 import blockContent from "./schemas/blocks/shared/block-content";
+import table, { tableCellContent } from "./schemas/blocks/shared/table";
 import link from "./schemas/blocks/shared/link";
 import { colorVariant } from "./schemas/blocks/shared/color-variant";
 import { buttonVariant } from "./schemas/blocks/shared/button-variant";
@@ -51,6 +52,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     desktopRelease,
     // shared objects
     blockContent,
+    table,
+    tableCellContent,
     link,
     colorVariant,
     buttonVariant,

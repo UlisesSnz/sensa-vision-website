@@ -1,9 +1,11 @@
 import { defineType, defineArrayMember } from "sanity";
+import { PortableTextTablePlugins } from "@/sanity/components/portable-text-table";
 
 export default defineType({
   title: "Block Content",
   name: "block-content",
   type: "array",
+  components: { portableText: { plugins: PortableTextTablePlugins } },
   of: [
     defineArrayMember({
       title: "Block",
@@ -57,5 +59,6 @@ export default defineType({
         },
       ],
     }),
+    defineArrayMember({ type: "table" }),
   ],
 });

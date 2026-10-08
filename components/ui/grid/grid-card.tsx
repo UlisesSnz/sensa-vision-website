@@ -8,6 +8,7 @@ import type { PortableTextProps } from "@portabletext/react";
 import { urlFor } from "@/sanity/lib/image";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
+import { hasPortableTextTable } from "@/lib/portable-text-table";
 
 interface GridCardProps {
   color:
@@ -54,11 +55,13 @@ export default function GridCard({
   const excerptBlocks = Array.isArray(excerpt) ? excerpt : undefined;
   const excerptText = typeof excerpt === "string" ? excerpt.trim() : "";
   const hasExcerpt = (excerptBlocks?.length ?? 0) > 0 || excerptText.length > 0;
+  const hasTable = hasPortableTextTable(excerptBlocks);
+  const separateLinks = hasLink && hasTable;
 
   const cardContent = (
     <div
       className={cn(
-        "flex w-full flex-col justify-between overflow-hidden transition ease-in-out border rounded-3xl p-4",
+        "flex w-full min-w-0 flex-col justify-between overflow-hidden transition ease-in-out border rounded-3xl p-4",
         hasLink
           ? color === "primary"
             ? "group-hover:border-primary-foreground/50"
@@ -90,7 +93,19 @@ export default function GridCard({
         >
           {title && (
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-2xl">{title}</h3>
+              <h3 className="font-bold text-2xl">
+                {separateLinks ? (
+                  <Link
+                    href={localizeHref(linkHref, locale)}
+                    target={link?.target ? "_blank" : undefined}
+                    rel={link?.target ? "noopener noreferrer" : undefined}
+                  >
+                    {title}
+                  </Link>
+                ) : (
+                  title
+                )}
+              </h3>
             </div>
           )}
           {hasExcerpt && (
@@ -111,13 +126,23 @@ export default function GridCard({
           variant={stegaClean(link?.buttonVariant)}
           asChild
         >
-          <div>{link?.title}</div>
+          {separateLinks ? (
+            <Link
+              href={localizeHref(linkHref, locale)}
+              target={link?.target ? "_blank" : undefined}
+              rel={link?.target ? "noopener noreferrer" : undefined}
+            >
+              {link?.title}
+            </Link>
+          ) : (
+            <div>{link?.title}</div>
+          )}
         </Button>
       )}
     </div>
   );
 
-  if (hasLink) {
+  if (hasLink && !hasTable) {
     return (
       <Link
         className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"
@@ -129,5 +154,5 @@ export default function GridCard({
     );
   }
 
-  return <div className="flex w-full rounded-3xl">{cardContent}</div>;
+  return <div className="flex w-full min-w-0 rounded-3xl">{cardContent}</div>;
 }
