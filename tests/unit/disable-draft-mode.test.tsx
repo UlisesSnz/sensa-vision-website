@@ -38,7 +38,10 @@ describe("DisableDraftMode", () => {
       createElement(DisableDraftMode, { label: "Salir" }),
     );
 
-    expect(html).toContain('href="/api/draft-mode/disable"');
+    expect(html).toContain('action="/api/draft-mode/disable"');
+    expect(html).toContain('method="get"');
+    expect(html).toContain('type="submit"');
+    expect(html).not.toContain('<a');
     expect(html).toContain("Salir");
   });
 });
