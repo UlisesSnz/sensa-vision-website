@@ -71,6 +71,17 @@ Para revertir, desactivar primero `SANITY_SERVER_REVALIDATION_ENABLED` y despleg
 - Publicación sin navegadores: las tres rutas (`/es`, `/es/descargas`, `/es/blog/cache-qa`) actualizadas en **4286 ms**, incluyendo navegación y footer. Inglés sin cambios. El cronómetro monotónico comienza antes de enviar la publicación para evitar diferencias entre relojes.
 - Verificación final con el formulario de salida: una pestaña **4369 ms**, tres pestañas **5653 ms**, sin recargar manualmente. Draft Mode: **3064 ms**, contenido público aislado y salida manual comprobada. Sin errores de JavaScript.
 - Preview probado: rama `codex/corregir-cache-sanity`, código de aplicación `90ed1ff` (los commits siguientes actualizan pruebas y documentación); `SANITY_SERVER_REVALIDATION_ENABLED=true`. Informes reproducibles en `output/playwright/cache-verify.json` y `cache-browser.json`.
-- Producción: endpoint y función pendientes de activar en la secuencia documentada; el interruptor está preparado en `false`.
+- Validación conjunta con los bloques de código en el Preview de la PR #8, aplicación `fe5f2d2`: **7584 ms** sin navegadores, **3725 ms** con una pestaña y **5963 ms** con tres pestañas. Draft Mode: **2696 ms**, aislamiento público y salida manual correctos. Los registros de la función confirmaron invalidaciones en 1107, 511 y 454 ms. Las tres rutas, navegación, footer e inglés conservaron el comportamiento esperado.
+- Verificación completa de ambas mejoras: **226 pruebas**, tipos y build correctos; lint sin errores (19 advertencias existentes). Los informes `cache-verify.json`, `cache-browser.json` y `code-browser.json` corresponden al Preview de la PR #8.
+
+## Configuración de producción (19 de octubre de 2026)
+
+El endpoint se desplegó primero en `https://www.sensa.vision/api/revalidate-tags` con el interruptor apagado. Después se desplegó el stack `ST-6hz6atc7jm` (`sensa-website-production`), función `evx46bwpeg`, limitada a `e07b8hy0.production`, Node 24 y 30 s de timeout. Su secreto es distinto del de staging; no tiene variable de bypass de Preview.
+
+Se verificó el endpoint público: 401 sin autorización, 400 con JSON o etiquetas incorrectos y 200 con deduplicación de una etiqueta que no utiliza ninguna consulta editorial. El código de la función llamó satisfactoriamente al endpoint real en 1367 ms mediante `functions test`; en esta prueba local, la confirmación `done` la simula el CLI. La cadena desplegada completa se comprobó en staging con los tiempos anteriores, sin publicar pruebas en producción.
+
+Tras esas comprobaciones se configuró `SANITY_SERVER_REVALIDATION_ENABLED=true` para el despliegue integrado de la PR #8. La comprobación posterior al despliegue debe confirmar en el navegador `waitFor=function`, respuestas públicas sin borradores y disponibilidad del bloque Código en `/studio`, sin insertar ni editar documentos.
+
+Antes de activar se registraron los identificadores y revisiones de los 93 documentos editoriales de producción, incluidos borradores. La comparación de esas revisiones permite comprobar que la activación mantiene el contenido intacto. La reversión conserva el orden indicado arriba: desplegar el interruptor en `false` antes de retirar la función.
 
 Referencias: [integración oficial de Sanity](https://www.sanity.io/docs/functions/sync-tag-function-quickstart), [migración next-sanity 13](https://github.com/sanity-io/next-sanity/blob/main/packages/next-sanity/MIGRATE-v12-to-v13.md), [revalidateTag](https://nextjs.org/docs/app/api-reference/functions/revalidateTag).
