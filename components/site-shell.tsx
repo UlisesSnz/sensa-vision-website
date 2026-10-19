@@ -32,6 +32,7 @@ export default async function SiteShell({
   siteSettings,
 }: SiteShellProps) {
   const { isEnabled: isDraftMode } = await draftMode();
+  const serverRevalidation = process.env.SANITY_SERVER_REVALIDATION_ENABLED === "true";
   const dictionary = getDictionary(locale);
   const visibleLocales = isDraftMode ? SUPPORTED_LOCALES : getEnabledLocales();
   const alternates = document
@@ -47,7 +48,10 @@ export default async function SiteShell({
         siteSettings={siteSettings}
       />
       <main>{children}</main>
-      <SanityLive action={sanityLiveAction} />
+      <SanityLive
+        waitFor={!isDraftMode && serverRevalidation ? "function" : undefined}
+        action={isDraftMode || serverRevalidation ? "refresh" : sanityLiveAction}
+      />
       {isDraftMode ? (
         <>
           <DisableDraftMode label={dictionary.draftMode.disable} />
