@@ -2,6 +2,11 @@ import type { Locale } from "./config";
 
 const dictionaries = {
   es: {
+    code: {
+      copy: "Copiar código", copied: "Código copiado",
+      error: "No se pudo copiar. Selecciona el código y cópialo manualmente.",
+      block: "Bloque de código", text: "Texto",
+    },
     navigation: {
       home: "Página de inicio",
       openMenu: "Abrir menú",
@@ -79,6 +84,11 @@ const dictionaries = {
     },
   },
   en: {
+    code: {
+      copy: "Copy code", copied: "Code copied",
+      error: "Could not copy. Select the code and copy it manually.",
+      block: "Code block", text: "Text",
+    },
     navigation: {
       home: "Home page",
       openMenu: "Open menu",

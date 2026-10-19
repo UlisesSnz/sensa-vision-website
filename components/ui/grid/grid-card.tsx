@@ -9,6 +9,7 @@ import { urlFor } from "@/sanity/lib/image";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
 import { hasPortableTextTable } from "@/lib/portable-text-table";
+import { hasPortableTextCode } from "@/lib/portable-text-code";
 
 interface GridCardProps {
   color:
@@ -55,8 +56,8 @@ export default function GridCard({
   const excerptBlocks = Array.isArray(excerpt) ? excerpt : undefined;
   const excerptText = typeof excerpt === "string" ? excerpt.trim() : "";
   const hasExcerpt = (excerptBlocks?.length ?? 0) > 0 || excerptText.length > 0;
-  const hasTable = hasPortableTextTable(excerptBlocks);
-  const separateLinks = hasLink && hasTable;
+  const hasInteractiveContent = hasPortableTextTable(excerptBlocks) || hasPortableTextCode(excerptBlocks);
+  const separateLinks = hasLink && hasInteractiveContent;
 
   const cardContent = (
     <div
@@ -142,7 +143,7 @@ export default function GridCard({
     </div>
   );
 
-  if (hasLink && !hasTable) {
+  if (hasLink && !hasInteractiveContent) {
     return (
       <Link
         className="flex w-full rounded-3xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group"

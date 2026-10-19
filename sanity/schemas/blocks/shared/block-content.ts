@@ -1,5 +1,6 @@
 import { defineType, defineArrayMember } from "sanity";
 import { PortableTextTablePlugins } from "@/sanity/components/portable-text-table";
+import { codeLanguages, validateCodeContent } from "@/lib/portable-text-code";
 
 export default defineType({
   title: "Block Content",
@@ -60,5 +61,12 @@ export default defineType({
       ],
     }),
     defineArrayMember({ type: "table" }),
+    defineArrayMember({
+      type: "code",
+      title: "Código / Code",
+      initialValue: { language: "text" },
+      options: { withFilename: true, languageAlternatives: codeLanguages },
+      validation: rule => rule.custom(validateCodeContent),
+    }),
   ],
 });

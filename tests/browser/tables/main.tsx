@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { codeSchema } from "@sanity/code-input";
 import { createRoot } from "react-dom/client";
 import {
   EditorProvider,
@@ -40,7 +41,7 @@ const nativeTable = defineTable({
 const schemaDefinition = sanitySchemaDefinitionToPortableTextSchema(
   blockContent,
   {
-    types: [tableSchema, tableCellContent],
+    types: [tableSchema, tableCellContent, codeSchema],
   },
 );
 const storageKey = "sensa-portable-text-tables-local-qa";

@@ -61,6 +61,12 @@ const Carousel = React.forwardRef<
       {
         ...opts,
         axis: orientation === "horizontal" ? "x" : "y",
+        watchDrag: (carouselApi, event) => {
+          if (event.target instanceof Element && event.target.closest("[data-carousel-interactive]")) return false;
+          return typeof opts?.watchDrag === "function"
+            ? opts.watchDrag(carouselApi, event)
+            : opts?.watchDrag ?? true;
+        },
       },
       plugins
     );
@@ -86,6 +92,7 @@ const Carousel = React.forwardRef<
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.target instanceof Element && event.target.closest("[data-carousel-interactive]")) return;
         if (event.key === "ArrowLeft") {
           event.preventDefault();
           scrollPrev();

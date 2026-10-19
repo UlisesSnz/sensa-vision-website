@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
+import { codeSchema } from "@sanity/code-input";
 import { describe, expect, it, vi } from "vitest";
 import {
   createSchema,
@@ -35,6 +36,7 @@ const render = (value: unknown[], locale: "es" | "en" = "es") =>
 const schema = createSchema({
   name: "tables",
   types: [
+    codeSchema,
     table,
     tableCellContent,
     blockContent,
