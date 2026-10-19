@@ -2,6 +2,7 @@ import { PortableText, type PortableTextProps } from "@portabletext/react";
 import Image from "next/image";
 import Link from "next/link";
 import PortableTextTable from "@/components/portable-text-table";
+import PortableTextCodeBlock from "@/components/portable-text-code";
 
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
@@ -18,6 +19,7 @@ function createPortableTextComponents(
 ): PortableTextProps["components"] {
   return {
     types: {
+      code: ({ value }) => <PortableTextCodeBlock value={value} locale={locale} />,
       table: ({ value }) => <PortableTextTable value={value} locale={locale} />,
       image: ({ value }) => {
         const { url, metadata } = value.asset ?? {};

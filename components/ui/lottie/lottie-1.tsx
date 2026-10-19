@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import SectionContainer, {
   ISectionContainer,
@@ -7,7 +5,7 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import { stegaClean } from "next-sanity";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import LottiePlayer from "./lottie-player";
 import type { Locale } from "@/i18n/config";
 
 // Standalone sizes (center, vertical, no-body) — 4:3 aspect
@@ -106,7 +104,7 @@ export default function Lottie1({
             className="overflow-hidden rounded-lg"
             style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
           >
-            <DotLottieReact
+            <LottiePlayer
               {...lottieCommon}
               style={{ width: "100%", height: "100%" }}
             />
@@ -125,12 +123,12 @@ export default function Lottie1({
             className="overflow-hidden rounded-lg"
             style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
           >
-            <DotLottieReact
+            <LottiePlayer
               {...lottieCommon}
               style={{ width: "100%", height: "100%" }}
             />
           </div>
-          <div className="mt-6 max-w-[48rem]">{textBlock}</div>
+          <div className="mt-6 w-full min-w-0 max-w-[48rem]">{textBlock}</div>
         </div>
       </SectionContainer>
     );
@@ -150,12 +148,12 @@ export default function Lottie1({
               minHeight: LOTTIE_MIN_HEIGHTS[size] || LOTTIE_MIN_HEIGHTS.md,
             }}
           >
-            <DotLottieReact
+            <LottiePlayer
               {...lottieCommon}
               style={{ width: "100%", height: "100%" }}
             />
           </div>
-          <div className="px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center">
+          <div className="min-w-0 px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center">
             {textBlock}
           </div>
         </div>
@@ -177,7 +175,7 @@ export default function Lottie1({
                 maxWidth: "100%",
               }}
             >
-              <DotLottieReact
+              <LottiePlayer
                 {...lottieCommon}
                 style={{ width: "100%", height: "100%" }}
               />
@@ -197,7 +195,7 @@ export default function Lottie1({
                 maxWidth: "100%",
               }}
             >
-              <DotLottieReact
+              <LottiePlayer
                 {...lottieCommon}
                 style={{ width: "100%", height: "100%" }}
               />

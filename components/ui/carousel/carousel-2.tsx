@@ -15,6 +15,7 @@ import { StarRating } from "@/components/ui/star-rating";
 import PortableTextRenderer from "@/components/portable-text-renderer";
 import type { Locale } from "@/i18n/config";
 import { hasPortableTextTable } from "@/lib/portable-text-table";
+import { hasPortableTextCode } from "@/lib/portable-text-code";
 
 interface Carousel2Props {
   padding: {
@@ -84,7 +85,7 @@ export default function Carousel2({
                       {item.body && (
                         <div
                           className={
-                            hasPortableTextTable(item.body)
+                            hasPortableTextTable(item.body) || hasPortableTextCode(item.body)
                               ? "text-sm mt-2"
                               : "text-sm mt-2 line-clamp-4"
                           }

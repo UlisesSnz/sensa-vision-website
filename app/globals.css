@@ -72,3 +72,34 @@
     scroll-behavior: smooth;
   }
 }
+
+.portable-code pre {
+  margin: 0;
+  width: max-content;
+  min-width: 100%;
+  padding: 1rem 0;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.portable-code code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.portable-code .line { display: inline-block; min-width: 100%; padding: 0 1rem; }
+.portable-code .line.highlighted {
+  background: hsl(var(--foreground) / 0.08);
+  box-shadow: inset 3px 0 hsl(var(--foreground) / 0.5);
+}
+.portable-code .shiki, .portable-code .shiki span {
+  color: var(--shiki-light);
+  font-style: var(--shiki-light-font-style);
+  font-weight: var(--shiki-light-font-weight);
+  text-decoration: var(--shiki-light-text-decoration);
+}
+.portable-code .shiki { background-color: var(--shiki-light-bg); }
+.dark .portable-code .shiki, .dark .portable-code .shiki span {
+  color: var(--shiki-dark);
+  font-style: var(--shiki-dark-font-style);
+  font-weight: var(--shiki-dark-font-weight);
+  text-decoration: var(--shiki-dark-text-decoration);
+}
+.dark .portable-code .shiki { background-color: var(--shiki-dark-bg); }

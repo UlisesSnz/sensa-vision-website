@@ -5,6 +5,7 @@
  */
 
 import { visionTool } from "@sanity/vision";
+import { codeInput } from "@sanity/code-input";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { presentationTool } from "sanity/presentation";
@@ -27,6 +28,7 @@ export default defineConfig({
   // Add and edit the content schema in the './sanity/schema' folder
   schema,
   plugins: [
+    codeInput(),
     documentInternationalization({
       supportedLanguages: SANITY_LANGUAGES,
       schemaTypes: [...TRANSLATED_SCHEMA_TYPES],

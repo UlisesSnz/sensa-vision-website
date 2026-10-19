@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
   },
   globalIgnores([
     ".next/**",
+    ".sanity/**",
     "node_modules/**",
     "out/**",
     "build/**",

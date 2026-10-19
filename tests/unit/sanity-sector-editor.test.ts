@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { codeSchema } from "@sanity/code-input";
 import {
   createSchema,
   resolveInitialValueForType,
@@ -19,6 +20,7 @@ import { localizeHref } from "@/i18n/routing";
 const schema = createSchema({
   name: "sector-editor-regressions",
   types: [
+    codeSchema,
     gridCard,
     blockContent,
     table,

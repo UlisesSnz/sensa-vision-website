@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@/lib/utils";
 import SectionContainer, {
   ISectionContainer,
@@ -163,7 +161,7 @@ export default function Video1({
               {videoInner}
             </div>
           </div>
-          <div className="px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center">
+          <div className="min-w-0 px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center">
             {textBlock}
           </div>
         </div>
