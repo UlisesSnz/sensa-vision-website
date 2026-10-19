@@ -34,6 +34,7 @@ yarn-error.log*
 # vercel
 .vercel
 .sanity/
+functions/**/.build/
 
 # typescript
 *.tsbuildinfo
