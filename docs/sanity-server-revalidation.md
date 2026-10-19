@@ -69,8 +69,8 @@ Para revertir, desactivar primero `SANITY_SERVER_REVALIDATION_ENABLED` y despleg
 - Reproducción sobre `82923f1`: tres rutas mantuvieron contenido antiguo durante más de 35 s, con respuestas `HIT` y cero navegadores.
 - Función staging: etiquetas reales `s1:L7mrrA,s1:EfDTYA,s1:cKdyUQ`; invalidación y confirmación registradas en 1070 ms en la primera ejecución satisfactoria.
 - Publicación sin navegadores: las tres rutas (`/es`, `/es/descargas`, `/es/blog/cache-qa`) actualizadas en **4286 ms**, incluyendo navegación y footer. Inglés sin cambios. El cronómetro monotónico comienza antes de enviar la publicación para evitar diferencias entre relojes.
-- Una pestaña: **3651 ms**. Tres pestañas: **4132 ms**, sin recargar manualmente. Draft Mode: **2652 ms**, contenido público aislado y salida manual comprobada. Sin errores de JavaScript.
-- Preview probado: rama `codex/corregir-cache-sanity`, commit `dba31a7`; `SANITY_SERVER_REVALIDATION_ENABLED=true`. Informes reproducibles en `output/playwright/cache-verify.json` y `cache-browser.json`.
+- Verificación final con el formulario de salida: una pestaña **4369 ms**, tres pestañas **5653 ms**, sin recargar manualmente. Draft Mode: **3064 ms**, contenido público aislado y salida manual comprobada. Sin errores de JavaScript.
+- Preview probado: rama `codex/corregir-cache-sanity`, código de aplicación `90ed1ff` (los commits siguientes actualizan pruebas y documentación); `SANITY_SERVER_REVALIDATION_ENABLED=true`. Informes reproducibles en `output/playwright/cache-verify.json` y `cache-browser.json`.
 - Producción: endpoint y función pendientes de activar en la secuencia documentada; el interruptor está preparado en `false`.
 
 Referencias: [integración oficial de Sanity](https://www.sanity.io/docs/functions/sync-tag-function-quickstart), [migración next-sanity 13](https://github.com/sanity-io/next-sanity/blob/main/packages/next-sanity/MIGRATE-v12-to-v13.md), [revalidateTag](https://nextjs.org/docs/app/api-reference/functions/revalidateTag).
