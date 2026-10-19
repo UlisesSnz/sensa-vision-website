@@ -18,6 +18,8 @@ El endpoint tiene 5 s de timeout por intento; `done` tiene 3 s. Ambos reintentan
 
 Draft Mode siempre refresca sin invalidar la caché publicada. Con el interruptor desactivado se conserva la invalidación local por eventos para desarrollo y reversión.
 
+Se corrigió además el enlace de salida de Draft Mode: ahora es un enlace HTML sin precarga. El `Link` anterior podía precargar el GET de desactivación y borrar la cookie antes de que el editor pulsara el botón. Este fallo se reprodujo durante la validación de borradores.
+
 ## Configuración por entorno
 
 Aplicación (Node 22.20 o compatible con `engines`):
@@ -64,6 +66,11 @@ Para revertir, desactivar primero `SANITY_SERVER_REVALIDATION_ENABLED` y despleg
 
 - `npm run check`: 203 pruebas pasan; lint sin errores (20 advertencias anteriores), tipos y build correctos con Node 22.20.0 y npm 10.9.3.
 - Dataset staging creado con datos sintéticos en español e inglés; stack `ST-tf5qy276dw` (`sensa-website-staging`).
-- Mediciones y activación: pendientes de completar en el Preview dedicado antes de promover a producción.
+- Reproducción sobre `82923f1`: tres rutas mantuvieron contenido antiguo durante más de 35 s, con respuestas `HIT` y cero navegadores.
+- Función staging: etiquetas reales `s1:L7mrrA,s1:EfDTYA,s1:cKdyUQ`; invalidación y confirmación registradas en 1070 ms en la primera ejecución satisfactoria.
+- Publicación sin navegadores: las tres rutas (`/es`, `/es/descargas`, `/es/blog/cache-qa`) actualizadas en **4286 ms**, incluyendo navegación y footer. Inglés sin cambios. El cronómetro monotónico comienza antes de enviar la publicación para evitar diferencias entre relojes.
+- Una pestaña: **3651 ms**. Tres pestañas: **4132 ms**, sin recargar manualmente. Draft Mode: **2652 ms**, contenido público aislado y salida manual comprobada. Sin errores de JavaScript.
+- Preview probado: rama `codex/corregir-cache-sanity`, commit `dba31a7`; `SANITY_SERVER_REVALIDATION_ENABLED=true`. Informes reproducibles en `output/playwright/cache-verify.json` y `cache-browser.json`.
+- Producción: endpoint y función pendientes de activar en la secuencia documentada; el interruptor está preparado en `false`.
 
 Referencias: [integración oficial de Sanity](https://www.sanity.io/docs/functions/sync-tag-function-quickstart), [migración next-sanity 13](https://github.com/sanity-io/next-sanity/blob/main/packages/next-sanity/MIGRATE-v12-to-v13.md), [revalidateTag](https://nextjs.org/docs/app/api-reference/functions/revalidateTag).

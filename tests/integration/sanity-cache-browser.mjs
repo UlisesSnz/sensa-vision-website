@@ -13,7 +13,7 @@ const client = getCliClient({ apiVersion: "2026-10-01" }).withConfig({
   projectId: "e07b8hy0", dataset: "staging", useCdn: false, perspective: "published",
 });
 const browser = await chromium.launch({ headless: true, channel: "msedge" });
-const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: "es-MX" });
 await context.route(`${origin}/**`, async route => route.continue({ headers: {
   ...await route.request().allHeaders(), "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
 } }));
