@@ -81,7 +81,7 @@ try {
   assert(!publicHtml.includes(marker), "Draft leaked into a public response");
   assert(publicHtml.includes(published.headerNavigation[0].label));
   report.draft = { refreshed: true, elapsedMs: draftElapsedMs, publicIsolated: true };
-  await draft.getByRole("link", { name: "Desactivar modo borrador" }).click();
+  await draft.getByRole("button", { name: "Desactivar modo borrador" }).click();
   await waitForMarker(draft, published.headerNavigation[0].label);
   report.draft.manualExit = true;
   assert.equal(report.errors.length, 0);

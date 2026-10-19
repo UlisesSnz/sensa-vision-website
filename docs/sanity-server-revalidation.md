@@ -18,7 +18,7 @@ El endpoint tiene 5 s de timeout por intento; `done` tiene 3 s. Ambos reintentan
 
 Draft Mode siempre refresca sin invalidar la caché publicada. Con el interruptor desactivado se conserva la invalidación local por eventos para desarrollo y reversión.
 
-Se corrigió además el enlace de salida de Draft Mode: ahora es un enlace HTML sin precarga. El `Link` anterior podía precargar el GET de desactivación y borrar la cookie antes de que el editor pulsara el botón. Este fallo se reprodujo durante la validación de borradores.
+Se corrigió además la salida de Draft Mode: ahora es un formulario GET sin precarga, como recomienda la guía de Next.js. El `Link` anterior podía precargar el GET de desactivación y borrar la cookie antes de que el editor pulsara el botón. Este fallo se reprodujo durante la validación de borradores.
 
 ## Configuración por entorno
 

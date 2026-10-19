@@ -13,10 +13,8 @@ export function DisableDraftMode({ label }: { label: string }) {
   }
 
   return (
-    <Button asChild>
-      <a href="/api/draft-mode/disable" className="fixed bottom-4 right-4">
-        {label}
-      </a>
-    </Button>
+    <form action="/api/draft-mode/disable" method="get" className="fixed bottom-4 right-4">
+      <Button type="submit">{label}</Button>
+    </form>
   );
 }
