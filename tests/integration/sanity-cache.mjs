@@ -22,24 +22,26 @@ async function read(path) {
   return { html, cache: response.headers.get("x-vercel-cache") };
 }
 const marker = `QA-${mode}-${Date.now()}`;
-const before = await Promise.all(paths.map(read));
+await Promise.all(paths.map(read));
 const englishBefore = await read("/en");
 const settings = await client.getDocument("qa-cache-settings-es");
 const padding = !settings.footerPadding.top;
+// Start before the write: avoids cross-machine clock skew and conservatively
+// includes the publication request itself in the measured latency.
+const startedAt = performance.now();
 const published = await client.patch(settings._id).set({
   "headerNavigation[0].label": marker, "footerPadding.top": padding,
 }).commit();
-const publishedAt = Date.parse(published._updatedAt);
 const samples = [];
 let updated = false;
-while (Date.now() - publishedAt < 35_000) {
+while (performance.now() - startedAt < 35_000) {
   const pages = await Promise.all(paths.map(read));
-  updated = pages.every(({ html }) => html.includes(marker));
-  samples.push({ elapsedMs: Date.now() - publishedAt, updated, cache: pages.map(page => page.cache) });
+  updated = pages.every(({ html }) => html.match(/<header\b[\s\S]*?<\/header>/)?.[0].includes(marker));
+  samples.push({ elapsedMs: Math.round(performance.now() - startedAt), updated, cache: pages.map(page => page.cache) });
   if (updated) {
     const footerPattern = /<footer\b[^>]*class="([^"]*)"/;
-    for (const [index, page] of pages.entries()) {
-      assert.notEqual(page.html.match(footerPattern)?.[1], before[index].html.match(footerPattern)?.[1], "Footer did not update");
+    for (const page of pages) {
+      assert.equal(page.html.match(footerPattern)?.[1].includes("pt-8"), padding, "Footer did not update");
     }
     break;
   }
