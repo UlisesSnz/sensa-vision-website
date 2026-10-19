@@ -1,0 +1,22 @@
+{
+  "name": "@aws-lite/lambda",
+  "version": "0.1.5",
+  "description": "Official `aws-lite` plugin for Lambda",
+  "homepage": "https://aws-lite.org/services/lambda",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aws-lite/aws-lite.git",
+    "directory": "plugins/lambda"
+  },
+  "bugs": "https://github.com/aws-lite/aws-lite/issues",
+  "main": "src/index.mjs",
+  "engines": {
+    "node": ">=16"
+  },
+  "author": "@architect",
+  "license": "Apache-2.0",
+  "files": [
+    "src"
+  ],
+  "scripts": {}
+}

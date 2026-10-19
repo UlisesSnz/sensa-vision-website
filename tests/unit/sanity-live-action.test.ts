@@ -45,22 +45,13 @@ describe("sanityLiveAction", () => {
     expect(result).toBeUndefined();
   });
 
-  it("uses stale-while-revalidate tags and refreshes Draft Mode", async () => {
+  it("refreshes Draft Mode without touching published caches", async () => {
     liveMocks.draftMode.mockResolvedValue({ isEnabled: true });
 
     const result = await sanityLiveAction(["unsafe-tag"] as never);
 
-    expect(liveMocks.revalidateTag).toHaveBeenCalledTimes(2);
-    expect(liveMocks.revalidateTag).toHaveBeenNthCalledWith(
-      1,
-      "sanity:document",
-      "max",
-    );
-    expect(liveMocks.revalidateTag).toHaveBeenNthCalledWith(
-      2,
-      "sanity:settings",
-      "max",
-    );
+    expect(liveMocks.revalidateTag).not.toHaveBeenCalled();
+    expect(liveMocks.parseTags).not.toHaveBeenCalled();
     expect(liveMocks.updateTag).not.toHaveBeenCalled();
     expect(result).toBe("refresh");
   });
