@@ -89,10 +89,10 @@ export default function PricingCard({
   );
 
   return (
-    <div className="flex w-full rounded-2xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group">
+    <div className="flex min-w-0 w-full rounded-2xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group">
       <div
         className={cn(
-          "flex w-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-shadow duration-300 hover:shadow-lg",
+          "flex min-w-0 w-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-shadow duration-300 hover:shadow-lg",
           color === "primary" && "border-primary/20 shadow-sm",
         )}
       >
@@ -101,12 +101,12 @@ export default function PricingCard({
         >
           {/* ── Header: title + badge ── */}
           {title && (
-            <div className="flex items-start justify-between gap-3 mb-6">
-              <h3 className="text-xl font-bold leading-tight tracking-tight">
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+              <h3 className="min-w-0 max-w-full [overflow-wrap:anywhere] text-xl font-bold leading-tight tracking-tight">
                 {title}
               </h3>
               {tagLine && (
-                <Badge className="shrink-0 whitespace-nowrap text-[11px] px-2.5 py-1 rounded-full">
+                <Badge className="min-w-0 max-w-full whitespace-normal [overflow-wrap:anywhere] text-left text-[11px] px-2.5 py-1 rounded-full">
                   {tagLine}
                 </Badge>
               )}

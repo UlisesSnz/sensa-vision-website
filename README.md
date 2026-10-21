@@ -14,6 +14,18 @@ npm ci
 npm run check
 ```
 
+The pricing-card browser regression uses isolated fixtures and does not connect
+to Sanity or require environment variables:
+
+```bash
+npx playwright install chromium
+npm run test:pricing
+```
+
+It checks five viewport widths (375, 768, 1024, 1180 and 1440 px), both themes,
+long and missing badges, localized links and billing controls. Screenshots and
+the JSON report are saved to `output/playwright/pricing/`.
+
 [Docs](https://schemaui.com/docs) | [Components](https://schemaui.com/components) | [Demo](https://schemaui-starter.vercel.app/)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fserge-0v%2Fnext-js-sanity-starter&env=NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_SITE_ENV,NEXT_PUBLIC_SANITY_API_VERSION,NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET,SANITY_API_READ_TOKEN,RESEND_API_KEY,RESEND_AUDIENCE_ID&demo-title=Next.js%20Sanity%20Starter&demo-description=Next.js%20Sanity%20Starter%20by%20Schema%20UI&demo-url=https%3A%2F%2Fschemaui-starter.vercel.app)
