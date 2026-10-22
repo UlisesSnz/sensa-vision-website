@@ -28,6 +28,7 @@ export async function assertPricingLayout(page, grid) {
       const card = header.parentElement.parentElement;
       const style = getComputedStyle(card);
       const cardBox = bounds(card);
+      const priceRow = header.nextElementSibling.firstElementChild;
       return {
         card: cardBox,
         content: {
@@ -39,6 +40,8 @@ export async function assertPricingLayout(page, grid) {
         header: inspect(header),
         title: inspect(heading),
         badge: inspect(heading.nextElementSibling),
+        amount: inspect(priceRow.children[0]),
+        period: inspect(priceRow.children[1]),
       };
     });
   });
@@ -47,16 +50,30 @@ export async function assertPricingLayout(page, grid) {
     assert(inner.left >= outer.left - 1 && inner.right <= outer.right + 1
       && inner.top >= outer.top - 1 && inner.bottom <= outer.bottom + 1, message);
   };
-  for (const { content, header, title, badge } of results) {
+  for (const { content, header, title, badge, amount, period } of results) {
     assert(!header.clipped, "The header must not hide overflow");
-    for (const [name, element] of [["title", title], ["badge", badge]]) {
+    for (const [name, element] of [["title", title], ["badge", badge], ["amount", amount], ["period", period]]) {
       if (!element) continue;
       const label = `${name}: ${element.text.slice(0, 90)}`;
       assert(element.box.width > 0 && element.box.height > 0, `${label} must be visible`);
       inside(element.box, content, `${label} must fit inside the card's content area`);
       assert(!element.clipped, `${label} must not be clipped or truncated`);
       assert(element.scrollWidth <= element.clientWidth + 1, `${label} must not overflow internally`);
-      for (const rect of element.textRects) inside(rect, element.box, `${label} must show all text`);
+      // Large numerals can extend vertically beyond their CSS line box without
+      // being clipped. Keep their glyphs within the card and their own width.
+      const textBounds = name === "amount"
+        ? { ...element.box, top: content.top, bottom: content.bottom }
+        : element.box;
+      for (const rect of element.textRects) inside(rect, textBounds, `${label} must show all text`);
+      if (name === "amount" || name === "period") {
+        assert(element.textRects.length > 0 && element.textRects.every((rect) =>
+          Math.abs(rect.top - element.textRects[0].top) <= 1), `${label} must remain on one line`);
+      }
+    }
+    if (period) {
+      assert(amount.box.right <= period.box.left + 1
+        && period.box.top < amount.box.bottom && amount.box.top < period.box.bottom,
+      "Amount and billing period must share a row without overlapping");
     }
     if (badge) {
       assert(title.box.right <= badge.box.left + 1 || title.box.bottom <= badge.box.top + 1,

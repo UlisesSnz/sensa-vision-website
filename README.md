@@ -22,8 +22,9 @@ npx playwright install chromium
 npm run test:pricing
 ```
 
-It checks five viewport widths (375, 768, 1024, 1180 and 1440 px), both themes,
-long and missing badges, localized links and billing controls. Screenshots and
+It checks eight viewport widths (375, 768, 1023, 1024, 1180, 1279, 1280 and 1440 px),
+both themes, single-line prices and billing periods, long and missing badges,
+localized links and billing controls. Screenshots and
 the JSON report are saved to `output/playwright/pricing/`.
 
 [Docs](https://schemaui.com/docs) | [Components](https://schemaui.com/components) | [Demo](https://schemaui-starter.vercel.app/)

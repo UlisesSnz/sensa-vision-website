@@ -5,9 +5,9 @@ export const pricingCases = [
     id: "es",
     locale: "es",
     cards: [
-      { title: "Sensa Free", tagLine: "1 pantalla incluida", value: 0 },
-      { title: "Pantallas adicionales", tagLine: "Más pantallas, mismas funciones", value: 149 },
-      { title: "Sensa Max", tagLine: "Complemento opcional", value: 70 },
+      { title: "Sensa Free", tagLine: "1 pantalla incluida", value: 0, period: "MXN al mes" },
+      { title: "Pantallas adicionales", tagLine: "Más pantallas, mismas funciones", value: 149, period: "MXN por pantalla al mes" },
+      { title: "Sensa Max", tagLine: "Complemento opcional", value: 70, period: "MXN por pantalla al mes" },
     ],
   },
   {

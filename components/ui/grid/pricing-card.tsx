@@ -92,7 +92,7 @@ export default function PricingCard({
     <div className="flex min-w-0 w-full rounded-2xl ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group">
       <div
         className={cn(
-          "flex min-w-0 w-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-shadow duration-300 hover:shadow-lg",
+          "flex min-w-0 w-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-6 sm:p-8 lg:px-6 xl:px-8 transition-shadow duration-300 hover:shadow-lg",
           color === "primary" && "border-primary/20 shadow-sm",
         )}
       >
@@ -116,8 +116,8 @@ export default function PricingCard({
           {/* ── Price block ── */}
           {price && price.value != null && (
             <div className="mb-8">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-4xl font-extrabold tracking-tight tabular-nums">
+              <div className="flex items-baseline gap-1.5 sm:whitespace-nowrap">
+                <span className="text-4xl lg:text-[32px] xl:text-4xl font-extrabold tracking-tight tabular-nums">
                   $
                   {price.value.toLocaleString(locale === "es" ? "es-MX" : "en")}
                 </span>

@@ -16,7 +16,7 @@ try {
   browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   page.on("pageerror", (error) => report.errors.push(error.message));
-  for (const width of [1180, 375, 768, 1024, 1440]) {
+  for (const width of [1180, 375, 768, 1023, 1024, 1279, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const theme of ["light", "dark"]) {
       await page.goto(`http://127.0.0.1:4174/?theme=${theme}`);
@@ -29,6 +29,8 @@ try {
         scenario.cards.forEach((card, index) => {
           assert.equal(layout[index].title.text, card.title);
           assert.equal(layout[index].badge?.text ?? "", card.tagLine ?? "");
+          assert.equal(layout[index].amount.text, `$${card.value}`);
+          assert.equal(layout[index].period.text, card.period ?? (scenario.locale === "es" ? "MXN al mes" : "MXN per month"));
         });
         const links = await section.getByRole("link").evaluateAll((elements) => elements.map((el) => el.getAttribute("href")));
         assert.deepEqual(links, Array(3).fill(`/${scenario.locale}/contact`));

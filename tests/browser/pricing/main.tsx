@@ -25,7 +25,7 @@ createRoot(document.getElementById("root")!).render(
             ...card,
             _type: "pricing-card",
             _key: `${id}-${index}`,
-            price: { value, period: locale === "es" ? "MXN al mes" : "MXN per month" },
+            price: { value, period: "period" in card ? card.period : (locale === "es" ? "MXN al mes" : "MXN per month") },
             list: [],
             excerpt: "",
             link: { title: locale === "es" ? "Ver detalles" : "View details", href: "/contact", buttonVariant: "outline" },
