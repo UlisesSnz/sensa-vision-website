@@ -70,6 +70,13 @@ export default defineType({
       name: "description",
       type: "text",
     }),
+    defineField({
+      name: "links",
+      type: "array",
+      title: "Links",
+      description: "Optional buttons below the description.",
+      of: [{ type: "link" }],
+    }),
   ],
   preview: {
     select: {

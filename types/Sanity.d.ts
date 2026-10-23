@@ -103,6 +103,9 @@ declare global {
       installer: DesktopInstaller;
     };
 
+    // Android is a presentation-only option until a public release contract exists.
+    type DownloadPlatform = DesktopReleasePlatform | "android";
+
     type Link = {
       _key?: string;
       title: string;

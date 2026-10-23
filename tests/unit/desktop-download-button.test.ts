@@ -105,4 +105,22 @@ describe("DesktopDownloadButton", () => {
 
     expect(html).toContain("Download for Linux ARM64");
   });
+
+  it.each(["es", "en"] as const)(
+    "uses a visible %s label when a custom title contains only whitespace",
+    (locale) => {
+      const messages = getDictionary(locale).downloads;
+      const html = renderToStaticMarkup(
+        createElement(DesktopDownloadButton, {
+          release,
+          title: " \n\t ",
+          messages,
+        }),
+      );
+
+      expect(html).toContain(messages.defaultLabels["win32/x64"]);
+      expect(html).toContain('href="https://downloads.example.com/SensaVision.exe"');
+      expect(html).not.toContain('disabled=""');
+    },
+  );
 });

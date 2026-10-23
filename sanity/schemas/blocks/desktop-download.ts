@@ -47,23 +47,36 @@ export default defineType({
       initialValue: "left",
     }),
     defineField({ name: "tagLine", type: "string" }),
-    defineField({ name: "title", type: "string" }),
+    defineField({
+      name: "title",
+      type: "string",
+      validation: (Rule) => Rule.custom((value, context) => {
+        const parent = context.parent as { downloadPlatform?: unknown } | undefined;
+        return parent?.downloadPlatform !== "android" || value?.trim()
+          ? true
+          : "Android necesita un título visible.";
+      }),
+    }),
     defineField({ name: "body", type: "block-content" }),
     defineField({
       name: "downloadPlatform",
       title: "Download operating system",
       type: "string",
       initialValue: "win32",
+      description: "Android se muestra como Próximamente; todavía no tiene un contrato de descarga pública.",
       options: {
-        list: DESKTOP_RELEASE_PLATFORMS.map((platform) => ({
-          title: getDesktopReleasePlatformTitle(platform),
-          value: platform,
-        })),
+        list: [
+          ...DESKTOP_RELEASE_PLATFORMS.map((platform) => ({
+            title: getDesktopReleasePlatformTitle(platform),
+            value: platform,
+          })),
+          { title: "Android · Próximamente", value: "android" },
+        ],
         layout: "radio",
       },
       validation: (Rule) =>
         Rule.custom((value) =>
-          value === undefined || isDesktopReleasePlatform(value)
+          value === undefined || value === "android" || isDesktopReleasePlatform(value)
             ? true
             : "Selecciona un sistema operativo válido.",
         ),
@@ -73,6 +86,7 @@ export default defineType({
       title: "Download architecture",
       type: "string",
       initialValue: "x64",
+      hidden: ({ parent }) => parent?.downloadPlatform === "android",
       options: {
         list: DESKTOP_RELEASE_ARCHITECTURES.map((architecture) => ({
           title: getDesktopReleaseArchitectureTitle(architecture),
@@ -85,7 +99,7 @@ export default defineType({
           const parent = context.parent as
             | { downloadPlatform?: unknown }
             | undefined;
-          if (value === undefined) return true;
+          if (parent?.downloadPlatform === "android" || value === undefined) return true;
 
           const platform = isDesktopReleasePlatform(parent?.downloadPlatform)
             ? parent.downloadPlatform
@@ -102,7 +116,13 @@ export default defineType({
       name: "buttonTitle",
       title: "Button text",
       type: "string",
-      validation: (Rule) => Rule.required(),
+      hidden: ({ parent }) => parent?.downloadPlatform === "android",
+      validation: (Rule) => Rule.custom((value, context) => {
+        const parent = context.parent as { downloadPlatform?: unknown } | undefined;
+        return parent?.downloadPlatform === "android" || value?.trim()
+          ? true
+          : "El texto del botón es obligatorio.";
+      }),
     }),
     defineField({
       name: "buttonVariant",
@@ -117,7 +137,7 @@ export default defineType({
       architecture: "downloadArchitecture",
     },
     prepare({ title, platform, architecture }) {
-      const target =
+      const target = platform === "android" ? "Android · Próximamente" :
         isDesktopReleasePlatform(platform) &&
         isDesktopReleaseArchitecture(architecture) &&
         isValidDesktopReleaseTarget({ platform, architecture })

@@ -8,6 +8,8 @@ import {
 import { describe, expect, it } from "vitest";
 
 import SectionHeader from "@/components/ui/section-header";
+import { getDictionary } from "@/i18n/dictionaries";
+import { installationHeader, releaseFixture } from "@/tests/fixtures/downloads";
 
 function renderDescription(description?: string) {
   return renderToStaticMarkup(
@@ -105,5 +107,69 @@ describe("SectionHeader descriptions", () => {
 
     expect(getParagraphs(html)).toEqual([]);
     expect(html).not.toContain("space-y-4");
+  });
+});
+
+describe("SectionHeader optional links", () => {
+  it.each(["es", "en"] as const)("localizes %s links and preserves the anchor and layout", (locale) => {
+    const html = renderToStaticMarkup(createElement(SectionHeader, { ...installationHeader, locale }));
+    expect(html).toContain(`href="/${locale}/downloads"`);
+    expect(html).toContain('id="requisitos"');
+    expect(html).toContain("scroll-mt-20");
+    expect(html).toContain("pt-16 xl:pt-20 pb-16 xl:pb-20");
+    expect(html).toContain("mt-10 flex flex-wrap gap-4");
+    expect(html).toContain('<div class="mt-10 flex flex-wrap gap-4">');
+    expect(html.indexOf("Ver descargas")).toBeGreaterThan(html.lastIndexOf("</p>"));
+  });
+
+  it("retains centered/narrow layout, button variants and external link attributes", () => {
+    const html = renderToStaticMarkup(createElement(SectionHeader, {
+      ...installationHeader, stackAlign: "center", sectionWidth: "narrow",
+      links: [{ title: "Externo", href: "https://example.test/downloads", target: true, buttonVariant: "outline" }],
+    }));
+    expect(html).toContain("text-center max-w-[48rem] mx-auto");
+    expect(html).toContain('<div class="mt-10 flex flex-wrap gap-4 justify-center">');
+    expect(html).toContain("border-input");
+    expect(html).toContain('href="https://example.test/downloads"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
+  });
+
+  it.each([undefined, [], [{ title: "Incompleto" }]])("adds no button spacing for missing links: %j", (links) => {
+    const html = renderToStaticMarkup(createElement(SectionHeader, { ...installationHeader, links }));
+    expect(html).not.toContain("mt-10");
+    expect(html).not.toContain("<a ");
+  });
+
+  it.each([undefined, "", " \n ", vercelStegaCombine(" ", editMetadata, false)])("omits an empty heading: %j", (title) => {
+    const html = renderToStaticMarkup(createElement(SectionHeader, { ...installationHeader, title }));
+    expect(html).not.toContain("<h2");
+    expect(html).toContain("Ver descargas");
+  });
+
+  it("cleans preview annotations before localizing a URL", () => {
+    const html = renderToStaticMarkup(createElement(SectionHeader, {
+      ...installationHeader,
+      links: [{ title: "Ver descargas", href: vercelStegaCombine("/es/downloads?source=product#android", editMetadata, false) }],
+      locale: "en",
+    }));
+    expect(html).toContain('href="/en/downloads?source=product#android"');
+  });
+
+  it("honors the shared desktop link contract and its availability", () => {
+    const props = {
+      ...installationHeader,
+      links: [{ title: "Descargar Windows", targetType: "desktopDownload" as const }],
+      downloadMessages: getDictionary("es").downloads,
+    };
+    const unavailable = renderToStaticMarkup(createElement(SectionHeader, props));
+    expect(unavailable).toContain("disabled");
+    expect(unavailable).toContain("Próximamente");
+    const release = releaseFixture({ platform: "win32", architecture: "x64" });
+    const available = renderToStaticMarkup(createElement(SectionHeader, {
+      ...props, desktopReleases: { "win32/x64": release },
+    }));
+    expect(available).toContain(`href="${release.installer.url}"`);
+    expect(available).not.toContain('disabled=""');
   });
 });

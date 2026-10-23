@@ -10,7 +10,6 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import type { ButtonProps } from "@/components/ui/button";
 import type { Locale } from "@/i18n/config";
-import { DEFAULT_DESKTOP_RELEASE_TARGET } from "@/lib/desktop-release";
 import {
   getDesktopReleaseFromLookup,
   getDesktopReleaseTargetFromContent,
@@ -41,7 +40,7 @@ export default function DesktopDownload({
   tagLine: string;
   title: string;
   body: any;
-  downloadPlatform: Sanity.Link["downloadPlatform"];
+  downloadPlatform: Sanity.DownloadPlatform;
   downloadArchitecture: Sanity.Link["downloadArchitecture"];
   buttonTitle: string;
   buttonVariant: ButtonProps["variant"];
@@ -52,10 +51,16 @@ export default function DesktopDownload({
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
-  const targetFields = { downloadPlatform, downloadArchitecture };
-  const target =
-    getDesktopReleaseTargetFromContent(targetFields) ||
-    DEFAULT_DESKTOP_RELEASE_TARGET;
+  const platform = stegaClean(downloadPlatform);
+  const targetFields = {
+    downloadPlatform: platform,
+    downloadArchitecture: stegaClean(downloadArchitecture),
+  };
+  // Android has no desktop release target; never fall back to a Windows installer.
+  const target = getDesktopReleaseTargetFromContent(targetFields);
+  const heading = stegaClean(title)?.trim()
+    ? title
+    : platform === "android" ? "Android" : undefined;
   const desktopRelease = getDesktopReleaseFromLookup(
     desktopReleases,
     targetFields,
@@ -77,7 +82,7 @@ export default function DesktopDownload({
               {tagLine}
             </span>
           )}
-          {title && <h2 className="mb-4">{title}</h2>}
+          {heading && <h2 className="mb-4">{heading}</h2>}
           {body && <PortableTextRenderer locale={locale} value={body} />}
         </div>
         <div

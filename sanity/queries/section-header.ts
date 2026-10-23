@@ -12,5 +12,6 @@ export const sectionHeaderQuery = groq`
     title,
     description,
     link,
+    links,
   },
 `;

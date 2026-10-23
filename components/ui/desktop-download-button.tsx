@@ -26,14 +26,12 @@ export default function DesktopDownloadButton({
   title?: string;
   variant?: ButtonProps["variant"];
   messages: DesktopDownloadMessages;
-  target?: DesktopReleaseTarget;
+  target?: DesktopReleaseTarget | null;
 }) {
   const installerUrl = release?.installer?.url;
-  const label =
-    stegaClean(title) || messages.defaultLabels[getDesktopReleaseTargetKey(target)];
   const buttonVariant = stegaClean(variant);
 
-  if (!installerUrl) {
+  if (!installerUrl || !target) {
     return (
       <Button disabled variant={buttonVariant}>
         <Download aria-hidden="true" />
@@ -41,6 +39,9 @@ export default function DesktopDownloadButton({
       </Button>
     );
   }
+
+  const label =
+    stegaClean(title)?.trim() || messages.defaultLabels[getDesktopReleaseTargetKey(target)];
 
   return (
     <Button asChild variant={buttonVariant}>
