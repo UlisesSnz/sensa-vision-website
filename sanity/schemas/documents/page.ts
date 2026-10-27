@@ -3,6 +3,7 @@ import { Files } from "lucide-react";
 import { orderRankField } from "@sanity/orderable-document-list";
 import { languageField } from "../fields/language";
 import { isUniqueWithinLanguage } from "../fields/localized-slug";
+import { validateUniqueSectionAnchors } from "@/lib/section-anchors";
 
 export default defineType({
   name: "page",
@@ -42,6 +43,7 @@ export default defineType({
       name: "blocks",
       type: "array",
       group: "content",
+      validation: (Rule) => Rule.custom(validateUniqueSectionAnchors),
       of: [
         { type: "hero-1" },
         { type: "section-header" },

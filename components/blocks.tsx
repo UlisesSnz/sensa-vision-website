@@ -21,6 +21,7 @@ import {
 } from "@/lib/desktop-release-content";
 import { getDesktopReleaseTargetKey } from "@/lib/desktop-release";
 import { fetchLatestDesktopRelease } from "@/sanity/lib/content";
+import { withUniqueSectionAnchors } from "@/lib/section-anchors";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
@@ -49,7 +50,8 @@ export default async function Blocks({
   locale: Locale;
   dictionary: UiDictionary;
 }) {
-  const desktopTargets = collectDesktopReleaseTargets(blocks);
+  const visibleBlocks = withUniqueSectionAnchors(blocks);
+  const desktopTargets = collectDesktopReleaseTargets(visibleBlocks);
   const releaseEntries = await Promise.all(
     desktopTargets.map(async (target) => [
       getDesktopReleaseTargetKey(target),
@@ -62,7 +64,7 @@ export default async function Blocks({
 
   return (
     <>
-      {blocks?.map((block: Sanity.Block) => {
+      {visibleBlocks.map((block: Sanity.Block) => {
         const Component = componentMap[block._type];
         if (!Component) {
           // Fallback for unknown block types to debug

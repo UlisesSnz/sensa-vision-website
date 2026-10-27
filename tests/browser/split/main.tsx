@@ -1,0 +1,117 @@
+import { createRoot } from "react-dom/client";
+import SplitRow from "@/components/ui/split/split-row";
+import SectionHeader from "@/components/ui/section-header";
+import {
+  designColumn,
+  designRow,
+  editorImage,
+  followingFeatures,
+  legacyColumn,
+} from "@/tests/fixtures/split-row";
+import type { SplitColumnContent } from "@/lib/split-content";
+import "@/app/globals.css";
+import "./styles.css";
+
+const params = new URLSearchParams(location.search);
+const locale = params.get("locale") === "en" ? "en" : "es";
+document.documentElement.lang = locale;
+document.documentElement.classList.toggle(
+  "dark",
+  params.get("theme") === "dark",
+);
+document.body.classList.add("font-sans");
+const widthCases = (["default", "narrow"] as const).flatMap((sectionWidth) =>
+  (["default", "narrow"] as const).flatMap((contentWidth) =>
+    (["left", "center"] as const).map((stackAlign) => ({
+      id: `${sectionWidth}-${contentWidth}-${stackAlign}`,
+      column: {
+        ...designColumn,
+        sectionWidth,
+        contentWidth,
+        stackAlign,
+        link: legacyColumn.link,
+      },
+    })),
+  ),
+);
+const cases: Array<{ id: string; column: SplitColumnContent }> = [
+  ...widthCases,
+  { id: "legacy-right", column: legacyColumn },
+  { id: "legacy-left", column: { ...legacyColumn, position: true } },
+  {
+    id: "horizontal-contain",
+    column: { ...legacyColumn, imageFit: "contain" },
+  },
+  {
+    id: "vertical-cover",
+    column: { ...legacyColumn, layout: "vertical", position: true },
+  },
+  {
+    id: "no-dimensions",
+    column: {
+      ...designColumn,
+      image: {
+        ...editorImage,
+        asset: { ...editorImage.asset, metadata: undefined },
+      } as Sanity.Image,
+    },
+  },
+  { id: "image-only", column: { image: editorImage, imageFit: "contain" } },
+  { id: "text-only", column: { title: "Solo texto", body: legacyColumn.body } },
+  { id: "link-only", column: { layout: "vertical", link: legacyColumn.link } },
+];
+
+createRoot(document.getElementById("root")!).render(
+  <>
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95">
+      <nav className="container flex h-16 items-center justify-between">
+        <span>SensaVision</span>
+        <a href="#diseno">Ir a diseño</a>
+      </nav>
+    </header>
+    <main>
+      <div className="container py-16">
+        <h1>Producto</h1>
+      </div>
+      <div data-testid="feature-sequence">
+        <SplitRow {...designRow} locale={locale} />
+        {followingFeatures.map((feature) => (
+          <SectionHeader
+            key={feature.title}
+            {...feature}
+            sectionWidth="narrow"
+            stackAlign="left"
+            colorVariant="background"
+            padding={{ top: true, bottom: true }}
+            locale={locale}
+          />
+        ))}
+      </div>
+      {cases.map(({ id, column }) => (
+        <section data-testid={id} key={id}>
+          <SplitRow
+            padding={{ top: true, bottom: true }}
+            splitColumns={[column]}
+            locale={locale}
+          />
+        </section>
+      ))}
+      <section data-testid="primary">
+        <SplitRow {...designRow} uid="primary" colorVariant="primary" />
+      </section>
+      <section data-testid="mixed">
+        <SplitRow
+          padding={{ top: true, bottom: true }}
+          splitColumns={[designColumn, legacyColumn]}
+        />
+      </section>
+      <section data-testid="empty">
+        <SplitRow
+          uid="empty"
+          padding={{ top: true, bottom: true }}
+          splitColumns={[{}, { title: "  " }, { link: { href: "/features" } }]}
+        />
+      </section>
+    </main>
+  </>,
+);

@@ -129,9 +129,9 @@ declare global {
         alt: string;
         asset: {
           _id: string;
-          metadata: {
-            dimensions: SanityImageDimensions;
-            lqip: string;
+          metadata?: {
+            dimensions?: SanityImageDimensions;
+            lqip?: string;
           };
         };
       }>;

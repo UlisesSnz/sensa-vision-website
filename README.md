@@ -27,6 +27,19 @@ both themes, single-line prices and billing periods, long and missing badges,
 localized links and billing controls. Screenshots and
 the JSON report are saved to `output/playwright/pricing/`.
 
+The Split Row browser regression uses the product screenshot, local fonts, and real
+components without connecting to Sanity:
+
+```bash
+npm run test:split
+```
+
+It checks five viewport widths (375, 768, 1024, 1280 and 1440 px), both themes,
+Spanish/English links, complete images, layout variants, spacing and section anchors.
+Screenshots and the report are saved to `output/playwright/split/`. See
+[`docs/split-row.md`](docs/split-row.md) for the editor controls, compatibility contract,
+and the later manual consolidation of the product draft.
+
 [Docs](https://schemaui.com/docs) | [Components](https://schemaui.com/components) | [Demo](https://schemaui-starter.vercel.app/)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fserge-0v%2Fnext-js-sanity-starter&env=NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_SITE_ENV,NEXT_PUBLIC_SANITY_API_VERSION,NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET,SANITY_API_READ_TOKEN,RESEND_API_KEY,RESEND_AUDIENCE_ID&demo-title=Next.js%20Sanity%20Starter&demo-description=Next.js%20Sanity%20Starter%20by%20Schema%20UI&demo-url=https%3A%2F%2Fschemaui-starter.vercel.app)

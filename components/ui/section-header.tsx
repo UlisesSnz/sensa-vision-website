@@ -12,6 +12,7 @@ import DesktopDownloadButton, {
 } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
+import { normalizeSectionAnchor } from "@/lib/section-anchors";
 import {
   getDesktopReleaseFromLookup,
   getDesktopReleaseTargetFromContent,
@@ -48,7 +49,7 @@ export default function SectionHeader({
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
-  const sectionId = uid ? stegaClean(uid).trim() : undefined;
+  const sectionId = normalizeSectionAnchor(uid);
   const visibleLinks = (links || []).filter((link) =>
     stegaClean(link.targetType) === "desktopDownload"
       ? Boolean(downloadMessages)

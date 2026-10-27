@@ -16,6 +16,7 @@
     "test:unit": "vitest run",
     "test:pricing": "node tests/integration/pricing-card.mjs",
     "test:downloads": "node tests/integration/downloads.mjs",
+    "test:split": "node tests/integration/split-row.mjs",
     "test:tables:browser": "vite --config tests/browser/tables/vite.config.mts",
     "check": "npm run lint && npm run typecheck && npm run test:unit && npm run build",
     "prei18n:backup": "node -e \"require('node:fs').mkdirSync('backups',{recursive:true})\"",

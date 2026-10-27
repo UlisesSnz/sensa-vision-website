@@ -1,43 +1,62 @@
 import SectionContainer, {
-  ISectionContainer,
-  ISectionPadding,
+  type ISectionContainer,
+  type ISectionPadding,
 } from "@/components/ui/section-container";
 import { stegaClean } from "next-sanity";
-import SplitColumn, { ISplitColumn } from "@/components/ui/split/split-column";
+import SplitColumn from "@/components/ui/split/split-column";
 import type { Locale } from "@/i18n/config";
+import {
+  getRenderableSplitColumns,
+  getSplitOptions,
+  type SplitColumnContent,
+} from "@/lib/split-content";
+import { normalizeSectionAnchor } from "@/lib/section-anchors";
+import { cn } from "@/lib/utils";
+
+export interface ISplitRow {
+  uid?: string | null;
+  padding?: ISectionPadding | null;
+  colorVariant?: ISectionContainer["color"] | null;
+  splitColumns?: (SplitColumnContent | null)[] | null;
+  locale?: Locale;
+}
 
 export default function SplitRow({
+  uid,
   padding,
   colorVariant,
   splitColumns,
   locale = "es",
-}: Partial<{
-  padding: ISectionPadding;
-  colorVariant: ISectionContainer["color"];
-  splitColumns: Array<Omit<ISplitColumn, "locale">>;
-  locale: Locale;
-}>) {
-  const color = stegaClean(colorVariant);
+}: ISplitRow) {
+  const columns = getRenderableSplitColumns(splitColumns);
+  if (!columns.length) return null;
+  const sectionId = normalizeSectionAnchor(uid);
+  const hasVertical = columns.some(
+    (column) => getSplitOptions(column).layout === "vertical",
+  );
 
   return (
-    <SectionContainer color={color} padding={padding}>
-      {splitColumns && splitColumns?.length > 0 && (
-        <div className="grid grid-col-1 gap-6 xl:gap-16">
-          {splitColumns?.map((column, index) => (
-            <SplitColumn
-              key={index}
-              colorVariant={colorVariant}
-              position={column.position}
-              tagLine={column.tagLine}
-              title={column.title}
-              body={column.body}
-              image={column.image}
-              link={column.link}
-              locale={locale}
-            />
-          ))}
-        </div>
-      )}
+    <SectionContainer
+      id={sectionId}
+      color={stegaClean(colorVariant) ?? undefined}
+      padding={padding}
+      className={sectionId ? "scroll-mt-20" : undefined}
+    >
+      <div
+        className={cn(
+          "grid grid-cols-1",
+          hasVertical ? "gap-16 xl:gap-20" : "gap-6 xl:gap-16",
+        )}
+      >
+        {columns.map((column, index) => (
+          <SplitColumn
+            {...column}
+            key={column._key || index}
+            colorVariant={colorVariant}
+            locale={locale}
+          />
+        ))}
+      </div>
     </SectionContainer>
   );
 }
