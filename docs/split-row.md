@@ -109,7 +109,8 @@ foco por teclado y navegación a `#diseno`, incluida la carga con fragmento.
 Las capturas y el informe JSON quedan en `output/playwright/split/`. La regresión
 de descargas verifica los consumidores existentes de Section Header. Los tests
 unitarios incluyen el esquema real, consultas GROQ offline y el renderer Blocks.
-El build completo sí puede leer Sanity y descargar las fuentes configuradas por Next.
+El build completo sí puede leer Sanity. Las fuentes se incluyen localmente en el
+repositorio y en el paquete `geist`, sin descargarlas de Google durante el build.
 
 En el sandbox de Windows puede ser necesario apuntar `TEMP`/`TMP` a una carpeta
 escribible dentro de `output/playwright/`, indicar `PLAYWRIGHT_BROWSERS_PATH` para el

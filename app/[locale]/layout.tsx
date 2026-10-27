@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { GeistPixelSquare } from "geist/font/pixel";
 
@@ -17,9 +17,11 @@ import "../globals.css";
 
 const isProduction = process.env.NEXT_PUBLIC_SITE_ENV === "production";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+const fontSans = localFont({
+  src: "../fonts/inter-latin.woff2",
+  weight: "400 800",
+  style: "normal",
+  display: "swap",
   variable: "--font-sans",
 });
 

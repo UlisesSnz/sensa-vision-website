@@ -14,6 +14,11 @@ npm ci
 npm run check
 ```
 
+Inter is bundled in `app/fonts/` and loaded with `next/font/local`; Geist Pixel
+comes from the installed `geist` package. Builds do not fetch Google Fonts.
+Keep the Inter license with the font when updating it. See
+[`app/fonts/README.md`](app/fonts/README.md) for provenance and supported characters.
+
 The pricing-card browser regression uses isolated fixtures and does not connect
 to Sanity or require environment variables:
 
