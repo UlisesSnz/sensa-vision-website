@@ -12,7 +12,7 @@ export default function OptionalLinkInput(props: ObjectInputProps) {
         props.renderDefault(props)
       ) : (
         <Text muted size={1}>
-          La tarjeta se mostrará sin enlace.
+          El contenido se mostrará sin enlace.
         </Text>
       )}
       <Flex>

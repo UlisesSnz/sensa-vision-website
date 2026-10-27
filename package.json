@@ -17,6 +17,7 @@
     "test:pricing": "node tests/integration/pricing-card.mjs",
     "test:downloads": "node tests/integration/downloads.mjs",
     "test:split": "node tests/integration/split-row.mjs",
+    "test:split:studio": "node tests/integration/split-link-editor.mjs",
     "test:tables:browser": "vite --config tests/browser/tables/vite.config.mts",
     "check": "npm run lint && npm run typecheck && npm run test:unit && npm run build",
     "prei18n:backup": "node -e \"require('node:fs').mkdirSync('backups',{recursive:true})\"",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@portabletext/sanity-bridge": "4.1.2",
     "@sanity/blueprints": "0.28.0",
+    "@sanity/mutator": "6.18.0",
     "@types/node": "^22.10.2",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",

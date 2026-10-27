@@ -1,10 +1,13 @@
 import { defineField, defineType } from "sanity";
+import OptionalLinkInput from "@/sanity/components/optional-link-input";
 import { SECTION_WIDTH, STACK_ALIGN } from "../shared/layout-variants";
 
 export default defineType({
   name: "split-column",
   type: "object",
   title: "Split Column",
+  // Override Link's nested defaults so a new feature starts without a link.
+  initialValue: { link: undefined },
   fields: [
     defineField({
       name: "layout",
@@ -118,8 +121,9 @@ export default defineType({
     defineField({
       name: "link",
       type: "link",
+      components: { input: OptionalLinkInput },
       description:
-        "Link to a page or external URL. Leave empty to hide the link.",
+        "Opcional. Usa Agregar enlace para configurar un botón y Quitar enlace para retirarlo sin cambiar el resto de la característica.",
     }),
   ],
   preview: {

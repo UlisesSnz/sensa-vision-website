@@ -36,7 +36,16 @@ diferida de Next Image. **Recortar** conserva las alturas y `object-cover` anter
 H2 es una elección explícita para una sección principal y usa la tipografía de
 Section Header. H3 sigue siendo el valor predeterminado, incluso en vertical.
 La descripción conserva Portable Text, sus listas, formato y enlaces localizados.
-El enlace de la característica sigue siendo opcional y necesita título y URL.
+El enlace de la característica es opcional. Las columnas nuevas empiezan sin un
+objeto Link: **Agregar enlace** abre sus campos y **Quitar enlace** elimina solo
+el enlace, conservando título, descripción, imagen y ancla. Un enlace URL activo
+necesita título y destino válidos; el destino Desktop conserva sus reglas existentes.
+
+Si una columna anterior contiene un Link vacío que marca `Title: Required` o
+`La URL es obligatoria.`, usar **Quitar enlace**. Vaciar únicamente el texto y la URL
+deja un enlace incompleto y sigue produciendo errores. Esta corrección del
+[issue #12](https://github.com/UlisesSnz/sensa-website/issues/12) no limpia ni migra
+documentos automáticamente. Los controles respetan el modo de solo lectura.
 
 La separación texto/imagen vertical es 24 px, o 32 px desde `lg`. Las filas con
 alguna unidad vertical visible separan sus unidades por 64 px, u 80 px desde `xl`.
@@ -91,6 +100,7 @@ La referencia inspeccionada es el borrador español de Producto
 ```bash
 npm run check
 npm run test:split
+npm run test:split:studio
 npm run test:downloads
 ```
 
@@ -112,6 +122,20 @@ unitarios incluyen el esquema real, consultas GROQ offline y el renderer Blocks.
 El build completo sí puede leer Sanity. Las fuentes se incluyen localmente en el
 repositorio y en el paquete `geist`, sin descargarlas de Google durante el build.
 
+`test:split:studio` monta `FormBuilder`, los campos del esquema y el input opcional
+reales en Vite/Chromium. Comprueba agregar, editar, quitar y reabrir enlaces, rechaza
+enlaces incompletos y URLs inválidas, permite Desktop sin URL y respeta solo lectura.
+Incluye objetos vacíos antiguos y verifica que el resto del documento no cambie.
+El documento se persiste exclusivamente en `localStorage`; los permisos y las
+fuentes de Studio tienen respuestas locales. Se bloquea cualquier otra petición
+de API o externa, sin cargar la configuración ni las credenciales de producción.
+Las capturas y resultados quedan en `output/playwright/split-editor/`.
+
+Los tests unitarios complementan el formulario con la inicialización y validación
+reales de Sanity, el borrado en la ruta anidada de Split Row y controles de regresión
+para Grid Card, CTA y Desktop. Este arnés comprueba el comportamiento del editor y
+su validación, no una publicación en el dataset ni la persistencia remota de Studio.
+
 En el sandbox de Windows puede ser necesario apuntar `TEMP`/`TMP` a una carpeta
 escribible dentro de `output/playwright/`, indicar `PLAYWRIGHT_BROWSERS_PATH` para el
 Chromium instalado y permitir acceso a localhost para los arneses. Son ajustes del
@@ -131,3 +155,19 @@ proceso de pruebas, no cambios de configuración del sitio.
 
 La comprobación visual corresponde a fixtures locales con el contenido de referencia;
 no implica que el borrador de Sanity se haya consolidado ni que exista un despliegue nuevo.
+
+### Verificación del issue #12 realizada el 27 de octubre de 2026
+
+- `npm run check`: aprobado; TypeScript, 319 pruebas en 24 archivos (15 nuevas)
+  y build de producción con 28 páginas. ESLint terminó sin errores.
+- `npm run test:split:studio`: 13 escenarios aprobados, sin errores de navegador
+  ni peticiones imprevistas. Se inspeccionaron las capturas del enlace completo
+  y del enlace vacío antiguo después de retirarlo.
+- `npm run test:split`: 20 escenarios aprobados, sin errores de navegador ni
+  solicitudes externas.
+- `git diff --check`: aprobado.
+
+El informe del editor está en `output/playwright/split-editor/results.json` y el
+resultado general en `check-result.json`, junto al registro `check.log`. El borrador
+de Sanity no se modificó: agregar, quitar y reabrir se verificó con almacenamiento
+local y la validación real de Studio, sin publicar contenido.

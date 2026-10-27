@@ -45,6 +45,16 @@ Screenshots and the report are saved to `output/playwright/split/`. See
 [`docs/split-row.md`](docs/split-row.md) for the editor controls, compatibility contract,
 and the later manual consolidation of the product draft.
 
+To test the optional Split Column link in Sanity's real form components:
+
+```bash
+npm run test:split:studio
+```
+
+This isolated editor checks adding, editing, removing and reopening links, including
+legacy empty values and read-only mode. It uses local browser storage and blocks
+CMS access. Screenshots and results are saved to `output/playwright/split-editor/`.
+
 [Docs](https://schemaui.com/docs) | [Components](https://schemaui.com/components) | [Demo](https://schemaui-starter.vercel.app/)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fserge-0v%2Fnext-js-sanity-starter&env=NEXT_PUBLIC_SITE_URL,NEXT_PUBLIC_SITE_ENV,NEXT_PUBLIC_SANITY_API_VERSION,NEXT_PUBLIC_SANITY_PROJECT_ID,NEXT_PUBLIC_SANITY_DATASET,SANITY_API_READ_TOKEN,RESEND_API_KEY,RESEND_AUDIENCE_ID&demo-title=Next.js%20Sanity%20Starter&demo-description=Next.js%20Sanity%20Starter%20by%20Schema%20UI&demo-url=https%3A%2F%2Fschemaui-starter.vercel.app)
