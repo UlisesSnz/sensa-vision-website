@@ -6,7 +6,7 @@ export const sectionAnchorField = defineField({
   type: "string",
   title: "Anchor ID",
   description:
-    "Ancla opcional de todo el bloque, incluso si contiene varias unidades. Usa un valor único en la página, como diseno, sin # ni espacios.",
+    "Optional. A unique name for linking directly to this section, such as design.",
   validation: (Rule) =>
     Rule.custom((value) =>
       !value || SECTION_ANCHOR_PATTERN.test(value)

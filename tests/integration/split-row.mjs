@@ -236,13 +236,56 @@ try {
                 : item.image.right <= item.heading.left,
             );
         }
-        for (const id of ["horizontal-contain", "image-only"]) {
+        for (const id of [
+          "horizontal-contain",
+          "image-only",
+          "horizontal-design-left",
+          "horizontal-design-right",
+          "horizontal-short-left",
+          "horizontal-short-right",
+          "horizontal-long-left",
+          "horizontal-long-right",
+        ]) {
           const item = metrics.cases[id];
           near(
             item.image.height,
             (item.image.width * 1654) / 3190,
             "Contain variant ratio",
           );
+          if (id === "horizontal-contain" && width >= 1024) {
+            near(
+              item.text.top + item.text.height / 2,
+              item.image.top + item.image.height / 2,
+              "Horizontal center includes the label and link",
+            );
+          }
+        }
+        for (const length of ["design", "short", "long"]) {
+          for (const side of ["left", "right"]) {
+            const item = metrics.cases[`horizontal-${length}-${side}`];
+            if (width >= 1024) {
+              near(
+                item.text.top + item.text.height / 2,
+                item.image.top + item.image.height / 2,
+                "Horizontal text and full image share the same vertical center",
+              );
+              if (length === "short")
+                assert(item.image.height > item.text.height);
+              if (length === "long")
+                assert(item.text.height > item.image.height);
+              assert(
+                side === "left"
+                  ? item.heading.right <= item.image.left
+                  : item.image.right <= item.heading.left,
+              );
+            } else {
+              near(
+                item.heading.top - item.image.bottom,
+                24,
+                "Horizontal mobile spacing",
+              );
+            }
+          }
         }
         near(
           metrics.cases["image-only"].image.width,
@@ -286,6 +329,22 @@ try {
             await page
               .getByTestId("legacy-left")
               .screenshot({ path: `${output}/legacy-${width}-${theme}.png` });
+          if (width === 375 || width === 1280 || width === 1440) {
+            for (const side of ["left", "right"]) {
+              await page.getByTestId(`horizontal-design-${side}`).screenshot({
+                path: `${output}/horizontal-design-${side}-${width}-${theme}.png`,
+              });
+              if (width === 1280) {
+                for (const length of ["short", "long"]) {
+                  await page
+                    .getByTestId(`horizontal-${length}-${side}`)
+                    .screenshot({
+                      path: `${output}/horizontal-${length}-${side}-${width}-${theme}.png`,
+                    });
+                }
+              }
+            }
+          }
         }
         await page.goto(`${address}#diseno`);
         await page.locator("#diseno").waitFor();

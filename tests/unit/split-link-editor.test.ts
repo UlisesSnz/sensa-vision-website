@@ -48,10 +48,12 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe("Split Column optional-link lifecycle", () => {
   it.each(["split-column", "splitLinkEditor", "grid-card"])(
-    "initializes %s without an empty link",
+    "initializes %s without requiring a link",
     async (type) => {
       const value = await initial(type);
-      expect(value?.link).toBeUndefined();
+      const link = value?.link as { title?: string; href?: string } | undefined;
+      expect(link?.title).toBeUndefined();
+      expect(link?.href).toBeUndefined();
       const document = reopen(splitLinkEditorDocument(value));
       expect(await errors(document)).toEqual([]);
       expect(getSplitContent(document as SplitColumnContent).hasLink).toBe(
@@ -60,7 +62,7 @@ describe("Split Column optional-link lifecycle", () => {
     },
   );
 
-  it("preserves column defaults while suppressing only Link defaults", async () => {
+  it("preserves column defaults and the existing link shape", async () => {
     expect(await initial("split-column")).toMatchObject({
       layout: "horizontal",
       position: false,
@@ -69,6 +71,7 @@ describe("Split Column optional-link lifecycle", () => {
       sectionWidth: "default",
       contentWidth: "narrow",
       stackAlign: "left",
+      link: { _type: "link", targetType: "url", buttonVariant: "default" },
     });
   });
 
@@ -105,23 +108,35 @@ describe("Split Column optional-link lifecycle", () => {
   );
 
   it.each([
+    undefined,
+    null,
+    {},
     initializedEmptyLink,
-    { ...initializedEmptyLink, title: "Ver más", href: "/features" },
-  ])(
-    "removes an existing link without losing section content: %j",
-    async (link) => {
-      const withoutLink = splitLinkEditorDocument();
-      const document = { ...withoutLink, link };
-      const cleared = reopen(applyEditorPatches(document, [unset(["link"])]));
-      expect(cleared).toEqual(withoutLink);
-      expect(await errors(cleared)).toEqual([]);
-      expect(getSplitContent(cleared as SplitColumnContent).hasLink).toBe(
-        false,
-      );
-    },
-  );
+    { ...initializedEmptyLink, title: "", href: "" },
+  ])("accepts an empty link without any action: %j", async (link) => {
+    const document = reopen({ ...splitLinkEditorDocument(), link });
+    expect(await errors(document)).toEqual([]);
+    expect(getSplitContent(document as SplitColumnContent).hasLink).toBe(false);
+  });
 
-  it("clears a legacy empty link at the actual nested row path", async () => {
+  it("hides the link after clearing its fields without losing content", async () => {
+    const withoutLink = splitLinkEditorDocument();
+    const document = {
+      ...withoutLink,
+      link: { ...initializedEmptyLink, title: "Ver más", href: "/features" },
+    };
+    const cleared = reopen(
+      applyEditorPatches(document, [
+        unset(["link", "title"]),
+        unset(["link", "href"]),
+      ]),
+    );
+    expect(cleared).toEqual({ ...withoutLink, link: initializedEmptyLink });
+    expect(await errors(cleared)).toEqual([]);
+    expect(getSplitContent(cleared as SplitColumnContent).hasLink).toBe(false);
+  });
+
+  it("accepts legacy empty links at the actual nested row path without changing them", async () => {
     const { uid, ...column } = splitLinkEditorDocument();
     const document: SanityDocument = {
       ...column,
@@ -140,10 +155,7 @@ describe("Split Column optional-link lifecycle", () => {
       },
     };
     const path = ["row", "splitColumns", { _key: "feature" }, "link"];
-    expect((await errors(document)).map(({ path }) => path)).toEqual([
-      [...path, "title"],
-      [...path, "href"],
-    ]);
+    expect(await errors(document)).toEqual([]);
     const cleared = reopen(applyEditorPatches(document, [unset(path)]));
     expect(await errors(cleared)).toEqual([]);
     expect(cleared.row).toMatchObject({
@@ -180,11 +192,14 @@ describe("Split Column optional-link lifecycle", () => {
     expect(
       (
         await errors({
-          ...splitLinkEditorDocument(),
-          link: { ...desktop, title: undefined },
+          ...document,
+          cta: {
+            _type: "cta-1",
+            links: [{ ...desktop, _key: "cta-link", title: undefined }],
+          },
         })
       ).map(({ path }) => path),
-    ).toContainEqual(["link", "title"]);
+    ).toContainEqual(["cta", "links", { _key: "cta-link" }, "title"]);
     expect(
       (
         await errors({

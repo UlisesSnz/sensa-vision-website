@@ -99,19 +99,31 @@ export default function SplitColumn(props: ISplitColumn) {
         "min-w-0",
         vertical
           ? "w-full"
-          : "px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center",
+          : twoColumns && natural
+            ? "px-4 py-6 lg:py-0 lg:px-16 xl:px-20"
+            : "px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center",
         vertical && options.contentWidth === "narrow"
           ? "max-w-[48rem] mx-auto"
           : undefined,
         vertical && options.stackAlign === "center" ? "text-center" : undefined,
       )}
     >
-      <div className={vertical ? "space-y-4" : undefined}>
+      <div
+        className={cn(
+          vertical ? "space-y-4" : undefined,
+          twoColumns && natural
+            ? "lg:flex lg:flex-col lg:items-start"
+            : undefined,
+        )}
+      >
         {hasTitle || hasTagLine || body.length ? (
           <div
             className={cn(
               color === "primary" ? "text-background" : undefined,
               vertical ? "space-y-4" : undefined,
+              twoColumns && natural && !hasLink
+                ? "lg:[&>*:last-child]:mb-0"
+                : undefined,
             )}
           >
             {hasTagLine ? (
@@ -179,6 +191,7 @@ export default function SplitColumn(props: ISplitColumn) {
       className={cn(
         "grid grid-cols-1 min-w-0",
         twoColumns ? "lg:grid-cols-2" : undefined,
+        twoColumns && natural ? "lg:items-center" : undefined,
         vertical ? "w-full gap-6 lg:gap-8" : undefined,
         vertical && options.sectionWidth === "narrow"
           ? "max-w-[48rem] mx-auto"

@@ -51,7 +51,7 @@ To test the optional Split Column link in Sanity's real form components:
 npm run test:split:studio
 ```
 
-This isolated editor checks adding, editing, removing and reopening links, including
+This isolated editor checks filling, editing, clearing and reopening links, including
 legacy empty values and read-only mode. It uses local browser storage and blocks
 CMS access. Screenshots and results are saved to `output/playwright/split-editor/`.
 

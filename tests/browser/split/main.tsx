@@ -7,6 +7,7 @@ import {
   editorImage,
   followingFeatures,
   legacyColumn,
+  splitParagraph,
 } from "@/tests/fixtures/split-row";
 import type { SplitColumnContent } from "@/lib/split-content";
 import "@/app/globals.css";
@@ -42,6 +43,37 @@ const cases: Array<{ id: string; column: SplitColumnContent }> = [
     id: "horizontal-contain",
     column: { ...legacyColumn, imageFit: "contain" },
   },
+  ...[false, true].flatMap((position) => [
+    {
+      id: `horizontal-design-${position ? "left" : "right"}`,
+      column: { ...designColumn, layout: "horizontal" as const, position },
+    },
+    {
+      id: `horizontal-short-${position ? "left" : "right"}`,
+      column: {
+        ...designColumn,
+        layout: "horizontal" as const,
+        position,
+        title: "Diseños",
+        body: undefined,
+      },
+    },
+    {
+      id: `horizontal-long-${position ? "left" : "right"}`,
+      column: {
+        ...designColumn,
+        layout: "horizontal" as const,
+        position,
+        body: [
+          ...(Array.isArray(designColumn.body) ? designColumn.body : []),
+          splitParagraph(
+            "Actualiza tus diseños cuando lo necesites y conserva una presentación consistente en todas las pantallas de tu negocio.",
+            "additional",
+          ),
+        ],
+      },
+    },
+  ]),
   {
     id: "vertical-cover",
     column: { ...legacyColumn, layout: "vertical", position: true },

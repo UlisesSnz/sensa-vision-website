@@ -7,26 +7,28 @@ export default defineType({
   type: "object",
   title: "Split Row",
   description:
-    "Agrupa características con texto e imagen. Cada unidad puede ser horizontal o vertical; el ancla pertenece al bloque completo.",
+    "Present features with text and images, side by side or stacked.",
   icon: LayoutList,
   fields: [
     sectionAnchorField,
     {
       name: "padding",
       type: "section-padding",
+      title: "Spacing",
+      description: "Add space above or below this section.",
     },
     {
       name: "colorVariant",
       type: "color-variant",
-      title: "Color Variant",
-      description: "Select a background color variant",
+      title: "Background",
+      description: "Choose a background for this section.",
     },
     {
       name: "splitColumns",
       type: "array",
-      title: "Características",
+      title: "Features",
       description:
-        "Para enlazar una característica de forma independiente, colócala en otro Split Row con su propia ancla.",
+        "Add features in the order they should appear.",
       of: [{ type: "split-column" }],
     },
   ],
@@ -37,8 +39,8 @@ export default defineType({
       return {
         title: "Split Row",
         subtitle: first
-          ? `${first.layout === "vertical" ? "Vertical" : "Horizontal"} · ${first.title || "Sin título"}${columns.length > 1 ? ` (+${columns.length - 1})` : ""}`
-          : "Sin características",
+          ? `${first.layout === "vertical" ? "Vertical" : "Horizontal"} · ${first.title || "Untitled"}${columns.length > 1 ? ` (+${columns.length - 1})` : ""}`
+          : "No features",
       };
     },
   },

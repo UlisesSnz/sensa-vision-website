@@ -188,6 +188,22 @@ describe("Split rendering and compatibility", () => {
     ).toBe("");
   });
 
+  it.each(["horizontal", "vertical"] as const)(
+    "keeps an empty optional link invisible in %s layout",
+    (layout) => {
+      const column = { ...designColumn, layout };
+      const withoutLink = renderColumn(column);
+      for (const link of [
+        { targetType: "url" as const, buttonVariant: "default" as const },
+        { title: "", href: "" },
+        { title: " ", href: " " },
+      ]) {
+        expect(renderColumn({ ...column, link })).toBe(withoutLink);
+      }
+      expect(withoutLink).not.toContain("<a ");
+    },
+  );
+
   it("preserves lists, formatting and inline links in Portable Text", () => {
     const paragraph = splitParagraph("Texto con formato");
     const body = [

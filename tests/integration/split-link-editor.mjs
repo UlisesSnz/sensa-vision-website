@@ -76,7 +76,7 @@ try {
   const visit = async (query = "") => {
     await page.goto(`http://127.0.0.1:4177/${query}`, { timeout: 90000 });
     await page
-      .getByRole("heading", { name: "Split Column · formulario local" })
+      .getByRole("heading", { name: "Split Column · local form" })
       .waitFor({ timeout: 90000 });
   };
   const record = async (name) => {
@@ -86,29 +86,38 @@ try {
       fullPage: true,
     });
   };
-  const add = () =>
-    page.getByRole("button", { name: "Agregar enlace", exact: true });
-  const remove = () =>
-    page.getByRole("button", { name: "Quitar enlace", exact: true });
-  const title = () => page.getByRole("textbox", { name: "Title", exact: true });
-  const href = () => page.getByRole("textbox", { name: "href", exact: true });
+  const title = () => page.getByRole("textbox", { name: "Text", exact: true });
+  const href = () => page.getByRole("textbox", { name: "URL", exact: true });
+  const content = (value) =>
+    Object.fromEntries(Object.entries(value).filter(([key]) => key !== "link"));
+  const clearLink = async () => {
+    await title().fill("");
+    if (await href().count()) await href().fill("");
+    await errors([]);
+  };
 
   await visit();
   await errors([]);
   const baseline = await documentValue();
-  assert.equal(Object.hasOwn(baseline, "link"), false);
-  assert(await add().isVisible());
+  assert(!baseline.link?.title && !baseline.link?.href);
+  assert(await title().isVisible());
+  assert(await href().isVisible());
+  assert.equal(
+    await page
+      .getByRole("button", {
+        name: /Agregar enlace|Quitar enlace|Add link|Remove link/i,
+      })
+      .count(),
+    0,
+  );
   await record("new-without-link");
   await page.reload();
   await errors([]);
   assert.deepEqual(await documentValue(), baseline);
   await record("reopened-without-link");
 
-  await add().focus();
-  await page.keyboard.press("Enter");
-  await errors(["link.title", "link.href"]);
-  assert(await remove().isVisible());
-  await title().fill("Ver diseños");
+  await title().focus();
+  await page.keyboard.type("Ver diseños");
   await errors(["link.href"]);
   await record("title-only-invalid");
   await title().fill("");
@@ -134,17 +143,15 @@ try {
   assert.equal(await title().inputValue(), "Explorar diseños");
   assert.equal(await href().inputValue(), "https://example.com/disenos");
   await record("edited-and-reopened");
-  await remove().focus();
-  await page.keyboard.press("Enter");
-  await errors([]);
-  assert.deepEqual(await documentValue(), baseline);
+  await clearLink();
+  assert.deepEqual(content(await documentValue()), content(baseline));
   await page.reload();
   await errors([]);
-  assert.deepEqual(await documentValue(), baseline);
-  assert(await add().isVisible());
-  await record("removed-and-reopened");
+  assert.deepEqual(content(await documentValue()), content(baseline));
+  assert.equal(await title().inputValue(), "");
+  assert.equal(await href().inputValue(), "");
+  await record("cleared-and-reopened");
 
-  await add().click();
   await title().fill("Descargar");
   await page
     .getByRole("radio", { name: "SensaVision Desktop", exact: true })
@@ -152,39 +159,40 @@ try {
   await errors([]);
   assert.equal(await href().count(), 0);
   await record("desktop-without-url");
-  await remove().click();
-  await errors([]);
-  assert.deepEqual(await documentValue(), baseline);
+  await clearLink();
+  assert.deepEqual(content(await documentValue()), content(baseline));
 
   await visit("?fixture=legacy");
-  await errors(["link.title", "link.href"]);
+  await errors([]);
   const { link: legacyLink, ...legacyContent } = await documentValue();
   assert.equal(legacyLink.title, undefined);
-  await remove().click();
-  await errors([]);
-  assert.deepEqual(await documentValue(), legacyContent);
+  assert.deepEqual(content(await documentValue()), legacyContent);
   await page.reload();
   await errors([]);
-  assert.deepEqual(await documentValue(), legacyContent);
-  await record("legacy-empty-link-cleared");
+  assert.deepEqual(content(await documentValue()), legacyContent);
+  assert.deepEqual((await documentValue()).link, legacyLink);
+  await record("legacy-empty-link-valid");
 
   await visit("?fixture=complete");
   await errors([]);
   const { link: existingLink, ...existingContent } = await documentValue();
   assert.equal(existingLink.title, "Ver más");
-  await remove().click();
-  await errors([]);
-  assert.deepEqual(await documentValue(), existingContent);
-  await record("existing-link-cleared");
+  await clearLink();
+  assert.deepEqual(content(await documentValue()), existingContent);
+  await record("existing-link-fields-cleared");
 
   for (const fixture of ["new", "complete"]) {
     await visit(`?fixture=${fixture}&readonly`);
     await errors([]);
     const value = await documentValue();
-    assert(await (fixture === "new" ? add() : remove()).isDisabled());
+    assert.equal(await title().isEditable(), false);
+    assert.equal(await href().isEditable(), false);
     assert.deepEqual(await documentValue(), value);
     await record(`readonly-${fixture}`);
   }
+  await visit("?fixture=legacy&controls");
+  await errors([]);
+  await record("column-controls");
   assert.deepEqual(report.errors, []);
   assert.deepEqual(report.blockedRequests, []);
   console.log(

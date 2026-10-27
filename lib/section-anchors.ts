@@ -60,7 +60,7 @@ export function validateUniqueSectionAnchors(value: unknown) {
   );
   return duplicates.length
     ? {
-        message: `Cada ancla debe ser única en la página. Repetidas: ${duplicates.map(([anchor]) => anchor).join(", ")}.`,
+        message: `Each section needs a unique anchor. Already used: ${duplicates.map(([anchor]) => anchor).join(", ")}.`,
         paths: duplicates.flatMap(([, paths]) => paths),
       }
     : true;

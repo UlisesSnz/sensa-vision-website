@@ -70,7 +70,10 @@ const workspace = await createWorkspaceFromConfig({
     components: {
       // Keep the real field values, but avoid mounting image/Portable Text services.
       field: (props) =>
-        props.path.length === 1 && props.name !== "link"
+        props.path.length === 1 &&
+        (new URLSearchParams(location.search).has("controls")
+          ? ["image", "body"].includes(props.name)
+          : props.name !== "link")
           ? null
           : props.renderDefault(props),
     },
@@ -139,11 +142,9 @@ function Editor() {
   const errors = validation.filter(({ level }) => level === "error");
   return (
     <main>
-      <h1>Split Column · formulario local</h1>
-      <p>
-        Campos reales de Studio. Los cambios se guardan solo en este navegador.
-      </p>
-      <section aria-label="Editor de enlace">
+      <h1>Split Column · local form</h1>
+      <p>Real Studio fields. Changes are saved only in this browser.</p>
+      <section aria-label="Link editor">
         {formState && (
           <FormBuilder
             {...formState}
@@ -176,14 +177,14 @@ function Editor() {
         data-ready={validated === document}
       >
         {validated !== document
-          ? "Validando…"
-          : `${errors.length} errores de validación`}
+          ? "Validating…"
+          : `${errors.length} validation errors`}
       </p>
       <pre data-testid="errors">
         {JSON.stringify(errors.map(({ path, message }) => ({ path, message })))}
       </pre>
       <details>
-        <summary>Documento local</summary>
+        <summary>Local document</summary>
         <pre data-testid="document">{JSON.stringify(document, null, 2)}</pre>
       </details>
     </main>

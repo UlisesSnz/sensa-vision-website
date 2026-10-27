@@ -1,20 +1,17 @@
 import { defineField, defineType } from "sanity";
-import OptionalLinkInput from "@/sanity/components/optional-link-input";
 import { SECTION_WIDTH, STACK_ALIGN } from "../shared/layout-variants";
+import { splitLinkField } from "./split-link";
 
 export default defineType({
   name: "split-column",
   type: "object",
   title: "Split Column",
-  // Override Link's nested defaults so a new feature starts without a link.
-  initialValue: { link: undefined },
   fields: [
     defineField({
       name: "layout",
-      title: "Disposición",
+      title: "Layout",
       type: "string",
-      description:
-        "Horizontal conserva las dos columnas actuales. Vertical coloca el texto encima de la imagen.",
+      description: "Place the text beside the image or above it.",
       initialValue: "horizontal",
       options: {
         layout: "radio",
@@ -26,38 +23,34 @@ export default defineType({
     }),
     defineField({
       name: "position",
-      title: "Position",
+      title: "Text on the left",
       type: "boolean",
-      description: "Check this box if text content should be on the left side.",
+      description: "Turn off to place the text on the right.",
       initialValue: false,
       hidden: ({ parent }) => parent?.layout === "vertical",
     }),
     defineField({
       name: "sectionWidth",
-      title: "Ancho del conjunto",
+      title: "Section width",
       type: "string",
-      description:
-        "Normal ocupa el contenedor. Estrecho centra texto e imagen en un máximo de 48 rem. Solo se aplica a la disposición vertical.",
+      description: "Choose how wide the text and image appear together.",
       initialValue: "default",
       options: { layout: "radio", list: SECTION_WIDTH },
       hidden: ({ parent }) => parent?.layout !== "vertical",
     }),
     defineField({
       name: "contentWidth",
-      title: "Ancho del texto",
+      title: "Text width",
       type: "string",
-      description:
-        "Estrecho (predeterminado) centra el texto en un máximo de 48 rem sin reducir la imagen. Normal utiliza todo el ancho del conjunto.",
+      description: "Keep the text easy to read without shrinking the image.",
       initialValue: "narrow",
       options: { layout: "radio", list: SECTION_WIDTH },
       hidden: ({ parent }) => parent?.layout !== "vertical",
     }),
     defineField({
       name: "stackAlign",
-      title: "Alineación del texto",
+      title: "Text alignment",
       type: "string",
-      description:
-        "Izquierda por defecto. Centrar el texto no cambia los anchos del texto ni de la imagen.",
       initialValue: "left",
       options: { layout: "radio", list: STACK_ALIGN },
       hidden: ({ parent }) => parent?.layout !== "vertical",
@@ -73,16 +66,15 @@ export default defineType({
     }),
     defineField({
       name: "headingLevel",
-      title: "Nivel del encabezado",
+      title: "Heading",
       type: "string",
-      description:
-        "H3 conserva la jerarquía actual. Elige H2 cuando esta característica sea una sección principal de la página.",
+      description: "Use a section heading for a main feature.",
       initialValue: "h3",
       options: {
         layout: "radio",
         list: [
-          { title: "H3 · Subsección", value: "h3" },
-          { title: "H2 · Sección principal", value: "h2" },
+          { title: "Subheading", value: "h3" },
+          { title: "Section heading", value: "h2" },
         ],
       },
     }),
@@ -105,26 +97,19 @@ export default defineType({
     }),
     defineField({
       name: "imageFit",
-      title: "Ajuste de imagen",
+      title: "Image display",
       type: "string",
-      description:
-        "Recortar conserva las alturas actuales. Imagen completa muestra el asset original sin recorte ni deformación, ideal para capturas de pantalla; no aplica el recorte ni el hotspot del editor.",
+      description: "Show the whole image to keep all its details visible.",
       initialValue: "cover",
       options: {
         layout: "radio",
         list: [
-          { title: "Recortar para llenar", value: "cover" },
-          { title: "Imagen completa", value: "contain" },
+          { title: "Fill the space", value: "cover" },
+          { title: "Show the whole image", value: "contain" },
         ],
       },
     }),
-    defineField({
-      name: "link",
-      type: "link",
-      components: { input: OptionalLinkInput },
-      description:
-        "Opcional. Usa Agregar enlace para configurar un botón y Quitar enlace para retirarlo sin cambiar el resto de la característica.",
-    }),
+    splitLinkField,
   ],
   preview: {
     select: {
@@ -134,7 +119,7 @@ export default defineType({
     },
     prepare({ title, media, layout }) {
       return {
-        title: title || "Característica sin título",
+        title: title || "Untitled feature",
         subtitle: layout === "vertical" ? "Vertical" : "Horizontal",
         media,
       };

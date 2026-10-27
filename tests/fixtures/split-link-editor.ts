@@ -27,7 +27,6 @@ export const splitLinkEditorTypes = [
     name: "splitLinkEditor",
     type: "document",
     fields: [sectionAnchorField, ...splitColumn.fields],
-    initialValue: splitColumn.initialValue,
   },
   {
     name: "splitLinkPage",
