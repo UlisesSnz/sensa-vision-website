@@ -1,3 +1,5 @@
+import { stegaClean } from "next-sanity";
+import { getSplitContent, type SplitColumnContent } from "@/lib/split-content";
 import {
   DEFAULT_DESKTOP_RELEASE_TARGET,
   getDesktopReleaseTargetKey,
@@ -20,11 +22,13 @@ export type DesktopReleaseLookup = Partial<
 type BlockWithDesktopDownloads = Sanity.Block &
   DesktopReleaseTargetFields & {
     links?: Sanity.Link[];
+    splitColumns?: (SplitColumnContent | null)[] | null;
   };
 
 export function getDesktopReleaseTargetFromContent(
   value: DesktopReleaseTargetFields,
 ): DesktopReleaseTarget | null {
+  value = stegaClean(value);
   if (!value.downloadPlatform && !value.downloadArchitecture) {
     return { ...DEFAULT_DESKTOP_RELEASE_TARGET };
   }
@@ -58,7 +62,15 @@ export function collectDesktopReleaseTargets(
     if (block._type === "desktop-download") addTarget(block);
 
     for (const link of block.links || []) {
-      if (link.targetType === "desktopDownload") addTarget(link);
+      if (stegaClean(link.targetType) === "desktopDownload") addTarget(link);
+    }
+
+    if (block._type === "split-row") {
+      for (const column of block.splitColumns || []) {
+        if (!column?.link) continue;
+        const { hasLink, isDesktopDownload } = getSplitContent(column);
+        if (hasLink && isDesktopDownload) addTarget(column.link);
+      }
     }
   }
 

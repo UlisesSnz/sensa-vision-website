@@ -299,6 +299,68 @@ try {
             metrics.cases["vertical-cover"].paragraph.bottom,
         );
         assert.equal(await page.locator("a a, button a, a button").count(), 0);
+        for (const layout of ["horizontal", "vertical"]) {
+          const download = page
+            .getByTestId(`desktop-${layout}`)
+            .getByRole("link", { name: "Descargar SensaVision" });
+          assert(await download.isVisible());
+          assert.equal(
+            await download.getAttribute("href"),
+            "https://downloads.example.test/win32/x64/installer",
+          );
+          assert.equal(await download.getAttribute("download"), "");
+          await download.focus();
+          assert(
+            await download.evaluate((el) => el === document.activeElement),
+          );
+          const buttonBox = await download.boundingBox();
+          const item = metrics.cases[`desktop-${layout}`];
+          if (layout === "horizontal" && width >= 1024) {
+            near(
+              item.text.top + item.text.height / 2,
+              item.image.top + item.image.height / 2,
+              "Desktop link stays inside the centered text block",
+            );
+          }
+          if (layout === "vertical") {
+            const imageBox = await page
+              .getByTestId(`desktop-${layout}`)
+              .locator("img")
+              .boundingBox();
+            near(
+              buttonBox.x + buttonBox.width / 2,
+              imageBox.x + imageBox.width / 2,
+              "Desktop button follows centered text alignment",
+            );
+            near(
+              imageBox.y - (buttonBox.y + buttonBox.height),
+              width >= 1024 ? 32 : 24,
+              "Desktop button to image spacing",
+            );
+          }
+        }
+        assert(
+          await page
+            .getByTestId("desktop-unavailable")
+            .getByRole("button", {
+              name: locale === "es" ? "Próximamente" : "Coming soon",
+            })
+            .isDisabled(),
+        );
+        assert.equal(
+          await page
+            .getByTestId("desktop-unavailable")
+            .getByRole("link")
+            .count(),
+          0,
+        );
+        assert.equal(
+          await page
+            .getByTestId("desktop-cleared")
+            .locator(":scope > *")
+            .count(),
+          0,
+        );
         const variantLink = page
           .getByTestId("default-default-left")
           .getByRole("link", { name: "Ver producto" });
@@ -322,6 +384,15 @@ try {
         const anchorY = (await page.locator("#diseno").boundingBox()).y;
         near(anchorY, 80, "Anchor offset below sticky header");
         if (locale === "es") {
+          if (width === 375 || width === 1280) {
+            for (const layout of ["horizontal", "vertical", "unavailable"]) {
+              await page
+                .getByTestId(`desktop-${layout}`)
+                .screenshot({
+                  path: `${output}/desktop-${layout}-${width}-${theme}.png`,
+                });
+            }
+          }
           await page
             .getByTestId("feature-sequence")
             .screenshot({ path: `${output}/features-${width}-${theme}.png` });

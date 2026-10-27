@@ -8,6 +8,14 @@ import Link from "next/link";
 import type { ISectionContainer } from "../section-container";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
+import DesktopDownloadButton, {
+  type DesktopDownloadMessages,
+} from "@/components/ui/desktop-download-button";
+import {
+  getDesktopReleaseFromLookup,
+  getDesktopReleaseTargetFromContent,
+  type DesktopReleaseLookup,
+} from "@/lib/desktop-release-content";
 import {
   getSplitContent,
   getSplitOptions,
@@ -17,6 +25,8 @@ import {
 export interface ISplitColumn extends SplitColumnContent {
   colorVariant?: ISectionContainer["color"] | null;
   locale?: Locale;
+  desktopReleases?: DesktopReleaseLookup;
+  downloadMessages?: DesktopDownloadMessages;
 }
 
 const fullImageSizes =
@@ -34,11 +44,21 @@ export default function SplitColumn(props: ISplitColumn) {
     title,
     image,
     link,
+    desktopReleases,
+    downloadMessages,
     locale = "es",
   } = props;
   const options = getSplitOptions(props);
-  const { body, hasTitle, hasTagLine, href, hasLink, hasImage, hasText } =
-    getSplitContent(props);
+  const {
+    body,
+    hasTitle,
+    hasTagLine,
+    href,
+    hasLink,
+    isDesktopDownload,
+    hasImage,
+    hasText,
+  } = getSplitContent(props);
   if (!hasImage && !hasText) return null;
   const vertical = options.layout === "vertical";
   const twoColumns = !vertical && hasImage && hasText;
@@ -167,7 +187,25 @@ export default function SplitColumn(props: ISplitColumn) {
             ) : null}
           </div>
         ) : null}
-        {hasLink ? (
+        {hasLink && isDesktopDownload && downloadMessages && link ? (
+          <div
+            className={cn(
+              "flex",
+              !vertical ? "mt-2" : undefined,
+              vertical && options.stackAlign === "center"
+                ? "justify-center"
+                : undefined,
+            )}
+          >
+            <DesktopDownloadButton
+              messages={downloadMessages}
+              release={getDesktopReleaseFromLookup(desktopReleases, link)}
+              target={getDesktopReleaseTargetFromContent(link)}
+              title={link.title}
+              variant={link.buttonVariant}
+            />
+          </div>
+        ) : hasLink && !isDesktopDownload ? (
           <Button
             className={!vertical ? "mt-2" : undefined}
             variant={stegaClean(link?.buttonVariant)}

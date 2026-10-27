@@ -50,6 +50,18 @@ falta. Tanto el campo ausente como los objetos Link vacíos anteriores son váli
 sin necesidad de limpiarlos ni migrarlos.
 Las opciones de estilo no obligan a mostrar un enlace.
 
+Para **SensaVision Desktop**, completar **Text** y elegir el sistema operativo y
+la arquitectura muestra la descarga correspondiente; no hace falta introducir
+una URL. La web utiliza el instalador publicado para ese destino. Si aún no hay
+instalador disponible, muestra **Próximamente** como botón deshabilitado. Vaciar
+el texto oculta esta descarga opcional. Una URL anterior que quede guardada al
+cambiar de destino no reemplaza el instalador.
+
+Split Row recibe las descargas y sus traducciones del renderizador de bloques.
+Las descargas de sus columnas se recopilan junto con las del resto de la página,
+sin repetir consultas para el mismo destino. Las opciones se interpretan sin las
+anotaciones de preview de Sanity, conservando el contenido original.
+
 La validación opcional está limitada al campo de Split Column y conserva el objeto
 existente al editarlo. El título, la descripción, la imagen y el ancla se conservan
 al vaciar el enlace. Las validaciones de los CTA y otros consumidores del tipo Link
@@ -133,6 +145,11 @@ repositorio y en el paquete `geist`, sin descargarlas de Google durante el build
 `test:split:studio` monta `FormBuilder`, los campos del esquema y el input opcional
 reales en Vite/Chromium. Comprueba completar, editar, vaciar y reabrir enlaces, rechaza
 enlaces incompletos y URLs inválidas, permite Desktop sin URL y respeta solo lectura.
+Comprueba también la reapertura, edición y vaciado de Desktop y el regreso a un
+enlace URL vacío. `split-desktop-link.test.tsx` conecta la validación real de Studio,
+la proyección GROQ y el renderizado de `Blocks` usando los mismos datos, con
+instaladores sintéticos. Así se verifica que un Desktop válido sin URL aparezca
+en la web, incluida su selección de plataforma, disponibilidad y preview.
 Incluye objetos vacíos antiguos sin errores ni cambios automáticos, comprueba que
 no aparezcan controles para agregar o quitar y verifica que el resto del documento
 no cambie. También permite revisar los controles editoriales en inglés.
@@ -191,3 +208,28 @@ almacenamiento local y la validación real de Studio, sin publicar contenido.
 
 Después del ajuste de centrado se repitieron las 31 pruebas del renderer de Split
 Row, los 20 escenarios visuales y ESLint sobre los archivos modificados, sin errores.
+
+### Regresión del enlace Desktop, 27 de octubre de 2026
+
+La validación admitía un Desktop sin URL, pero el renderer seguía exigiendo `href`
+y la carga de descargas no recorría las columnas de Split Row. La nueva regresión
+reprodujo nueve fallos antes del arreglo y pasó después, usando el mismo enlace
+desde la validación hasta la consulta y el renderizado.
+
+- `npm run check`: aprobado; TypeScript, **337 pruebas en 25 archivos** y build
+  de producción con **28 páginas**. ESLint terminó sin errores; sus 27 advertencias
+  corresponden a código previo (18) y cachés de herramientas de pruebas (9).
+- `npm run test:split:studio`: **17 escenarios aprobados**, incluidos Desktop sin
+  URL, reapertura, edición, vaciado y regreso a URL; sin peticiones al CMS.
+- `npm run test:split`: **20 escenarios aprobados**, en cinco anchos, ambos temas
+  y ambos idiomas. Incluye descarga disponible, no disponible y vaciada, foco por
+  teclado, centrado horizontal y alineación vertical. Se revisaron capturas a
+  375 y 1280 px. Sin errores de navegador ni solicitudes externas.
+- `npm run test:downloads`: **32 escenarios aprobados**, sin solicitudes externas.
+- `git diff --check`: aprobado.
+
+Los resultados anteriores y posteriores de la regresión y el registro general
+están en `output/playwright/split-desktop/`. Las nuevas capturas están en
+`output/playwright/split/desktop-*.png` y `output/playwright/split-editor/`.
+Los instaladores de las pruebas son sintéticos; no se descargaron archivos ni se
+modificó o publicó contenido de Sanity.

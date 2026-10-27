@@ -159,8 +159,26 @@ try {
   await errors([]);
   assert.equal(await href().count(), 0);
   await record("desktop-without-url");
+  const desktop = await documentValue();
+  await page.reload();
+  await errors([]);
+  assert.deepEqual(await documentValue(), desktop);
+  assert.equal(await href().count(), 0);
+  await title().fill("Descargar reproductor");
+  await errors([]);
+  await record("desktop-reopened-and-edited");
   await clearLink();
   assert.deepEqual(content(await documentValue()), content(baseline));
+  await page.reload();
+  await errors([]);
+  assert.equal(await title().inputValue(), "");
+  assert.equal((await documentValue()).link.targetType, "desktopDownload");
+  assert.deepEqual(content(await documentValue()), content(baseline));
+  await record("desktop-cleared-and-reopened");
+  await page.getByRole("radio", { name: "URL", exact: true }).check();
+  await errors([]);
+  assert.equal(await href().inputValue(), "");
+  await record("desktop-switched-back-to-empty-url");
 
   await visit("?fixture=legacy");
   await errors([]);

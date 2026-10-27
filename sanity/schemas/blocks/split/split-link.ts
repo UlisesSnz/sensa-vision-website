@@ -11,7 +11,8 @@ export const splitLinkField = defineField({
   title: "Link",
   type: "object",
   initialValue: { _type: "link" },
-  description: "Optional. Leave the text and URL empty to hide the link.",
+  description:
+    "Optional. Enter text and a URL, or choose a Desktop download. Clear the text and URL to hide the link.",
   options: { collapsible: false },
   fields: link.fields.map((field) => {
     if (field.name === "title") {

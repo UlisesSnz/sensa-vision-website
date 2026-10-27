@@ -12,6 +12,8 @@ import {
 } from "@/lib/split-content";
 import { normalizeSectionAnchor } from "@/lib/section-anchors";
 import { cn } from "@/lib/utils";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 
 export interface ISplitRow {
   uid?: string | null;
@@ -19,6 +21,8 @@ export interface ISplitRow {
   colorVariant?: ISectionContainer["color"] | null;
   splitColumns?: (SplitColumnContent | null)[] | null;
   locale?: Locale;
+  desktopReleases?: DesktopReleaseLookup;
+  downloadMessages?: DesktopDownloadMessages;
 }
 
 export default function SplitRow({
@@ -26,6 +30,8 @@ export default function SplitRow({
   padding,
   colorVariant,
   splitColumns,
+  desktopReleases,
+  downloadMessages,
   locale = "es",
 }: ISplitRow) {
   const columns = getRenderableSplitColumns(splitColumns);
@@ -54,6 +60,8 @@ export default function SplitRow({
             key={column._key || index}
             colorVariant={colorVariant}
             locale={locale}
+            desktopReleases={desktopReleases}
+            downloadMessages={downloadMessages}
           />
         ))}
       </div>

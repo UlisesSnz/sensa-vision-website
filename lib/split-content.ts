@@ -72,11 +72,24 @@ export function getSplitContent(column: SplitColumnContent) {
   const hasTitle = Boolean(cleanSplitText(column.title));
   const hasTagLine = Boolean(cleanSplitText(column.tagLine));
   const href = cleanSplitText(column.link?.href);
-  const hasLink = Boolean(href && cleanSplitText(column.link?.title));
+  const isDesktopDownload =
+    cleanSplitText(column.link?.targetType) === "desktopDownload";
+  const hasLink = Boolean(
+    cleanSplitText(column.link?.title) && (isDesktopDownload || href),
+  );
   const hasImage = Boolean(cleanSplitText(column.image?.asset?._id));
   const hasText = hasTitle || hasTagLine || body.length > 0 || hasLink;
 
-  return { body, hasTitle, hasTagLine, href, hasLink, hasImage, hasText };
+  return {
+    body,
+    hasTitle,
+    hasTagLine,
+    href,
+    hasLink,
+    isDesktopDownload,
+    hasImage,
+    hasText,
+  };
 }
 
 export function getRenderableSplitColumns(

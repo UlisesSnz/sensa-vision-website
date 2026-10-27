@@ -10,11 +10,20 @@ import {
   splitParagraph,
 } from "@/tests/fixtures/split-row";
 import type { SplitColumnContent } from "@/lib/split-content";
+import { getDictionary } from "@/i18n/dictionaries";
+import { releaseFixture } from "@/tests/fixtures/downloads";
 import "@/app/globals.css";
 import "./styles.css";
 
 const params = new URLSearchParams(location.search);
 const locale = params.get("locale") === "en" ? "en" : "es";
+const desktopLink = {
+  title: "Descargar SensaVision",
+  targetType: "desktopDownload",
+  downloadPlatform: "win32",
+  downloadArchitecture: "x64",
+  buttonVariant: "outline",
+} satisfies Sanity.Link;
 document.documentElement.lang = locale;
 document.documentElement.classList.toggle(
   "dark",
@@ -91,6 +100,23 @@ const cases: Array<{ id: string; column: SplitColumnContent }> = [
   { id: "image-only", column: { image: editorImage, imageFit: "contain" } },
   { id: "text-only", column: { title: "Solo texto", body: legacyColumn.body } },
   { id: "link-only", column: { layout: "vertical", link: legacyColumn.link } },
+  ...(["horizontal", "vertical"] as const).map((layout) => ({
+    id: `desktop-${layout}`,
+    column: {
+      ...designColumn,
+      layout,
+      stackAlign: "center" as const,
+      link: desktopLink,
+    },
+  })),
+  {
+    id: "desktop-unavailable",
+    column: { link: { ...desktopLink, downloadPlatform: "darwin" } },
+  },
+  {
+    id: "desktop-cleared",
+    column: { link: { ...desktopLink, title: "" } },
+  },
 ];
 
 createRoot(document.getElementById("root")!).render(
@@ -125,6 +151,13 @@ createRoot(document.getElementById("root")!).render(
             padding={{ top: true, bottom: true }}
             splitColumns={[column]}
             locale={locale}
+            downloadMessages={getDictionary(locale).downloads}
+            desktopReleases={{
+              "win32/x64": releaseFixture({
+                platform: "win32",
+                architecture: "x64",
+              }),
+            }}
           />
         </section>
       ))}
