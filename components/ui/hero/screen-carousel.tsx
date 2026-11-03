@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  type PointerEvent,
   type ReactNode,
 } from "react";
 import type { UiDictionary } from "@/i18n/dictionaries";
@@ -69,6 +70,7 @@ export default function ScreenCarousel({
   }>({});
   const [playback, setPlayback] = useState<Playback>("auto");
   const [pausedByHover, setPausedByHover] = useState(false);
+  const [controlPointer, setControlPointer] = useState<string>();
   const stage = useRef<HTMLDivElement>(null);
   const inView = useStageVisibility(stage);
   const reduce = useSyncExternalStore(
@@ -122,6 +124,10 @@ export default function ScreenCarousel({
     setRequest({ key: target.key, direction, manual: true });
   }
 
+  function trackControlPointer(event: PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== controlPointer) setControlPointer(event.pointerType);
+  }
+
   function mark(src: string, status: LoadState[string]) {
     setLoads((last) =>
       last[src] === status ? last : { ...last, [src]: status },
@@ -165,7 +171,13 @@ export default function ScreenCarousel({
       }}
     >
       {visible && (
-        <div className={styles.controls} data-single={!multiple}>
+        <div
+          className={styles.controls}
+          data-single={!multiple}
+          data-pointer={controlPointer}
+          onPointerMove={trackControlPointer}
+          onPointerDown={trackControlPointer}
+        >
           <button
             type="button"
             aria-label={playing ? pauseLabel : playLabel}

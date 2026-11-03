@@ -50,6 +50,13 @@ async function context(options = {}) {
   return ctx;
 }
 const button = (page, name) => page.getByRole("button", { name, exact: true });
+const buttonBackground = (control) =>
+  control.evaluate((el) => getComputedStyle(el).backgroundColor);
+async function assertTouchReleased(control, idleBackground) {
+  // A browser can apply compatibility hover after the tap has already changed the slide.
+  await control.page().waitForTimeout(500);
+  assert.equal(await buttonBackground(control), idleBackground, "The arrow returns to idle after touch release");
+}
 async function image(page, name) {
   const active = page.getByRole("img", { name, exact: true });
   await active.waitFor();
@@ -116,6 +123,7 @@ async function verifyCarouselChanges(browserContext) {
   await page.keyboard.press("Tab");
   await waitForControls(page, true);
   assert(await previous.evaluate((el) => el === document.activeElement));
+  assert.equal(await previous.evaluate((el) => getComputedStyle(el).outlineStyle), "solid");
   await page.locator("[data-scene]").hover();
   const original = await bounds();
   assert(original[0].x + original[0].width <= original[1].x);
@@ -322,6 +330,7 @@ try {
           `/${locale}/features`,
         );
         const advance = button(page, locale === "es" ? "Plantilla siguiente" : "Next template");
+        const idleBackground = await buttonBackground(advance);
         if (mobile) await advance.tap();
         else {
           await page.getByRole("heading").hover();
@@ -331,6 +340,19 @@ try {
         assert.deepEqual(await getLayout(), before);
         assert((await page.getByRole("status").textContent()).includes(second));
         assert.equal(await page.getByRole("img").count(), 1);
+        if (mobile) {
+          await assertTouchReleased(advance, idleBackground);
+          const previous = button(page, locale === "es" ? "Plantilla anterior" : "Previous template");
+          await previous.hover();
+          assert.notEqual(await buttonBackground(previous), idleBackground, "A mouse on a touch device can still highlight an arrow");
+          await previous.tap();
+          await image(page, first);
+          await assertTouchReleased(previous, idleBackground);
+        } else {
+          assert.notEqual(await buttonBackground(advance), idleBackground, "The mouse highlights the arrow");
+          await page.getByRole("heading").hover();
+          assert.equal(await buttonBackground(advance), idleBackground, "The highlight clears when the mouse leaves");
+        }
       }
     await visual.close();
   }

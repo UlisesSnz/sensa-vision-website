@@ -164,7 +164,8 @@
   place-items: center;
   border-radius: 50%;
 }
-.controls button:hover {
+.controls[data-pointer="mouse"] button:hover,
+.controls button:active {
   background: var(--room-wash);
 }
 .controls button:focus-visible {
