@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#245a4e"/><g fill="#e4f4ca" font-family="Arial,sans-serif">
+    <text x="42" y="64" font-size="24" letter-spacing="4">BOTICA RONDA</text>
+    <text x="40" y="231" font-family="Georgia,serif" font-size="87">Turno de</text>
+    <text x="39" y="330" font-family="Georgia,serif" font-style="italic" font-size="96">atención.</text>
+    <path d="M44 422h450v2H44z"/><text x="44" y="470" font-size="26">Pasa al mostrador 2</text></g>
+  <rect x="582" y="104" width="305" height="311" rx="20" fill="#c4e9a6"/>
+  <text x="601" y="324" font-size="166" letter-spacing="-9" fill="#204e45" font-family="Arial,sans-serif">024</text>
+</svg>

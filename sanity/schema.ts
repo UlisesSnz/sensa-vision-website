@@ -19,6 +19,7 @@ import sectionPadding from "./schemas/blocks/shared/section-padding";
 import desktopInstaller from "./schemas/objects/desktop-installer";
 // Schema UI objects
 import hero1 from "./schemas/blocks/hero/hero-1";
+import hero2 from "./schemas/blocks/hero/hero-2";
 import sectionHeader from "./schemas/blocks/section-header";
 import splitColumn from "./schemas/blocks/split/split-column";
 import splitRow from "./schemas/blocks/split/split-row";
@@ -61,6 +62,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     desktopInstaller,
     // blocks
     hero1,
+    hero2,
     sectionHeader,
     splitColumn,
     splitRow,

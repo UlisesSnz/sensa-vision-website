@@ -1,4 +1,5 @@
 import Hero1 from "@/components/ui/hero/hero-1";
+import Hero2 from "@/components/ui/hero/hero-2";
 import SectionHeader from "@/components/ui/section-header";
 import SplitRow from "@/components/ui/split/split-row";
 import GridRow from "@/components/ui/grid/grid-row";
@@ -25,6 +26,7 @@ import { withUniqueSectionAnchors } from "@/lib/section-anchors";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
+  "hero-2": Hero2,
   "section-header": SectionHeader,
   "split-row": SplitRow,
   "grid-row": GridRow,
@@ -64,7 +66,7 @@ export default async function Blocks({
 
   return (
     <>
-      {visibleBlocks.map((block: Sanity.Block) => {
+      {visibleBlocks.map((block: Sanity.Block, index) => {
         const Component = componentMap[block._type];
         if (!Component) {
           // Fallback for unknown block types to debug
@@ -73,6 +75,7 @@ export default async function Blocks({
         return (
           <Component
             {...block}
+            {...(block._type === "hero-2" && { isFirstBlock: index === 0 })}
             key={block._key}
             locale={locale}
             formMessages={dictionary.forms}

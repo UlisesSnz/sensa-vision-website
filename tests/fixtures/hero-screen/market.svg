@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#ffde99"/><g fill="#233e2d" font-family="Arial,sans-serif">
+    <text x="44" y="63" font-size="22" font-weight="bold" letter-spacing="4">MERCADO LOCAL</text>
+    <text x="37" y="236" font-family="Georgia,serif" font-size="99" letter-spacing="-5">Fruta de</text>
+    <text x="39" y="335" font-family="Georgia,serif" font-size="100" font-style="italic" letter-spacing="-5">estación.</text>
+    <path d="M43 423h435v2H43z"/><text x="43" y="472" font-size="24">Selección de la semana</text></g>
+  <circle cx="725" cy="295" r="150" fill="#f77938"/><circle cx="748" cy="298" r="121" fill="#ffce76"/>
+  <g stroke="#ffe6aa" stroke-width="7"><path d="m748 298 0-117m0 117 86-78m-86 78 117-7m-117 7 83 83m-83-83 12 116m-12-116-78 88m78-88-114 7m114-7-89-77"/></g>
+  <path d="M687 147q-59-115-143-82 36 84 143 82" fill="#387047"/>
+</svg>

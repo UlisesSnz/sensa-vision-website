@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#f4e8cf"/><rect x="575" width="385" height="540" fill="#e59769"/>
+  <g fill="#372f3d" font-family="Arial,sans-serif"><text x="45" y="64" font-size="23" letter-spacing="4">CASA NORTE / RECEPCIÓN</text>
+    <text x="40" y="250" font-family="Georgia,serif" font-size="110" letter-spacing="-6">Buenos</text>
+    <text x="40" y="371" font-family="Georgia,serif" font-style="italic" font-size="131">días.</text>
+    <path d="M44 432h459v2H44z"/><text x="45" y="476" font-size="23">Agenda del día</text><text x="366" y="476" font-size="23">09:00—18:00</text></g>
+  <g fill="none" stroke="#693e50" stroke-width="17"><path d="M604 502V245a165 165 0 0 1 330 0v257"/>
+    <path d="M634 502V245a135 135 0 0 1 270 0v257M665 502V245a104 104 0 0 1 208 0v257M696 502V245a73 73 0 0 1 146 0v257"/></g>
+</svg>

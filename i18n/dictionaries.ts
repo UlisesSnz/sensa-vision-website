@@ -67,6 +67,13 @@ const dictionaries = {
       unsupportedVideo: "Tu navegador no admite la etiqueta de video.",
       missingVideo: "No hay un video configurado",
     },
+    heroScreen: {
+      label: "Plantillas de Sensa", carousel: "carrusel", slide: "diapositiva",
+      play: "Reproducir", pause: "Pausar",
+      previous: "Plantilla anterior", next: "Plantilla siguiente",
+      template: "Plantilla", of: "de", standby: "Pantalla en reposo",
+      scenes: { office: "Recepción", store: "Tienda", pharmacy: "Farmacia", restaurant: "Cafetería", window: "Escaparate" },
+    },
     downloads: {
       comingSoon: "Próximamente",
       defaultLabels: {
@@ -148,6 +155,13 @@ const dictionaries = {
       youtubeTitle: "YouTube video",
       unsupportedVideo: "Your browser does not support the video tag.",
       missingVideo: "No video configured",
+    },
+    heroScreen: {
+      label: "Sensa templates", carousel: "carousel", slide: "slide",
+      play: "Play", pause: "Pause",
+      previous: "Previous template", next: "Next template",
+      template: "Template", of: "of", standby: "Screen on standby",
+      scenes: { office: "Reception", store: "Shop", pharmacy: "Pharmacy", restaurant: "Café", window: "Shop window" },
     },
     downloads: {
       comingSoon: "Coming soon",

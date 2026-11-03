@@ -55,7 +55,7 @@ export default defineType({
             value === undefined ||
             isDesktopReleasePlatform(value)
             ? true
-            : "Selecciona un sistema operativo válido.";
+            : "Choose a valid operating system.";
         }),
     }),
     defineField({
@@ -87,12 +87,12 @@ export default defineType({
           return isDesktopReleaseArchitecture(value) &&
             isValidDesktopReleaseTarget({ platform, architecture: value })
             ? true
-            : "La arquitectura no es válida para el sistema operativo seleccionado.";
+            : "Choose an architecture for this operating system.";
         }),
     }),
     defineField({
       name: "href",
-      title: "href",
+      title: "URL",
       type: "url",
       hidden: ({ parent }) => parent?.targetType === "desktopDownload",
       validation: (Rule) =>
@@ -104,7 +104,7 @@ export default defineType({
 
           return parent?.targetType === "desktopDownload" || value
             ? true
-            : "La URL es obligatoria.";
+            : "Enter a URL.";
         }),
     }),
     defineField({

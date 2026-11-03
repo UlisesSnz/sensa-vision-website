@@ -46,6 +46,7 @@ export default defineType({
       validation: (Rule) => Rule.custom(validateUniqueSectionAnchors),
       of: [
         { type: "hero-1" },
+        { type: "hero-2" },
         { type: "section-header" },
         { type: "split-row" },
         { type: "grid-row" },

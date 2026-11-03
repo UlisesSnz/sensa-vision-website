@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("../../../", import.meta.url)),
       "test-studio-ui": studioRequire.resolve("@sanity/ui"),
+      "test-studio-toast": studioRequire.resolve("@sanity/ui/toast"),
       "test-studio-style": studioRequire.resolve("@sanity/ui/styles.css"),
     },
   },

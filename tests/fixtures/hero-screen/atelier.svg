@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#dedbfa"/><g fill="#302943" font-family="Arial,sans-serif">
+    <text x="44" y="63" font-size="22" letter-spacing="5">ESTUDIO / TEXTIL</text>
+    <text x="40" y="242" font-family="Georgia,serif" font-size="97" letter-spacing="-5">Colección</text>
+    <text x="43" y="351" font-family="Georgia,serif" font-size="120" font-style="italic">lino.</text>
+    <path d="M44 424h450v2H44z"/><text x="44" y="472" font-size="24">Edición de temporada</text></g>
+  <path d="m650 65 38-14q40 55 78 0l40 14 88 87-64 56-32-34 17 271H636l17-271-33 34-63-56z" fill="#706497"/>
+  <g fill="none" stroke="#a99dcb" stroke-width="6"><path d="m688 51 38 80 40-80m-40 80v294m-67-253 6 220m128-222-8 219"/></g>
+</svg>

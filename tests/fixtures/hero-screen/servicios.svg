@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#efdcbc"/><g fill="#294b46" font-family="Arial,sans-serif">
+    <text x="44" y="64" font-size="24" letter-spacing="4">BOTICA RONDA</text>
+    <text x="42" y="234" font-family="Georgia,serif" font-size="92">Nuestros</text>
+    <text x="40" y="335" font-family="Georgia,serif" font-style="italic" font-size="105">servicios.</text>
+    <path d="M44 424h450v2H44z"/><text x="44" y="472" font-size="25">Información en el mostrador</text></g>
+  <path d="M659 111h106v91h93v105h-93v92H659v-92h-91V202h91z" fill="#85ad8e"/>
+  <circle cx="713" cy="256" r="34" fill="#faeaae"/>
+</svg>

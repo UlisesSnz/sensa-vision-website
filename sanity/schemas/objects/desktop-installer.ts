@@ -1,6 +1,10 @@
+import dynamic from "next/dynamic";
 import { defineField, defineType } from "sanity";
 
-import DesktopInstallerInput from "@/sanity/components/desktop-installer-input";
+// The upload input uses Next.js Server Actions. Schema tools only need the fields.
+const DesktopInstallerInput = dynamic(
+  () => import("@/sanity/components/desktop-installer-input"),
+);
 
 export default defineType({
   name: "desktopInstaller",

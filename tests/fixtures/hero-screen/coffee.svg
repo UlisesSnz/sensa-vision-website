@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" width="960" height="540">
+  <rect width="960" height="540" fill="#edc8aa"/><g fill="#542d36" font-family="Arial,sans-serif">
+    <text x="44" y="64" font-size="22" font-weight="bold" letter-spacing="4">CAFÉ DE BARRIO</text>
+    <text x="40" y="242" font-family="Georgia,serif" font-size="123" letter-spacing="-5">Café</text>
+    <text x="41" y="355" font-family="Georgia,serif" font-size="105" font-style="italic" letter-spacing="-6">de la casa.</text>
+    <path d="M44 424h460v2H44z"/><text x="44" y="473" font-size="24">Filtrado del día</text></g>
+  <path d="M557 215h254v60q0 127-127 127T557 275z" fill="#a64d3c"/>
+  <path d="M811 236h25q67 0 52 52-13 42-82 43" fill="none" stroke="#a64d3c" stroke-width="22"/>
+  <ellipse cx="684" cy="215" rx="127" ry="29" fill="#f6e4c5"/><ellipse cx="684" cy="219" rx="107" ry="18" fill="#593b39"/>
+  <path d="M529 414q146 45 318 0z" fill="#a64d3c"/><path d="M665 163q-34-37 3-74m32 73q-27-24 0-54" fill="none" stroke="#ad7c69" stroke-width="8"/>
+</svg>
