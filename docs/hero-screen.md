@@ -4,9 +4,9 @@ En Studio, abre una página y añade el bloque **Hero · Template Screen**. Pued
 
 **Hero 1** y **Hero · Template Screen** comparten el campo **Layout**. Elige **Text above** para centrar el texto y los botones arriba. Debajo, la imagen de Hero 1 o la escena animada ocupa todo el ancho del contenido de la página. **Side by side** sitúa el texto a la izquierda en escritorio y arriba en móvil. Es la composición predeterminada, también para los bloques creados antes de añadir el campo.
 
-1. Elige el ambiente en **Default scene**. El valor inicial es *Office or reception*.
+1. **Default scene** define el ambiente que heredan las plantillas. El bloque nuevo ya trae *Office or reception*.
 2. En **Templates**, añade una imagen y describe su mensaje en **Alt text**. Para publicar el bloque hace falta al menos una plantilla con imagen y texto alternativo.
-3. Para una página de farmacias, elige *Pharmacy* como ambiente del bloque y deja vacío **Scene** en las imágenes. Para mostrar varios negocios en el home, elige el ambiente correspondiente en cada plantilla.
+3. Para una página de farmacias, elige *Pharmacy* una vez en el bloque. Cada plantilla mostrará **Use default (Pharmacy)**. Para el home, cambia **Scene** solo en las plantillas que necesiten otro ambiente. Puedes volver a **Use default** en cualquier momento.
 4. Arrastra las filas para cambiar el orden. Reemplazar la imagen de una fila conserva su posición. En vista previa, reordenar conserva la plantilla que estás viendo. Si la eliminas, la pantalla pasa a la primera disponible.
 
 La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se ve, en recepción se mecen las hojas, en la tienda oscila una etiqueta y en la farmacia un pulso recorre el mostrador. En la cafetería sube vapor de la taza y en el escaparate se desplaza un reflejo sobre el cristal. Estos detalles utilizan cinco animaciones Lottie locales que adoptan los colores del tema.
@@ -16,9 +16,9 @@ La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se v
   <img src="hero-screen/movimiento.webp" alt="Detalle de las hojas, la etiqueta, el pulso, el vapor y el reflejo de los cinco ambientes">
 </picture>
 
-Con varias plantillas, la imagen cambia cada cinco segundos con un fundido de 450 ms. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente hace un gesto de cuatro segundos.
+Con varias plantillas, la imagen cambia cada cinco segundos con un fundido de 450 ms. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente se anima en bucle mientras está a la vista. Debajo aparece un botón para pausar o reanudar el movimiento.
 
-En la web, los controles usan el idioma de la página y admiten teclado y tacto. Pasar el puntero detiene el avance para poder observar la escena. Al navegar manualmente, cada ambiente nuevo hace un solo gesto. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
+En la web, los controles usan el idioma de la página y admiten teclado y tacto. Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
 
 ## Verificación local
 

@@ -60,15 +60,36 @@ const first = "Horario de la farmacia";
 const second = "Turno de atención";
 const third = "Servicios de la farmacia";
 
+async function copyMetrics(page) {
+  await page.evaluate(() => document.fonts.ready);
+  return page.getByRole("heading", { level: 1 }).evaluate((title) => {
+    const intro = title.parentElement;
+    const tagline = intro.querySelector("span");
+    const top = tagline.getBoundingClientRect().top;
+    return [tagline, title, intro.querySelector("p"), ...intro.querySelectorAll("a")].map((el) => {
+      const css = getComputedStyle(el);
+      const box = el.getBoundingClientRect();
+      return [
+        css.fontFamily, css.fontSize, css.fontWeight, css.lineHeight, css.color,
+        css.textAlign, css.textWrap, box.x, box.width, box.height, box.top - top,
+      ];
+    });
+  });
+}
+
 async function verifyHeroLayouts(page) {
   for (const [device, width] of [
     ["desktop", 1440], ["wide", 1920], ["mobile", 375], ["small", 320],
   ]) {
     await page.setViewportSize({ width, height: 850 });
+    let classicCopy;
     for (const hero of [1, 2]) {
       await page.goto(`${origin}/?hero=${hero}&layout=vertical`);
       const img = await image(page, hero === 1 ? "Café de la casa" : first);
       await page.evaluate(() => document.fonts.ready);
+      const metrics = await copyMetrics(page);
+      if (hero === 1) classicCopy = metrics;
+      else assert.deepEqual(metrics, classicCopy, "Both stacked heroes share the original typography and spacing");
       assert(await img.evaluate((el) =>
         Number(new URL(el.currentSrc).searchParams.get("w")) >= el.clientWidth,
       ), "The browser requests an image large enough for this layout");
@@ -117,6 +138,15 @@ async function verifyHeroLayouts(page) {
         assert.equal(after.width, box.width);
         assert.equal(after.height, box.height);
       }
+    }
+    if (device === "desktop" || device === "mobile") {
+      await page.goto(`${origin}/?hero=1&theme=dark`);
+      await image(page, "Café de la casa");
+      const original = await copyMetrics(page);
+      await page.goto(`${origin}/?scenario=tour&theme=dark`);
+      await image(page, "Agenda de recepción");
+      assert.deepEqual(await copyMetrics(page), original, "Both split heroes share the original typography and spacing");
+      await page.locator("main").screenshot({ path: `${output}/office-dark-${device}.png` });
     }
   }
   await page.setViewportSize({ width: 1440, height: 850 });
@@ -231,6 +261,24 @@ try {
         .evaluate((el) => getComputedStyle(el).opacity),
       "1",
     );
+    const carousel = page.getByRole("group", { name: "Plantillas de Sensa", exact: true });
+    assert.equal(await carousel.getByText(/^(Recepción|Tienda|Farmacia|Cafetería|Escaparate)$/).count(), 0);
+    if (scene === "office") {
+      const inFront = await page.locator("[data-room=office] [data-room-poster] path[fill]").evaluate((leaves) => {
+        const screen = document.querySelector("[data-visible=true]").getBoundingClientRect();
+        const bounds = leaves.getBoundingClientRect();
+        leaves.style.pointerEvents = "visiblePainted";
+        try {
+          for (let x = Math.max(bounds.left, screen.left) + 1; x < Math.min(bounds.right, screen.right); x++)
+            for (let y = Math.max(bounds.top, screen.top) + 1; y < Math.min(bounds.bottom, screen.bottom); y++)
+              if (document.elementFromPoint(x, y) === leaves) return true;
+          return false;
+        } finally {
+          leaves.style.removeProperty("pointer-events");
+        }
+      });
+      assert(inFront, "A leaf is painted in front of the lower-left corner of the screen");
+    }
     await page
       .getByRole("group", { name: "Plantillas de Sensa", exact: true })
       .screenshot({ path: `${output}/scene-${scene}.png` });
@@ -255,17 +303,18 @@ try {
   await rooms.locator("[data-scene]").hover();
   for (const [scene, alt] of tour) {
     await image(rooms, alt);
+    await drawing(scene).waitFor();
+    await rooms.clock.runFor(4300);
     const before = await drawing(scene).innerHTML();
     await rooms.clock.runFor(650);
     assert.notEqual(
       await drawing(scene).innerHTML(),
       before,
-      `${scene} moves within a single template`,
+      `${scene} keeps moving beyond the first animation cycle while its template is held`,
     );
     await image(rooms, alt);
     if (scene !== "window") await button(rooms, "Plantilla siguiente").click();
   }
-  await button(rooms, "Reproducir").click();
   await button(rooms, "Pausar").click();
   const reflection = drawing("window");
   const paused = await reflection.innerHTML();
@@ -300,10 +349,18 @@ try {
   await only.clock.runFor(600);
   assert.notEqual(await accent.innerHTML(), startingPose);
   await only.clock.runFor(4100);
-  const settled = await accent.innerHTML();
+  const nextCycle = await accent.innerHTML();
   await only.clock.runFor(550);
-  assert.equal(await accent.innerHTML(), settled, "The single-image gesture finishes");
-  assert.equal(await only.getByRole("button").count(), 0);
+  assert.notEqual(await accent.innerHTML(), nextCycle, "The scene loops with a single static template");
+  assert.equal(await only.getByRole("button").count(), 1);
+  await button(only, "Pausar animación").click();
+  const pausedSingle = await accent.innerHTML();
+  await only.clock.runFor(500);
+  assert.equal(await accent.innerHTML(), pausedSingle);
+  await button(only, "Reproducir animación").click();
+  await only.clock.runFor(500);
+  assert.notEqual(await accent.innerHTML(), pausedSingle);
+  await image(only, first);
   await only.close();
 
   const missingArt = await motion.newPage();

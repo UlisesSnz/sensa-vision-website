@@ -24,7 +24,7 @@ const reducedMotion = () => window.matchMedia(motionQuery).matches;
 const serverReducedMotion = () => true;
 type LoadState = Record<string, "ready" | "failed">;
 type Direction = 1 | -1;
-type Playback = "auto" | "paused" | "playing" | "browsing";
+type Playback = "auto" | "paused" | "playing";
 
 function resolveSlide(
   slides: ScreenSlide[],
@@ -116,14 +116,9 @@ export default function ScreenCarousel({
     return () => window.clearTimeout(timer);
   }, [playing, hovered, inView, ready, requestedKey, nextKey]);
 
-  function browse() {
-    setPlayback((previous) => (previous === "paused" ? "paused" : "browsing"));
-  }
-
   function navigate(direction: Direction) {
     const target =
       available[(index + direction + available.length) % available.length];
-    browse();
     setRequest({ key: target.key, direction, manual: true });
   }
 
@@ -143,9 +138,11 @@ export default function ScreenCarousel({
     if (slide) layers.set(slide.key + ":" + slide.src, slide);
   }
   const scene = visible?.scene ?? baseScene;
-  const canAnimate =
-    inView && visible && loads[visible.src] === "ready" && playback !== "paused";
-  const roomMode = !canAnimate ? "paused" : playing && multiple ? "loop" : "once";
+  const animateRoom = Boolean(
+    inView && playing && visible && loads[visible.src] === "ready",
+  );
+  const playLabel = multiple ? messages.play : messages.playAnimation;
+  const pauseLabel = multiple ? messages.pause : messages.pauseAnimation;
   const position = `${messages.template} ${visibleIndex + 1} ${messages.of} ${available.length}`;
 
   return (
@@ -159,55 +156,45 @@ export default function ScreenCarousel({
       }}
       onPointerLeave={() => setHovered(false)}
       onFocusCapture={(event) => {
-        if (
-          !event.currentTarget.contains(event.relatedTarget) &&
-          event.target.matches(":focus-visible")
-        )
-          browse();
+        if (event.target.matches(":focus-visible")) setPlayback("paused");
       }}
     >
-      <div className={styles.caption}>
-        <span className={styles.sceneLabel}>
-          <i aria-hidden="true" />
-          {messages.scenes[scene]}
-        </span>
-        {multiple && (
-          <div className={styles.controls}>
-            <button
-              type="button"
-              aria-label={playing ? messages.pause : messages.play}
-              onClick={() => setPlayback(playing ? "paused" : "playing")}
-            >
-              {playing ? (
-                <Pause aria-hidden="true" />
-              ) : (
-                <Play aria-hidden="true" />
-              )}
-            </button>
-            <span className={styles.count} aria-hidden="true">
-              {String(visibleIndex + 1).padStart(2, "0")} /{" "}
-              {String(available.length).padStart(2, "0")}
-            </span>
-            <button
-              type="button"
-              aria-label={messages.previous}
-              onClick={() => navigate(-1)}
-            >
-              <ChevronLeft aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              aria-label={messages.next}
-              onClick={() => navigate(1)}
-            >
-              <ChevronRight aria-hidden="true" />
-            </button>
-          </div>
-        )}
-      </div>
+      {visible && (
+        <div className={styles.controls} data-single={!multiple}>
+          <button
+            type="button"
+            aria-label={playing ? pauseLabel : playLabel}
+            onClick={() => setPlayback(playing ? "paused" : "playing")}
+          >
+            {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+          </button>
+          {multiple && (
+            <>
+              <span className={styles.count} aria-hidden="true">
+                {String(visibleIndex + 1).padStart(2, "0")} /{" "}
+                {String(available.length).padStart(2, "0")}
+              </span>
+              <button
+                type="button"
+                aria-label={messages.previous}
+                onClick={() => navigate(-1)}
+              >
+                <ChevronLeft aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                aria-label={messages.next}
+                onClick={() => navigate(1)}
+              >
+                <ChevronRight aria-hidden="true" />
+              </button>
+            </>
+          )}
+        </div>
+      )}
       <div ref={stage} className={styles.stage} data-scene={scene}>
         <RoomMotionContext.Provider
-          value={{ scene, mode: roomMode, reduced: reduce }}
+          value={{ scene, playing: animateRoom, reduced: reduce }}
         >
           {children}
         </RoomMotionContext.Provider>

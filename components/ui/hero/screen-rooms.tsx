@@ -22,16 +22,18 @@ function Office() {
       </g>
       <path fill={wash} d="M258 374h202l-3 6H262z" />
       <path fill={ink} d="m267 380-4 12h4l7-12m170 0 7 12h4l-4-12" />
-      <g fill="none" data-room-poster="">
-        <path d="M78 349q3-50-16-96m17 88q0-73 17-107m-19 93q-7-32-36-53m38 65q13-36 36-51" />
-        <path
-          fill={wash}
-          d="M62 259q-21-8-23-33 25 7 25 29zM91 251q-2-24 15-38 4 26-15 38zM53 285q-23-1-32-24 22 0 32 24zM86 300q3-26 25-36-1 22-25 36zM102 300q14-21 31-19-9 19-31 19zM76 307q-22-8-25-32 21 8 25 32z"
-        />
+      <g className={styles.officePlant}>
+        <g fill="none" data-room-poster="">
+          <path d="M78 349q3-50-16-96m17 88q0-73 17-107m-19 93q-7-32-36-53m38 65q13-36 36-51" />
+          <path
+            fill={wash}
+            d="M62 259q-21-8-23-33 25 7 25 29zM91 251q-2-24 15-38 4 26-15 38zM53 285q-23-1-32-24 22 0 32 24zM86 300q3-26 25-36-1 22-25 36zM102 300q14-21 31-19-9 19-31 19zM76 307q-22-8-25-32 21 8 25 32z"
+          />
+        </g>
+        <path fill={paper} d="M54 341h50l-6 44q-1 7-8 7H68q-7 0-8-7z" />
+        <path fill={wash} d="M52 338h54v8H52z" />
+        <path className={styles.detail} d="m63 352 4 29m4-29 3 22m4-22 1 15" />
       </g>
-      <path fill={paper} d="M54 341h50l-6 44q-1 7-8 7H68q-7 0-8-7z" />
-      <path fill={wash} d="M52 338h54v8H52z" />
-      <path className={styles.detail} d="m63 352 4 29m4-29 3 22m4-22 1 15" />
     </>
   );
 }

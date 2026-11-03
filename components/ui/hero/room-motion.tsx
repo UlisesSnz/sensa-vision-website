@@ -23,13 +23,13 @@ const artwork = {
 
 type Motion = {
   scene: HeroScene;
-  mode: "loop" | "once" | "paused";
+  playing: boolean;
   reduced: boolean;
 };
 
 export const RoomMotionContext = createContext<Motion>({
   scene: "office",
-  mode: "paused",
+  playing: false,
   reduced: true,
 });
 
@@ -62,12 +62,10 @@ export function AnimatedRoom({
   children: ReactNode;
 }) {
   const motion = useContext(RoomMotionContext);
-  const active = motion.scene === scene;
-  const canStart = active && !motion.reduced && motion.mode !== "paused";
+  const canStart = motion.scene === scene && !motion.reduced && motion.playing;
   const host = useRef<HTMLDivElement>(null);
   const instance = useRef<AnimationItem | null>(null);
   const [ready, setReady] = useState<AnimationItem | null>(null);
-  const wasActive = useRef(false);
 
   useEffect(() => {
     if (!canStart || instance.current) return;
@@ -84,7 +82,7 @@ export function AnimatedRoom({
         rendererSettings: { focusable: false },
         animationData: structuredClone(drawing),
         autoplay: false,
-        loop: false,
+        loop: true,
       });
       item.setSubframe(false);
       instance.current = item;
@@ -107,21 +105,9 @@ export function AnimatedRoom({
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
-    const entering = active && !wasActive.current;
-    wasActive.current = active;
-    if (!canStart) {
-      ready.pause();
-      return;
-    }
-    const loop = motion.mode === "loop";
-    ready.setLoop(loop);
-    if (entering || (loop && ready.currentFrame >= ready.totalFrames - 1)) {
-      ready.goToAndPlay(0, true);
-    } else if (ready.currentFrame < ready.totalFrames - 1) {
-      ready.play();
-    }
-  }, [active, canStart, motion.mode, ready]);
+    if (canStart) ready?.play();
+    else ready?.pause();
+  }, [canStart, ready]);
 
   return (
     <div data-room={scene} data-animated={Boolean(ready) && !motion.reduced}>

@@ -1,5 +1,6 @@
 import { MonitorPlay } from "lucide-react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import HeroSceneInput from "@/sanity/components/hero-scene-input";
 import {
   DEFAULT_HERO_SCENE,
   HERO_SCENES,
@@ -34,8 +35,10 @@ export default defineType({
     defineField({
       name: "baseScene",
       title: "Default scene",
+      description: "Applies to every template unless overridden.",
       type: "string",
       options: sceneOptions,
+      components: { input: HeroSceneInput },
       initialValue: DEFAULT_HERO_SCENE,
       validation: (rule) => rule.custom(validateScene),
     }),
@@ -63,8 +66,8 @@ export default defineType({
               name: "scene",
               type: "string",
               title: "Scene",
-              description: "Leave blank to use the default scene.",
               options: sceneOptions,
+              components: { input: HeroSceneInput },
               validation: (rule) => rule.custom(validateScene),
             }),
           ],

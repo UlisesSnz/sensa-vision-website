@@ -70,9 +70,9 @@ const dictionaries = {
     heroScreen: {
       label: "Plantillas de Sensa", carousel: "carrusel", slide: "diapositiva",
       play: "Reproducir", pause: "Pausar",
+      playAnimation: "Reproducir animación", pauseAnimation: "Pausar animación",
       previous: "Plantilla anterior", next: "Plantilla siguiente",
       template: "Plantilla", of: "de", standby: "Pantalla en reposo",
-      scenes: { office: "Recepción", store: "Tienda", pharmacy: "Farmacia", restaurant: "Cafetería", window: "Escaparate" },
     },
     downloads: {
       comingSoon: "Próximamente",
@@ -159,9 +159,9 @@ const dictionaries = {
     heroScreen: {
       label: "Sensa templates", carousel: "carousel", slide: "slide",
       play: "Play", pause: "Pause",
+      playAnimation: "Play animation", pauseAnimation: "Pause animation",
       previous: "Previous template", next: "Next template",
       template: "Template", of: "of", standby: "Screen on standby",
-      scenes: { office: "Reception", store: "Shop", pharmacy: "Pharmacy", restaurant: "Café", window: "Shop window" },
     },
     downloads: {
       comingSoon: "Coming soon",

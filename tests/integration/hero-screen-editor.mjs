@@ -5,9 +5,10 @@ export async function verifyStudio(context, origin, output) {
   await editor.goto(`${origin}/studio.html`);
   const add = editor.getByRole("button", { name: "Add item" });
   await add.waitFor();
-  await editor
-    .getByRole("combobox", { name: "Default scene" })
-    .selectOption({ label: "Pharmacy" });
+  const defaultScene = editor.getByRole("combobox", { name: "Default scene" });
+  const scene = editor.getByRole("combobox", { name: "Scene", exact: true });
+  assert.equal(await defaultScene.inputValue(), "office");
+  await defaultScene.selectOption({ label: "Pharmacy" });
   const preview = await context.newPage();
   await preview.goto(`${origin}/?scenario=saved`);
   await preview.getByText("Pantalla en reposo").waitFor();
@@ -23,10 +24,8 @@ export async function verifyStudio(context, origin, output) {
   async function editImage(name, override) {
     await editor.getByLabel("Test image").selectOption({ label: name });
     await editor.getByRole("textbox", { name: "Alt text" }).fill(name);
-    if (override)
-      await editor
-        .getByRole("combobox", { name: "Scene", exact: true })
-        .selectOption({ label: override });
+    assert.equal(await scene.locator("option:checked").textContent(), "Use default (Pharmacy)");
+    if (override) await scene.selectOption({ label: override });
     await editor.getByRole("button", { name: "Close dialog" }).click();
     await editor.getByLabel("Test image").waitFor({ state: "hidden" });
     await editor.getByText("0 validation errors", { exact: true }).waitFor();
@@ -35,11 +34,13 @@ export async function verifyStudio(context, origin, output) {
     await add.click();
     await editImage(label);
   }
+  assert((await doc()).slides.every((slide) => !("scene" in slide)));
   await editor
     .getByRole("button", { name: new RegExp(labels[0]) })
     .locator("img")
     .evaluate((img) => img.decode());
   await image(labels[0]).waitFor();
+  await preview.locator('[data-scene="pharmacy"]').waitFor();
   await next.click();
   await image(labels[1]).waitFor();
   const startingKeys = (await doc()).slides.map((slide) => slide._key);
@@ -59,6 +60,7 @@ export async function verifyStudio(context, origin, output) {
   // Use the same grab handles that an editor drags in Studio.
   await editor.bringToFront();
   const handles = editor.locator('button[aria-roledescription="sortable"]');
+  await handles.nth(1).scrollIntoViewIfNeeded();
   const firstRow = await handles.nth(0).boundingBox();
   const secondRow = await handles.nth(1).boundingBox();
   const x = secondRow.x + secondRow.width / 2;
@@ -93,6 +95,24 @@ export async function verifyStudio(context, origin, output) {
   assert.deepEqual((await doc()).slides, before);
   await preview.reload();
   await image("Café de la casa").waitFor();
+  await defaultScene.selectOption({ label: "Store" });
+  await preview.locator('[data-scene="restaurant"]').waitFor();
+  await next.click();
+  await image(labels[0]).waitFor();
+  await preview.locator('[data-scene="store"]').waitFor();
+  await preview.getByRole("button", { name: "Plantilla anterior" }).click();
+  await preview.locator('[data-scene="restaurant"]').waitFor();
+  await editor.getByText("Café de la casa", { exact: true }).click();
+  await scene.selectOption({ label: "Use default (Store)" });
+  await editor.getByRole("button", { name: "Close dialog" }).click();
+  await preview.locator('[data-scene="store"]').waitFor();
+  await image("Café de la casa").waitFor();
+  const reverted = (await doc()).slides;
+  assert(!("scene" in reverted[0]));
+  assert.deepEqual(reverted.map((slide) => slide.asset), before.map((slide) => slide.asset));
+  await editor.reload();
+  await editor.getByText("Café de la casa", { exact: true }).waitFor();
+  assert.deepEqual((await doc()).slides, reverted);
 
   await editor.getByTestId("array-item-menu-button").first().click();
   await editor.getByRole("menuitem", { name: /remove/i }).click();
