@@ -1,3 +1,8 @@
+export const HERO_LAYOUTS = [
+  { title: "Side by side", value: "horizontal" },
+  { title: "Text above", value: "vertical" },
+];
+
 export const STACK_ALIGN = [
   { title: "Left", value: "left" },
   { title: "Center", value: "center" },

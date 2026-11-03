@@ -49,16 +49,23 @@ export async function verifyStudio(context, origin, output) {
   await image(labels[1]).waitFor();
   const startingKeys = (await doc()).slides.map((slide) => slide._key);
 
-  const sideBySide = editor.getByRole("radio", { name: "Side by side", exact: true });
-  const textAbove = editor.getByRole("radio", { name: "Text above", exact: true });
+  const layout = editor.getByRole("radiogroup", { name: "Layout" });
+  const sideBySide = layout.getByRole("radio", { name: "Side by side", exact: true });
+  const textAbove = layout.getByRole("radio", { name: "Text above", exact: true });
   const waitForAlignment = (centered) =>
     preview.waitForFunction((expected) => {
       const heading = document.querySelector("h1");
       return heading && (getComputedStyle(heading).textAlign === "center") === expected;
     }, centered);
   assert(await sideBySide.isChecked());
-  await textAbove.check();
+  assert.equal((await doc()).layout, "horizontal");
+  assert.equal(await layout.getByRole("radio").count(), 2);
+  assert.equal(await layout.getByRole("button").count(), 0);
+  await sideBySide.press("ArrowRight");
   await waitForAlignment(true);
+  await textAbove.click();
+  assert(await textAbove.isChecked(), "Clicking the selected layout keeps it selected");
+  assert.equal((await doc()).layout, "vertical");
   await image(labels[1]).waitFor();
 
   // Use the same grab handles that an editor drags in Studio.
@@ -145,7 +152,15 @@ export async function verifyStudio(context, origin, output) {
 
   await editor.goto(`${origin}/studio.html?hero=1`);
   await sideBySide.waitFor();
+  await editor.evaluate(() => {
+    const block = JSON.parse(localStorage.getItem("hero-image-document"));
+    delete block.layout;
+    localStorage.setItem("hero-image-document", JSON.stringify(block));
+  });
+  await editor.reload();
+  await sideBySide.waitFor();
   assert(await sideBySide.isChecked());
+  assert.equal((await doc()).layout, undefined, "Opening a legacy hero does not edit it");
   await preview.goto(`${origin}/?hero=1&scenario=saved`);
   await image("Café de la casa").waitFor();
   await textAbove.check();
