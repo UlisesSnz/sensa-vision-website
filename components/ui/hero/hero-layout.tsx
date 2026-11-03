@@ -71,6 +71,7 @@ export default function HeroLayout({
   return (
     <div className="container dark:bg-background py-20 lg:pt-40">
       <div
+        data-hero-content=""
         className={
           textAbove ? styles.textAbove : "grid grid-cols-1 gap-10 lg:grid-cols-2"
         }

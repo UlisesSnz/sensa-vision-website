@@ -60,6 +60,87 @@ const first = "Horario de la farmacia";
 const second = "Turno de atención";
 const third = "Servicios de la farmacia";
 
+async function waitForControls(page, shown) {
+  await page.waitForFunction((visible) => {
+    const controls = document.querySelector("[data-single]");
+    return controls && getComputedStyle(controls).opacity === (visible ? "1" : "0");
+  }, shown);
+}
+
+async function verifyCarouselChanges(browserContext) {
+  const page = await browserContext.newPage();
+  await page.setViewportSize({ width: 1440, height: 850 });
+  await page.goto(origin);
+  const previous = button(page, "Plantilla anterior");
+  const next = button(page, "Plantilla siguiente");
+  const count = page.locator("[data-single] span");
+  const bounds = () => Promise.all([previous, count, next].map((el) => el.boundingBox()));
+
+  async function openDeck(length) {
+    await page.evaluate((size) => {
+      const slides = Array.from({ length: size }, (_, i) => {
+        const name = i % 2 ? "market" : "reception";
+        return {
+          _type: "slide", _key: `slide-${i}`, alt: `Plantilla ${i + 1}`,
+          scene: i % 2 ? "store" : "office",
+          asset: { _type: "reference", _ref: `image-${name.padEnd(40, "0")}-960x540-png` },
+        };
+      });
+      localStorage.setItem("hero-screen-document", JSON.stringify({ title: "Demo", slides }));
+    }, length);
+    await page.goto(`${origin}/?scenario=saved`);
+    await image(page, "Plantilla 1");
+    await page.locator("[data-visible=false] img").evaluate((img) => img.decode());
+  }
+
+  await openDeck(2);
+  await waitForControls(page, false);
+  await page.getByRole("heading").hover();
+  await waitForControls(page, true);
+  await button(page, "Pausar").click();
+  await page.mouse.move(0, 0);
+  await waitForControls(page, false);
+  // Tab back to the controls without moving the pointer.
+  await page.keyboard.press("Tab");
+  await waitForControls(page, true);
+  assert(await previous.evaluate((el) => el === document.activeElement));
+  await page.locator("[data-scene]").hover();
+  const original = await bounds();
+  assert(original[0].x + original[0].width <= original[1].x);
+  assert(original[1].x + original[1].width <= original[2].x);
+  for (const [control, active] of [[next, 2], [next, 1], [previous, 2]]) {
+    await control.click();
+    await image(page, `Plantilla ${active}`);
+    assert.equal(await count.textContent(), `0${active}/02`);
+    assert.deepEqual(await bounds(), original);
+    const midpoint = await page.locator("[data-scene]").evaluate((el) => {
+      const layers = el.querySelectorAll("[data-visible], [data-room]");
+      const opacities = [];
+      for (const layer of layers) {
+        const fade = layer.getAnimations().find((a) => a.transitionProperty === "opacity");
+        if (!fade) continue;
+        fade.pause();
+        fade.currentTime = fade.effect.getTiming().duration / 2;
+        opacities.push(Number(getComputedStyle(layer).opacity));
+        fade.finish();
+      }
+      return opacities;
+    });
+    assert.equal(midpoint.length, 4, "Both templates and both rooms are crossfading");
+    assert(midpoint.every((opacity) => Math.abs(opacity - 0.5) < 0.02));
+  }
+
+  await openDeck(100);
+  await page.locator("[data-scene]").hover();
+  const wide = await bounds();
+  assert.equal(await count.textContent(), "001/100");
+  await previous.click();
+  await image(page, "Plantilla 100");
+  assert.equal(await count.textContent(), "100/100");
+  assert.deepEqual(await bounds(), wide, "Three-digit counts keep the arrows still");
+  await page.close();
+}
+
 async function copyMetrics(page) {
   await page.evaluate(() => document.fonts.ready);
   return page.getByRole("heading", { level: 1 }).evaluate((title) => {
@@ -163,17 +244,19 @@ try {
   await server.listen();
   browser = await chromium.launch();
 
-  const visual = await context({ reducedMotion: "reduce", hasTouch: true });
-  const page = await visual.newPage();
   for (const [size, width, height] of [
     ["desktop", 1440, 850],
     ["mobile", 375, 800],
   ]) {
-    await page.setViewportSize({ width, height });
+    const mobile = size === "mobile";
+    const visual = await context({ reducedMotion: "reduce", hasTouch: mobile, viewport: { width, height } });
+    const page = await visual.newPage();
     for (const locale of ["es", "en"])
       for (const theme of ["light", "dark"]) {
         await page.goto(`${origin}/?locale=${locale}&theme=${theme}`);
         const img = await image(page, first);
+        await page.mouse.move(0, 0);
+        await waitForControls(page, mobile);
         await button(page, locale === "es" ? "Reproducir" : "Play").waitFor();
         await button(page, locale === "es" ? "Plantilla anterior" : "Previous template").waitFor();
         await page.evaluate(() => document.fonts.ready);
@@ -221,16 +304,21 @@ try {
           await page.getByRole("link").first().getAttribute("href"),
           `/${locale}/features`,
         );
-        await button(
-          page,
-          locale === "es" ? "Plantilla siguiente" : "Next template",
-        ).tap();
+        const advance = button(page, locale === "es" ? "Plantilla siguiente" : "Next template");
+        if (mobile) await advance.tap();
+        else {
+          await page.getByRole("heading").hover();
+          await advance.click();
+        }
         await image(page, second);
         assert.deepEqual(await getLayout(), before);
         assert((await page.getByRole("status").textContent()).includes(second));
         assert.equal(await page.getByRole("img").count(), 1);
       }
+    await visual.close();
   }
+  const visual = await context({ reducedMotion: "reduce", hasTouch: true });
+  const page = await visual.newPage();
   await verifyHeroLayouts(page);
   await page.goto(`${origin}/?scenario=tour`);
   const tour = [
@@ -294,7 +382,24 @@ try {
   }
   await visual.close();
 
+  const touch = await context({ hasTouch: true, viewport: { width: 320, height: 740 } });
+  const compact = await touch.newPage();
+  await compact.goto(`${origin}/?scenario=single`);
+  const singleImage = await image(compact, first);
+  const pauseMotion = button(compact, "Pausar animación");
+  await waitForControls(compact, true);
+  const target = await pauseMotion.boundingBox();
+  const screenBox = await singleImage.boundingBox();
+  assert(target.width >= 44 && target.height >= 44);
+  assert(target.y >= screenBox.y + screenBox.height, "The pause target clears the entire template");
+  assert(target.x + target.width <= 320);
+  await singleImage.tap({ position: { x: screenBox.width - 2, y: screenBox.height - 2 } });
+  await pauseMotion.tap();
+  await button(compact, "Reproducir animación").waitFor();
+  await touch.close();
+
   const motion = await context();
+  await verifyCarouselChanges(motion);
   const rooms = await motion.newPage();
   await rooms.clock.install();
   await rooms.goto(`${origin}/?scenario=tour`);
@@ -353,6 +458,11 @@ try {
   await only.clock.runFor(550);
   assert.notEqual(await accent.innerHTML(), nextCycle, "The scene loops with a single static template");
   assert.equal(await only.getByRole("button").count(), 1);
+  const singleStage = only.locator("[data-scene]");
+  const singleGroup = only.getByRole("group", { name: "Plantillas de Sensa" });
+  assert.equal((await singleGroup.boundingBox()).height, (await singleStage.boundingBox()).height);
+  await singleStage.click();
+  await button(only, "Pausar animación").waitFor();
   await button(only, "Pausar animación").click();
   const pausedSingle = await accent.innerHTML();
   await only.clock.runFor(500);
@@ -370,6 +480,7 @@ try {
   await failedArt;
   await image(missingArt, tour[0][1]);
   await missingArt.locator("[data-room=office][data-animated=false] [data-room-poster]").waitFor();
+  await missingArt.locator("[data-scene]").hover();
   await button(missingArt, "Plantilla siguiente").click();
   await image(missingArt, tour[1][1]);
   await missingArt.locator("[data-room=store][data-animated=true] > div > svg").waitFor();
@@ -384,7 +495,7 @@ try {
     await player
       .locator("[data-visible=true]")
       .evaluate((el) => getComputedStyle(el).transitionDuration),
-    "0.45s",
+    "0.7s",
   );
   await player.locator("[data-scene]").hover();
   await player.clock.fastForward(11000);
@@ -441,6 +552,7 @@ try {
   });
   await delayed.goto(origin, { waitUntil: "domcontentloaded" });
   await image(delayed, first);
+  await delayed.locator("[data-scene]").hover();
   await button(delayed, "Plantilla siguiente").click();
   await image(delayed, first);
   failNext();

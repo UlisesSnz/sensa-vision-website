@@ -130,13 +130,16 @@ export default function ScreenCarousel({
 
   const layers = new Map<string, ScreenSlide>();
   for (const slide of [
-    ready ? frames.back : undefined,
+    visible && frames.back,
     visible,
     requested,
     ready ? next : undefined,
   ]) {
     if (slide) layers.set(slide.key + ":" + slide.src, slide);
   }
+  // Moving an existing image node can cancel its fade when the carousel wraps.
+  const orderedLayers = [...layers].sort(([a], [b]) => a.localeCompare(b));
+  const counterDigits = Math.max(2, String(slides.length).length);
   const scene = visible?.scene ?? baseScene;
   const animateRoom = Boolean(
     inView && playing && visible && loads[visible.src] === "ready",
@@ -170,10 +173,6 @@ export default function ScreenCarousel({
           </button>
           {multiple && (
             <>
-              <span className={styles.count} aria-hidden="true">
-                {String(visibleIndex + 1).padStart(2, "0")} /{" "}
-                {String(available.length).padStart(2, "0")}
-              </span>
               <button
                 type="button"
                 aria-label={messages.previous}
@@ -181,6 +180,10 @@ export default function ScreenCarousel({
               >
                 <ChevronLeft aria-hidden="true" />
               </button>
+              <span className={styles.count} aria-hidden="true">
+                {String(visibleIndex + 1).padStart(counterDigits, "0")}
+                /{String(available.length).padStart(counterDigits, "0")}
+              </span>
               <button
                 type="button"
                 aria-label={messages.next}
@@ -201,11 +204,12 @@ export default function ScreenCarousel({
         <div className={styles.screen}>
           <div
             className={styles.glass}
+            data-crossfade={Boolean(frames.back)}
             role={visible ? "group" : undefined}
             aria-roledescription={multiple ? messages.slide : undefined}
             aria-label={visible ? position : undefined}
           >
-            {[...layers].map(([id, slide]) => {
+            {orderedLayers.map(([id, slide]) => {
               const active =
                 slide.key === visible?.key && slide.src === visible.src;
               const leading =

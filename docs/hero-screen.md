@@ -16,9 +16,11 @@ La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se v
   <img src="hero-screen/movimiento.webp" alt="Detalle de las hojas, la etiqueta, el pulso, el vapor y el reflejo de los cinco ambientes">
 </picture>
 
-Con varias plantillas, la imagen cambia cada cinco segundos con un fundido de 450 ms. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente se anima en bucle mientras está a la vista. Debajo aparece un botón para pausar o reanudar el movimiento.
+Con varias plantillas, la imagen cambia cada cinco segundos. La plantilla anterior y la siguiente se mezclan durante 700 ms. Si cambia el ambiente, el mobiliario se desvanece al mismo ritmo. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente se anima en bucle mientras está a la vista. Un botón de pausa en el margen derecho evita añadir una fila a la escena.
 
-En la web, los controles usan el idioma de la página y admiten teclado y tacto. Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
+En escritorio, los controles aparecen al acercar el ratón al texto o a la escena y al navegar por el hero con teclado. En móvil y pantallas táctiles permanecen visibles. El contador queda entre las flechas y reserva el mismo ancho para todas las posiciones. Los controles usan el idioma de la página.
+
+Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
 
 ## Verificación local
 

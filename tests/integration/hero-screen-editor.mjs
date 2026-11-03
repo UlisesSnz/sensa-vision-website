@@ -41,6 +41,7 @@ export async function verifyStudio(context, origin, output) {
     .evaluate((img) => img.decode());
   await image(labels[0]).waitFor();
   await preview.locator('[data-scene="pharmacy"]').waitFor();
+  await preview.locator("[data-scene]").hover();
   await next.click();
   await image(labels[1]).waitFor();
   const startingKeys = (await doc()).slides.map((slide) => slide._key);
@@ -97,6 +98,7 @@ export async function verifyStudio(context, origin, output) {
   await image("Café de la casa").waitFor();
   await defaultScene.selectOption({ label: "Store" });
   await preview.locator('[data-scene="restaurant"]').waitFor();
+  await preview.locator("[data-scene]").hover();
   await next.click();
   await image(labels[0]).waitFor();
   await preview.locator('[data-scene="store"]').waitFor();

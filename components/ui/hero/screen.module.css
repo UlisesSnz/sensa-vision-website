@@ -1,7 +1,9 @@
 .carousel {
+  --scene-fade: 700ms ease-in-out;
   --room-paper: hsl(var(--background));
   --room-ink: color-mix(in srgb, hsl(var(--foreground)) 78%, var(--room-paper));
   --room-wash: color-mix(in srgb, hsl(var(--foreground)) 9%, var(--room-paper));
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -70,7 +72,7 @@
 .drawing [data-room],
 .frame {
   opacity: 0;
-  transition: opacity 450ms ease-in-out;
+  transition: opacity var(--scene-fade);
 }
 .stage[data-scene="office"] [data-room="office"],
 .stage[data-scene="store"] [data-room="store"],
@@ -106,12 +108,20 @@
 .glass {
   overflow: hidden;
   border-radius: inherit;
+  isolation: isolate;
 }
 .frame {
   background: #17191b;
+  /* Blend just the templates so their crossfade doesn't darken halfway through. */
+  mix-blend-mode: plus-lighter;
 }
 .frame[data-visible="true"] {
   z-index: 1;
+}
+@starting-style {
+  .glass[data-crossfade="true"] .frame[data-visible="true"] {
+    opacity: 0;
+  }
 }
 .standby {
   height: 100%;
@@ -131,6 +141,16 @@
   justify-content: flex-end;
   align-items: center;
   margin-inline: 1.25%;
+  transition: opacity 180ms ease-out;
+}
+.controls[data-single="true"] {
+  position: absolute;
+  z-index: 2;
+  /* The lower-right wall is clear of the screen and every room's furniture. */
+  inset-inline-start: max(86%, calc(100% - 44px));
+  top: calc(73% + 6px);
+  margin: 0;
+  color: hsl(var(--muted-foreground));
 }
 .controls button {
   width: 44px;
@@ -152,12 +172,20 @@
   stroke-width: 1.7;
 }
 .count {
-  padding-inline: 0.25rem;
   font:
     500 0.7rem/1 ui-monospace,
     monospace;
+  font-variant-numeric: tabular-nums;
+  min-inline-size: 5ch;
+  text-align: center;
   color: hsl(var(--muted-foreground));
   white-space: nowrap;
+}
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) and (not (any-pointer: coarse)) {
+  [data-hero-content]:not(:hover):not(:has(:focus-visible)) .controls {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 @media (max-width: 639px) {
   .screen {
@@ -170,6 +198,7 @@
     display: none;
   }
   .drawing [data-room],
+  .controls,
   .frame {
     transition: none;
   }
