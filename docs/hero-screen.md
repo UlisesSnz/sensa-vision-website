@@ -18,7 +18,7 @@ La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se v
 
 Con varias plantillas, la imagen cambia cada cinco segundos. La plantilla anterior y la siguiente se mezclan durante 700 ms. Si cambia el ambiente, el mobiliario se desvanece al mismo ritmo. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente se anima en bucle mientras está a la vista. Un botón de pausa en el margen derecho evita añadir una fila a la escena.
 
-En escritorio, los controles aparecen al acercar el ratón al texto o a la escena y al navegar por el hero con teclado. En móvil y pantallas táctiles permanecen visibles. El contador queda entre las flechas y reserva el mismo ancho para todas las posiciones. Los controles usan el idioma de la página.
+En escritorio, **Side by side** centra el bloque de texto y botones con la escena. Los controles aparecen al acercar el ratón al texto o a la escena y al navegar por el hero con teclado. En móvil y pantallas táctiles permanecen visibles. El contador queda entre las flechas y reserva el mismo ancho para todas las posiciones. Los controles usan el idioma de la página.
 
 Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
 

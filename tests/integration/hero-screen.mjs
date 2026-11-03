@@ -67,6 +67,17 @@ async function waitForControls(page, shown) {
   }, shown);
 }
 
+async function assertSplitAlignment(page) {
+  const offset = await page.locator("[data-hero-content]").evaluate((hero) => {
+    const intro = hero.firstElementChild;
+    const copyTop = intro.firstElementChild.getBoundingClientRect().top;
+    const copyBottom = intro.lastElementChild.getBoundingClientRect().bottom;
+    const stage = hero.querySelector("[data-scene]").getBoundingClientRect();
+    return (copyTop + copyBottom - stage.top - stage.bottom) / 2;
+  });
+  assert(Math.abs(offset) < 1, `The copy and scene centers differ by ${offset}px`);
+}
+
 async function verifyCarouselChanges(browserContext) {
   const page = await browserContext.newPage();
   await page.setViewportSize({ width: 1440, height: 850 });
@@ -97,6 +108,7 @@ async function verifyCarouselChanges(browserContext) {
   await waitForControls(page, false);
   await page.getByRole("heading").hover();
   await waitForControls(page, true);
+  await assertSplitAlignment(page);
   await button(page, "Pausar").click();
   await page.mouse.move(0, 0);
   await waitForControls(page, false);
@@ -282,9 +294,14 @@ try {
           ),
           false,
         );
-        if (size === "mobile")
+        const stage = await page.locator("[data-scene]").boundingBox();
+        assert(before[2].y >= stage.y + stage.height - 1, "Carousel controls sit below the stage");
+        if (size === "mobile") {
           assert(before[0].y > before[1].y + before[1].height);
-        else assert(before[0].x > before[1].x + before[1].width);
+        } else {
+          assert(before[0].x > before[1].x + before[1].width);
+          await assertSplitAlignment(page);
+        }
         assert(before[2].width >= 44 && before[2].height >= 44);
         await page
           .locator("main")

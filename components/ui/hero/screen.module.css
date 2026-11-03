@@ -1,4 +1,5 @@
 .carousel {
+  --control-size: 44px;
   --scene-fade: 700ms ease-in-out;
   --room-paper: hsl(var(--background));
   --room-ink: color-mix(in srgb, hsl(var(--foreground)) 78%, var(--room-paper));
@@ -147,14 +148,14 @@
   position: absolute;
   z-index: 2;
   /* The lower-right wall is clear of the screen and every room's furniture. */
-  inset-inline-start: max(86%, calc(100% - 44px));
+  inset-inline-start: max(86%, calc(100% - var(--control-size)));
   top: calc(73% + 6px);
   margin: 0;
   color: hsl(var(--muted-foreground));
 }
 .controls button {
-  width: 44px;
-  height: 44px;
+  width: var(--control-size);
+  height: var(--control-size);
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -180,6 +181,12 @@
   text-align: center;
   color: hsl(var(--muted-foreground));
   white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  [data-hero-content="horizontal"] .carousel:has(> .controls[data-single="false"]) {
+    /* Center the stage with the copy. The control row extends into the section padding. */
+    margin-block-end: calc(-1 * var(--control-size));
+  }
 }
 @media (min-width: 768px) and (hover: hover) and (pointer: fine) and (not (any-pointer: coarse)) {
   [data-hero-content]:not(:hover):not(:has(:focus-visible)) .controls {

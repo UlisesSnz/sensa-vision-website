@@ -22,3 +22,9 @@
 .textAbove > :empty {
   display: none;
 }
+
+@media (min-width: 1024px) {
+  [data-hero-content="horizontal"] > .intro > :first-child {
+    margin-block-start: 0;
+  }
+}
