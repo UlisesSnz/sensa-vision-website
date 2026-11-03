@@ -68,7 +68,7 @@ export default function ScreenCarousel({
     back?: ScreenSlide;
   }>({});
   const [playback, setPlayback] = useState<Playback>("auto");
-  const [hovered, setHovered] = useState(false);
+  const [pausedByHover, setPausedByHover] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
   const inView = useStageVisibility(stage);
   const reduce = useSyncExternalStore(
@@ -108,13 +108,13 @@ export default function ScreenCarousel({
   const playing = playback === "playing" || (playback === "auto" && !reduce);
 
   useEffect(() => {
-    if (!playing || hovered || !inView || !ready || !nextKey) return;
+    if (!playing || pausedByHover || !inView || !ready || !nextKey) return;
     const timer = window.setTimeout(
       () => setRequest({ key: nextKey, direction: 1, manual: false }),
       5000,
     );
     return () => window.clearTimeout(timer);
-  }, [playing, hovered, inView, ready, requestedKey, nextKey]);
+  }, [playing, pausedByHover, inView, ready, requestedKey, nextKey]);
 
   function navigate(direction: Direction) {
     const target =
@@ -155,9 +155,11 @@ export default function ScreenCarousel({
       aria-label={messages.label}
       aria-roledescription={multiple ? messages.carousel : undefined}
       onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setHovered(true);
+        if (event.pointerType === "mouse") setPausedByHover(true);
       }}
-      onPointerLeave={() => setHovered(false)}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "mouse") setPausedByHover(false);
+      }}
       onFocusCapture={(event) => {
         if (event.target.matches(":focus-visible")) setPlayback("paused");
       }}
@@ -167,7 +169,10 @@ export default function ScreenCarousel({
           <button
             type="button"
             aria-label={playing ? pauseLabel : playLabel}
-            onClick={() => setPlayback(playing ? "paused" : "playing")}
+            onClick={() => {
+              setPlayback(playing ? "paused" : "playing");
+              setPausedByHover(false);
+            }}
           >
             {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
           </button>

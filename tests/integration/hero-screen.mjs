@@ -530,16 +530,26 @@ try {
       .evaluate((el) => getComputedStyle(el).transitionDuration),
     "0.7s",
   );
-  await player.locator("[data-scene]").hover();
+  const stage = player.locator("[data-scene]");
+  await stage.hover();
   await player.clock.fastForward(11000);
   await image(player, first);
   await button(player, "Pausar").click();
   await button(player, "Reproducir").click();
-  await player.clock.fastForward(5100);
-  await image(player, first);
-  await player.mouse.move(0, 0);
+  assert.equal(await player.getByRole("img").getAttribute("alt"), first);
   await player.clock.fastForward(5100);
   await image(player, second);
+  await player.mouse.move(0, 0);
+  await stage.hover();
+  await player.clock.fastForward(11000);
+  assert.equal(
+    await player.getByRole("img").getAttribute("alt"),
+    second,
+    "A new hover holds the template again",
+  );
+  await player.mouse.move(0, 0);
+  await player.clock.fastForward(5100);
+  await image(player, third);
   assert.equal((await player.getByRole("status").textContent()).trim(), "");
   await player.getByRole("link", { name: "Descargar Sensa" }).focus();
   await player.keyboard.press("Tab");
@@ -551,14 +561,14 @@ try {
   );
   await player.keyboard.press("Shift+Tab");
   await player.clock.fastForward(11000);
-  await image(player, second);
+  await image(player, third);
   await player.keyboard.press("Tab");
   await player.keyboard.press("Enter");
   await player.clock.fastForward(5100);
-  await image(player, third);
+  await image(player, first);
   await player.keyboard.press("Tab");
   await player.keyboard.press("Space");
-  await image(player, second);
+  await image(player, third);
   assert.equal(
     await button(player, "Plantilla anterior").evaluate(
       (el) => el === document.activeElement,
@@ -566,11 +576,11 @@ try {
     true,
   );
   await player.clock.fastForward(11000);
-  await image(player, second);
+  await image(player, third);
   await button(player, "Plantilla siguiente").dblclick();
-  await image(player, first);
+  await image(player, second);
   await player.clock.fastForward(11000);
-  await image(player, first);
+  await image(player, second);
   await motion.close();
 
   const failure = await context({ reducedMotion: "reduce" });

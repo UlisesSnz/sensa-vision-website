@@ -32,7 +32,7 @@ Con varias plantillas, la imagen cambia cada cinco segundos. La plantilla anteri
 
 En escritorio, **Side by side** centra el bloque de texto y botones con la escena. Los controles aparecen al acercar el ratón al texto o a la escena y al navegar por el hero con teclado. En móvil y pantallas táctiles permanecen visibles. El contador queda entre las flechas y reserva el mismo ancho para todas las posiciones. Los controles usan el idioma de la página.
 
-Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel y **Reproducir** los reanuda. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
+Pasar el puntero por la escena mantiene la plantilla visible mientras se mueve el ambiente. **Pausar** detiene tanto el dibujo como el carrusel. **Reproducir** los reanuda aunque el puntero siga sobre el botón. Si el puntero sale y vuelve a entrar, la plantilla se mantiene visible otra vez. Al entrar con teclado, la reproducción espera a que se pulse **Reproducir**. Con movimiento reducido se muestra la ilustración fija, el avance empieza pausado y los cambios son instantáneos. Si una imagen falla, se conserva la última disponible. Si faltan todas, aparece **Pantalla en reposo**.
 
 ## Verificación local
 
