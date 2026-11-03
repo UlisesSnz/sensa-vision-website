@@ -344,8 +344,14 @@ try {
     ["pharmacy", first],
     ["restaurant", "Café de la casa"],
     ["window", "Nueva colección de lino"],
+    ["home", "Señal en línea"],
+    ["education", "Programa del aula abierta"],
+    ["manufacturing", "Producción de la línea dos"],
+    ["healthcare", "Próximo turno en consulta"],
   ];
   await image(page, tour[0][1]);
+  const mount = await page.locator("[data-visible=true]").boundingBox();
+  const controls = await page.locator("[data-single]").boundingBox();
   await page.waitForFunction(
     () => document.querySelectorAll("[data-visible] img").length === 2,
   );
@@ -356,6 +362,8 @@ try {
   );
   for (const [scene, alt] of tour) {
     await image(page, alt);
+    assert.deepEqual(await page.locator("[data-visible=true]").boundingBox(), mount);
+    assert.deepEqual(await page.locator("[data-single]").boundingBox(), controls);
     assert.equal(
       await page.locator("[data-scene]").getAttribute("data-scene"),
       scene,
@@ -367,7 +375,7 @@ try {
       "1",
     );
     const carousel = page.getByRole("group", { name: "Plantillas de Sensa", exact: true });
-    assert.equal(await carousel.getByText(/^(Recepción|Tienda|Farmacia|Cafetería|Escaparate)$/).count(), 0);
+    assert.equal(await carousel.getByText(/^(Recepción|Tienda|Farmacia|Cafetería|Escaparate|Home|Education|Manufacturing|Healthcare)$/).count(), 0);
     if (scene === "office") {
       const inFront = await page.locator("[data-room=office] [data-room-poster] path[fill]").evaluate((leaves) => {
         const screen = document.querySelector("[data-visible=true]").getBoundingClientRect();
@@ -413,6 +421,14 @@ try {
   await singleImage.tap({ position: { x: screenBox.width - 2, y: screenBox.height - 2 } });
   await pauseMotion.tap();
   await button(compact, "Reproducir animación").waitFor();
+  await compact.goto(`${origin}/?scene=home&theme=dark`);
+  const homeScreen = await (await image(compact, "Señal en línea")).boundingBox();
+  const homePause = await pauseMotion.boundingBox();
+  assert(homePause.y >= homeScreen.y + homeScreen.height);
+  assert(homePause.x + homePause.width <= homeScreen.x + homeScreen.width + 4,
+    "The touch control sits under the display, clear of the shelving");
+  await pauseMotion.tap();
+  await button(compact, "Reproducir animación").waitFor();
   await touch.close();
 
   const motion = await context();
@@ -435,29 +451,29 @@ try {
       `${scene} keeps moving beyond the first animation cycle while its template is held`,
     );
     await image(rooms, alt);
-    if (scene !== "window") await button(rooms, "Plantilla siguiente").click();
+    if (scene !== tour.at(-1)[0]) await button(rooms, "Plantilla siguiente").click();
   }
   await button(rooms, "Pausar").click();
-  const reflection = drawing("window");
-  const paused = await reflection.innerHTML();
+  const drip = drawing("healthcare");
+  const paused = await drip.innerHTML();
   await rooms.clock.runFor(500);
-  assert.equal(await reflection.innerHTML(), paused);
+  assert.equal(await drip.innerHTML(), paused);
   const ink = () =>
-    reflection.locator("path[stroke]").first().evaluate((el) => getComputedStyle(el).stroke);
+    drip.locator("path[stroke]").first().evaluate((el) => getComputedStyle(el).stroke);
   const light = await ink();
   await rooms.evaluate(() => document.documentElement.classList.add("dark"));
   const dark = await ink();
   assert.notEqual(dark, light, "The stroke changes with the theme");
   assert.equal(
     dark,
-    await rooms.locator("[data-room=window] > svg").evaluate((el) => getComputedStyle(el).stroke),
-    "The animated reflection and static furniture share the same dark ink",
+    await rooms.locator("[data-room=healthcare] > svg").evaluate((el) => getComputedStyle(el).stroke),
+    "The animated drip and static furniture share the same dark ink",
   );
   await button(rooms, "Reproducir").click();
   await rooms.clock.runFor(450);
-  assert.notEqual(await reflection.innerHTML(), paused);
+  assert.notEqual(await drip.innerHTML(), paused);
   await rooms.emulateMedia({ reducedMotion: "reduce" });
-  await rooms.locator("[data-room=window][data-animated=false]").waitFor();
+  await rooms.locator("[data-room=healthcare][data-animated=false]").waitFor();
   await rooms.getByRole("button", { name: "Plantilla siguiente" }).click();
   await image(rooms, tour[0][1]);
   assert.equal(await rooms.locator("[data-animated=true]").count(), 0);
@@ -607,7 +623,7 @@ try {
   assert.deepEqual(errors, []);
   assert.deepEqual(unexpected, []);
   console.log(
-    "Heroes OK: both layouts, responsive images, 8 visual combinations, 5 animated scenes, playback, asset failures and local Studio editing.",
+    "Heroes OK: both layouts, responsive images, 8 visual combinations, 9 animated scenes, playback, asset failures and local Studio editing.",
   );
 } catch (error) {
   if (errors.length || unexpected.length) console.error({ errors, unexpected });

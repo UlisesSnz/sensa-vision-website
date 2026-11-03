@@ -6,14 +6,26 @@ En Studio, abre una página y añade el bloque **Hero · Template Screen**. Pued
 
 1. **Default scene** define el ambiente que heredan las plantillas. El bloque nuevo ya trae *Office or reception*.
 2. En **Templates**, añade una imagen y describe su mensaje en **Alt text**. Para publicar el bloque hace falta al menos una plantilla con imagen y texto alternativo.
-3. Para una página de farmacias, elige *Pharmacy* una vez en el bloque. Cada plantilla mostrará **Use default (Pharmacy)**. Para el home, cambia **Scene** solo en las plantillas que necesiten otro ambiente. Puedes volver a **Use default** en cualquier momento.
+3. Para una página de farmacias, elige *Pharmacy* una vez en el bloque. Cada plantilla mostrará **Use default (Pharmacy)**. Para abrir la portada con *Home*, abre la primera fila de **Templates** y elige **Home** en **Scene**. Cada fila admite su propio ambiente.
 4. Arrastra las filas para cambiar el orden. Reemplazar la imagen de una fila conserva su posición. En vista previa, reordenar conserva la plantilla que estás viendo. Si la eliminas, la pantalla pasa a la primera disponible.
 
-La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se ve, en recepción se mecen las hojas, en la tienda oscila una etiqueta y en la farmacia un pulso recorre el mostrador. En la cafetería sube vapor de la taza y en el escaparate se desplaza un reflejo sobre el cristal. Estos detalles utilizan cinco animaciones Lottie locales que adoptan los colores del tema.
+La pantalla horizontal muestra la plantilla completa. Mientras la plantilla se ve, en recepción se mecen las hojas, en la tienda oscila una etiqueta y en la farmacia un pulso recorre el mostrador. En la cafetería sube vapor de la taza y en el escaparate se desplaza un reflejo sobre el cristal. Cada ambiente tiene su propio Lottie local, que se carga al reproducirse y adopta los colores del tema.
 
 <picture>
   <source media="(prefers-reduced-motion: reduce)" srcset="hero-screen/ambientes.webp">
   <img src="hero-screen/movimiento.webp" alt="Detalle de las hojas, la etiqueta, el pulso, el vapor y el reflejo de los cinco ambientes">
+</picture>
+
+| Ambiente en Studio | Detalle animado |
+| --- | --- |
+| Home | Un pulso recorre el cable desde la regleta del estante hasta el televisor. El HDMI se pierde en el margen izquierdo. |
+| Education | El globo terráqueo gira junto a los pupitres. |
+| Manufacturing | Un brazo articulado mueve su pinza sobre una cinta de embalaje. |
+| Healthcare | Una gota cae en la cámara de suero junto a la camilla. |
+
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="hero-screen/nuevos-ambientes.webp">
+  <img src="hero-screen/nuevos-ambientes-animados.webp" alt="Los ambientes Home, Education, Manufacturing y Healthcare en el hero con tema oscuro">
 </picture>
 
 Con varias plantillas, la imagen cambia cada cinco segundos. La plantilla anterior y la siguiente se mezclan durante 700 ms. Si cambia el ambiente, el mobiliario se desvanece al mismo ritmo. Dos plantillas del mismo negocio comparten la animación en curso. Con una sola plantilla, la imagen permanece fija y el ambiente se anima en bucle mientras está a la vista. Un botón de pausa en el margen derecho evita añadir una fila a la escena.
@@ -33,13 +45,13 @@ npm run test:hero-screen
 
 La prueba de navegador utiliza plantillas sintéticas, el componente real, los estilos del sitio y la consulta de páginas. El formulario de Studio usa referencias de imágenes locales y guarda el documento en el navegador. La vista previa recibe las ediciones en otra pestaña. El cargador de imágenes de prueba sustituye el servicio remoto de optimización.
 
-Para recorrer la demostración a mano, ejecuta `npx vite --config tests/browser/hero-screen/vite.config.mts --port 4184` y abre el [recorrido por los cinco ambientes](http://127.0.0.1:4184/?scenario=tour) o la [farmacia con tres plantillas](http://127.0.0.1:4184/). Puedes añadir `theme=dark` y `locale=en` a la URL.
+Para recorrer la demostración a mano, ejecuta `npx vite --config tests/browser/hero-screen/vite.config.mts --port 4184`. Puedes añadir `theme=dark` y `locale=en` a la URL. [Recorrido de nueve ambientes](http://127.0.0.1:4184/?scenario=tour) · [Home](http://127.0.0.1:4184/?scene=home) · [Farmacia con tres plantillas](http://127.0.0.1:4184/).
 
 Para ver el texto arriba, abre las demos de [Hero 1](http://127.0.0.1:4184/?hero=1&layout=vertical) y del [hero con pantalla](http://127.0.0.1:4184/?layout=vertical&scenario=tour).
 
 ![Hero 1 y Hero · Template Screen con el texto y los enlaces centrados sobre la imagen y la escena](hero-screen/text-above.webp)
 
-Las capturas reproducibles de los ocho cruces de idioma, tema y tamaño y de los cinco ambientes quedan en `output/playwright/hero-screen/`.
+Las capturas reproducibles de los ocho cruces de idioma, tema y tamaño y de los nueve ambientes quedan en `output/playwright/hero-screen/`.
 
 En los ocho casos, el marco y los controles conservaron sus coordenadas. Playwright comprueba que cada dibujo cambie de fotograma mientras la plantilla sigue fija, que responda a la pausa y que conserve el color del tema. Si falla un Lottie, queda visible el dibujo estático y se puede avanzar al siguiente ambiente. Las pruebas también cubren imágenes verticales o fallidas y la persistencia del orden al reabrir el formulario de Studio.
 

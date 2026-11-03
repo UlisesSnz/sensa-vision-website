@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#dfede1"/>
+  <rect x="594" y="32" width="334" height="476" rx="157" fill="#abd6c8"/>
+  <g fill="#233f42" font-family="Arial,sans-serif">
+    <text x="46" y="74" font-size="25" letter-spacing="4">CLÍNICA / CONSULTA</text>
+    <text x="43" y="245" font-size="89">Próximo</text><text x="43" y="340" font-size="89">turno</text>
+    <path d="M47 425h478v2H47z"/><text x="47" y="476" font-size="26">Consultorio 03</text>
+    <text x="758" y="333" text-anchor="middle" font-family="Georgia,serif" font-size="176">18</text>
+  </g>
+</svg>

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { HeroScene } from "@/lib/hero-screen";
 import { AnimatedRoom } from "./room-motion";
 import styles from "./screen.module.css";
@@ -192,13 +193,157 @@ function ShopWindow() {
   );
 }
 
+function Home() {
+  const hdmiFade = useId();
+  return (
+    <>
+      <defs>
+        <linearGradient id={hdmiFade} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="0">
+          <stop offset="0" stopColor={ink} stopOpacity="0" />
+          <stop offset="1" stopColor={ink} />
+        </linearGradient>
+      </defs>
+      <path
+        className={styles.detail}
+        stroke={`url(#${hdmiFade})`}
+        d="M101 196c-17 1-23 8-23 26v113c0 16-7 23-22 23H-2"
+      />
+
+      {/* Open steel uprights and the thin edges of the four wooden shelves. */}
+      <g fill={wash}>
+        <path d="m541 100 10-5h80l-8 5zm0 0h82v5h-82zm82 0 8-5v5l-8 5z" />
+        <path d="M541 105h3v288h-3zm81 0h3v288h-3zm7-5h2v284h-2z" />
+        {[229, 278, 372].map((y) => (
+          <path key={y} transform={`translate(0 ${y})`} d="m541 0 10-4h80l-8 4zm0 0h82v4h-82zm82 0 8-4v4l-8 4z" />
+        ))}
+      </g>
+      <g fill={paper}>
+        {/* Controller, books and a small cylindrical access point. */}
+        <g transform="translate(0 18)">
+          <path d="M548 206q1-10 6-12l5 2 5-2q5 0 8 12 0 4-4 2l-4-4h-8l-4 4q-4 2-4-2z" />
+          <path d="M583 181h7v28h-7zm8-4h7v32h-7zm9 9 7-2 6 23-7 2z" />
+          <path className={styles.detail} d="M552 199h5m-2-2v5m9-2h2m18-14h5m3-4h5" />
+        </g>
+        <path d="M594 253q0-4 8-4t8 4v19q0 3-8 3t-8-3z" />
+        <path className={styles.detail} d="M595 253q7 3 14 0m-9 17h3" />
+      </g>
+      {/* The pulse in motion/home.json follows this lead from the strip to the TV. */}
+      <path
+        className={styles.detail}
+        d="M556 261C556 255 554 251 548 251H544C536 251 532 247 532 239V204C532 192 529 187 518 187H505"
+      />
+      <rect x="547" y="265" width="41" height="10" rx="2.5" fill={paper} />
+      <path fill={wash} d="M552 264q0-3 3-3h3q3 0 3 3v5h-9z" />
+      <path d="M568 268v3m3-3v3m7-3v3m3-3v3" strokeWidth="1.4" />
+      {/* The bag rests its weight on the bottom shelf. */}
+      <path d="M566 314q-4-22 8-22 13 0 10 17m-22 9q-14 11-12 31l3 14" />
+      <path fill={wash} d="M558 327q1-21 20-24 18 0 23 21l5 31q2 13-10 15h-30q-12-1-11-13z" />
+      <path fill={paper} d="M562 341q15-6 32-1l4 20q-16 6-37 2z" />
+      <path className={styles.detail} d="M561 330q1-16 17-21 15-1 19 15m-33 21q13-4 28-2m-19 4-1 7m28-21 5 3" />
+    </>
+  );
+}
+
+function Education() {
+  return (
+    <>
+      {/* A globe on the classroom bookcase, with a fixed tilted cradle. */}
+      <circle cx="58" cy="252" r="20" fill={wash} />
+      <g transform="translate(58 252) rotate(16)">
+        <ellipse data-room-poster="" rx="10" ry="20" />
+        <path className={styles.detail} d="M-19-6q18 8 38 0m-35 17q15 5 31 0" />
+        <path d="M0-24a24 24 0 0 1 0 48m0-51v7m0 40v7" />
+      </g>
+      <path d="M51 276v9m-13 6q2-6 13-6t13 6z" fill={paper} />
+      <path fill={wash} d="M18 292h67v5H18zm3 46h61v5H21zm0 46h61v5H21z" />
+      <path d="M22 297v95m59-95v95" />
+      <g fill={paper}>
+        <path d="M28 311h7v26h-7zm8-4h7v30h-7zm11 6 7-2 6 24-7 2zM27 377h29v6H27zm3-6h30v6H30z" />
+        <path className={styles.detail} d="M29 318h5m4-5h4m-9 67h19" />
+      </g>
+      {[169, 357].map((x) => (
+        <g key={x} transform={`translate(${x} 0)`}>
+          <path fill={wash} d="m2 333 9-5h123l7 5v6H2z" />
+          <path d="M11 339 7 391m121-52 4 52M13 348h111" />
+          <path fill={paper} d="M38 321q0-4 4-4h43q4 0 4 4l-2 19q0 4-4 4H44q-4 0-4-4z" />
+          <path fill={wash} d="m39 360 7-6h39l7 6v4H39z" />
+          <path d="m45 344 2 10m35-10-1 10m-37 10-4 27m45-27 5 27" />
+          <path className={styles.detail} d="M48 323h31m19 5 7-5 13 1 9-2 5 5m-14-3 1 3" />
+        </g>
+      ))}
+    </>
+  );
+}
+
+function Manufacturing() {
+  return (
+    <>
+      {/* The arm is bolted to a plinth beside the packing line. */}
+      <path fill={wash} d="M55 386h86v6H55zm7-19h70v19H62zm9 0 6-14h39l7 14z" />
+      <path fill={paper} d="M82 342l42-31 14 13-37 35q-12 11-21 0-6-9 2-17z" />
+      <circle cx="91" cy="350" r="11" fill={wash} />
+      <circle cx="91" cy="350" r="4" />
+      <path className={styles.detail} d="m99 344 26-21m-55 52h25m-25 4h17" />
+      <g data-room-poster="" transform="translate(133 317)">
+        <path fill={wash} d="m-5-7 8-3 65 8 9 6-3 9-8 2-71-13z" />
+        <path d="m10-4 51 7m6 12v7h9v-7m-9 7-5 6 3 5m11-11 5 6-3 5" />
+        <circle cx="70" cy="5" r="6" fill={paper} />
+      </g>
+      <circle cx="133" cy="317" r="9" fill={paper} />
+      <circle cx="133" cy="317" r="3" fill={wash} />
+      <g fill={paper}>
+        <rect x="174" y="353" width="332" height="23" rx="11.5" fill={wash} />
+        {[190, 225, 260, 295, 330, 365, 400, 435, 470, 491].map((x) => (
+          <circle key={x} cx={x} cy="364" r="5" />
+        ))}
+        <path d="m196 376-3 16h8l5-16m270 0 5 16h8l-3-16" />
+        <path d="M192 339h23v13h-23zM317 321h47v31h-47zm56 8h35v23h-35z" />
+        <path fill={wash} d="M336 321h8v10l-4-2-4 2zm50 8h7v8h-7z" />
+        <path className={styles.detail} d="M322 345h11m-11 3h7m62-2h9" />
+      </g>
+    </>
+  );
+}
+
+function Healthcare() {
+  return (
+    <>
+      {/* Gravity-fed IV on a wheeled stand. */}
+      <path d="M40 379V177q0-7 7-7h19q5 0 5 5v4m-31 9h5m-5 190-18 10m18-10 20 10m-20-10v12" />
+      <g fill={paper}>
+        <circle cx="22" cy="390" r="2.5" /><circle cx="60" cy="390" r="2.5" />
+        <rect x="57" y="182" width="28" height="44" rx="7" />
+        <path d="M67 182v-4h8v4m-9 45v5h9v-5m-11 5h14l-2 22h-10z" />
+        <path fill={wash} d="M59 201q6-3 12 0t12 0v18q-1 5-6 5H65q-6 0-6-6z" />
+        <path className={styles.detail} d="M62 191h6m-6 4h4" />
+      </g>
+      <path data-room-poster="" d="M71 238v3" strokeWidth="2.6" />
+      <path className={styles.detail} d="M71 255v54q0 34 30 34h79q14 0 18 8" />
+      {/* Articulated exam couch, paper roll, lift and pull-out step. */}
+      <path fill={wash} d="m177 327 8-12 66 30h227v9H248z" />
+      <path fill={paper} d="M177 315q-5-3-2-8l2-4q2-4 7-2l65 31q4 2 2 7l-3 5z" />
+      <path fill={paper} d="M253 331h221q6 0 6 6v7H250v-9q0-4 3-4z" />
+      <path fill={wash} d="m182 302 5-5q2-2 6 0l21 10q3 2 1 5l-3 4z" />
+      <path d="m288 354 49 24m28-24-36 23m-46 3h100" />
+      <path fill={wash} d="M272 380h121l8 6v3H264v-3z" />
+      <circle cx="277" cy="390" r="3" fill={paper} /><circle cx="387" cy="390" r="3" fill={paper} />
+      <path fill={paper} d="M424 371h58v6h-58zm4 6-2 14m51-14 3 14" />
+      <path className={styles.detail} d="M431 368h43m-9-36v13q4 4 9 1m-26 3h12" />
+    </>
+  );
+}
+
 const furniture = {
   office: Office,
   store: Store,
   pharmacy: Pharmacy,
   restaurant: Restaurant,
   window: ShopWindow,
-};
+  home: Home,
+  education: Education,
+  manufacturing: Manufacturing,
+  healthcare: Healthcare,
+} satisfies Record<HeroScene, () => React.JSX.Element>;
 
 export default function ScreenRooms({ scenes }: { scenes: HeroScene[] }) {
   return (

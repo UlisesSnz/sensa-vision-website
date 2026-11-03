@@ -38,10 +38,6 @@ export default function Hero2({
   ...content
 }: Props) {
   const textAbove = stegaClean(layout) === "vertical";
-  const desktopSizes = textAbove
-    ? "(min-width: 1280px) 841px, (min-width: 1024px) 701px"
-    : "(min-width: 1280px) 406px, (min-width: 1024px) 336px";
-  const screenSizes = `${desktopSizes}, (min-width: 768px) 514px, (min-width: 640px) 421px, calc(75vw - 24px)`;
   const dictionary = getDictionary(locale);
   const base = stegaClean(baseScene);
   const scene = isHeroScene(base) ? base : DEFAULT_HERO_SCENE;
@@ -59,6 +55,16 @@ export default function Hero2({
       },
     ];
   });
+  const scenes = Array.from(new Set([scene, ...images.map((slide) => slide.scene)]));
+  const hasHome = scenes.includes("home");
+  const screenWidth = (width: number) => Math.ceil(width * (hasHome ? 0.66 : 0.73));
+  const screenSizes = [
+    `(min-width: 1280px) ${screenWidth(textAbove ? 1152 : 556)}px`,
+    `(min-width: 1024px) ${screenWidth(textAbove ? 960 : 460)}px`,
+    `(min-width: 768px) ${screenWidth(704)}px`,
+    `(min-width: 640px) ${screenWidth(576)}px`,
+    hasHome ? "calc(66vw - 21px)" : "calc(75vw - 24px)",
+  ].join(", ");
 
   return (
     <HeroLayout
@@ -74,9 +80,7 @@ export default function Hero2({
         messages={dictionary.heroScreen}
         isFirstBlock={isFirstBlock}
       >
-        <ScreenRooms
-          scenes={Array.from(new Set([scene, ...images.map((slide) => slide.scene)]))}
-        />
+        <ScreenRooms scenes={scenes} />
       </ScreenCarousel>
     </HeroLayout>
   );

@@ -19,6 +19,10 @@ const artwork = {
   pharmacy: () => import("./motion/pharmacy.json"),
   restaurant: () => import("./motion/restaurant.json"),
   window: () => import("./motion/window.json"),
+  education: () => import("./motion/education.json"),
+  manufacturing: () => import("./motion/manufacturing.json"),
+  healthcare: () => import("./motion/healthcare.json"),
+  home: () => import("./motion/home.json"),
 } satisfies Record<HeroScene, () => Promise<unknown>>;
 
 type Motion = {
@@ -110,7 +114,11 @@ export function AnimatedRoom({
   }, [canStart, ready]);
 
   return (
-    <div data-room={scene} data-animated={Boolean(ready) && !motion.reduced}>
+    <div
+      data-room={scene}
+      data-active={motion.scene === scene}
+      data-animated={Boolean(ready) && !motion.reduced}
+    >
       {children}
       <div ref={host} className={styles.roomPlayer} />
     </div>

@@ -8,6 +8,9 @@ export async function verifyStudio(context, origin, output) {
   const defaultScene = editor.getByRole("combobox", { name: "Default scene" });
   const scene = editor.getByRole("combobox", { name: "Scene", exact: true });
   assert.equal(await defaultScene.inputValue(), "office");
+  const additions = ["Home", "Education", "Manufacturing", "Healthcare"];
+  for (const label of additions)
+    assert.equal(await defaultScene.getByRole("option", { name: label, exact: true }).count(), 1);
   await defaultScene.selectOption({ label: "Pharmacy" });
   const preview = await context.newPage();
   await preview.goto(`${origin}/?scenario=saved`);
@@ -126,6 +129,19 @@ export async function verifyStudio(context, origin, output) {
   await editor.reload();
   await editor.getByText(labels[0], { exact: true }).waitFor();
   assert.equal((await doc()).slides.length, 2);
+
+  await editor.getByText(labels[0], { exact: true }).click();
+  for (const label of additions)
+    assert.equal(await scene.getByRole("option", { name: label, exact: true }).count(), 1);
+  await scene.selectOption({ label: "Home" });
+  await editor.getByRole("button", { name: "Close dialog" }).click();
+  await preview.locator('[data-scene="home"]').waitFor();
+  await preview.reload();
+  await image(labels[0]).waitFor();
+  await preview.locator('[data-scene="home"]').waitFor();
+  await preview.locator("[data-scene]").hover();
+  await next.click();
+  await preview.locator('[data-scene="store"]').waitFor();
 
   await editor.goto(`${origin}/studio.html?hero=1`);
   await sideBySide.waitFor();

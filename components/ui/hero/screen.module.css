@@ -75,11 +75,7 @@
   opacity: 0;
   transition: opacity var(--scene-fade);
 }
-.stage[data-scene="office"] [data-room="office"],
-.stage[data-scene="store"] [data-room="store"],
-.stage[data-scene="pharmacy"] [data-room="pharmacy"],
-.stage[data-scene="restaurant"] [data-room="restaurant"],
-.stage[data-scene="window"] [data-room="window"],
+.drawing [data-active="true"],
 .frame[data-visible="true"] {
   opacity: 1;
 }
@@ -105,6 +101,10 @@
   width: 3px;
   height: 1px;
   background: #abb7b3;
+}
+/* Reserve the shelving bay for the whole deck so the screen stays still between scenes. */
+.carousel:has([data-room="home"]) .screen {
+  width: 66%;
 }
 .glass {
   overflow: hidden;
@@ -147,11 +147,15 @@
 .controls[data-single="true"] {
   position: absolute;
   z-index: 2;
-  /* The lower-right wall is clear of the screen and every room's furniture. */
+  /* Keep the single control on clear wall, outside the template. */
   inset-inline-start: max(86%, calc(100% - var(--control-size)));
   top: calc(73% + 6px);
   margin: 0;
   color: hsl(var(--muted-foreground));
+}
+.carousel:has(> .stage[data-scene="home"]) .controls[data-single="true"] {
+  inset-inline-start: auto;
+  inset-inline-end: 19%;
 }
 .controls button {
   width: var(--control-size);

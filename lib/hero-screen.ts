@@ -4,6 +4,10 @@ export const HERO_SCENES = [
   { value: "pharmacy", title: "Pharmacy" },
   { value: "restaurant", title: "Restaurant or café" },
   { value: "window", title: "Shop window" },
+  { value: "education", title: "Education" },
+  { value: "manufacturing", title: "Manufacturing" },
+  { value: "healthcare", title: "Healthcare" },
+  { value: "home", title: "Home" },
 ] as const;
 
 export type HeroScene = (typeof HERO_SCENES)[number]["value"];

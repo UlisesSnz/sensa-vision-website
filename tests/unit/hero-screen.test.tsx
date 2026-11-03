@@ -154,6 +154,24 @@ describe("Hero con pantalla", () => {
     expect(await html([old])).toContain("Hero original");
   });
 
+  it.each(["home", "education", "manufacturing", "healthcare"])(
+    "can open on %s as an inherited scene or a template override",
+    async (scene) => {
+      for (const override of [false, true]) {
+        const block = {
+          ...screen,
+          baseScene: override ? "office" : scene,
+          slides: [{ ...pharmacySlides[0], scene: override ? scene : undefined }, pharmacySlides[1]],
+        };
+        expect(await validationPaths([block])).toEqual([]);
+        const output = await html(await project([block]));
+        expect(output).toContain(`data-scene="${scene}"`);
+        expect(output).toContain(`data-room="${scene}" data-active="true"`);
+        expect(output).toContain(`alt="${pharmacySlides[0].alt}"`);
+      }
+    },
+  );
+
   it.each([legacy, screen])(
     "preserves the layout choice and accepts older $_type blocks",
     async (block) => {

@@ -8,6 +8,10 @@ const catalog = [
   ["atelier", "Nueva colección de lino", "window"],
   ["turno", "Turno de atención", "pharmacy"],
   ["servicios", "Servicios de la farmacia", "pharmacy"],
+  ["signal", "Señal en línea", "home"],
+  ["campus", "Programa del aula abierta", "education"],
+  ["linea", "Producción de la línea dos", "manufacturing"],
+  ["consulta", "Próximo turno en consulta", "healthcare"],
 ] as const;
 
 // The .png references look like real Sanity assets. The browser fixture serves
@@ -36,7 +40,7 @@ export const pharmacySlides = [templates[2], templates[5], templates[6]].map(
   (asset) => slide(asset),
 );
 export const tourSlides = templates
-  .slice(0, 5)
+  .filter((asset) => asset.name !== "turno" && asset.name !== "servicios")
   .map((asset) => slide(asset, asset.scene));
 
 export const heroImage = {

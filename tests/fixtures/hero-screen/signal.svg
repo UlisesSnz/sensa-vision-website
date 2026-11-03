@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect width="960" height="540" fill="#25372f"/>
+  <g fill="#f3f1d9" font-family="Arial,sans-serif">
+    <text x="52" y="76" font-size="26" letter-spacing="5">SENSA / ESTUDIO</text>
+    <text x="45" y="269" font-size="112">Señal</text>
+    <text x="45" y="383" font-size="112">en línea.</text>
+    <path d="M52 445h852v2H52z"/>
+    <text x="52" y="493" font-size="23">Pantalla 01</text>
+  </g>
+  <g fill="none" stroke="#e7b36d" stroke-width="13">
+    <circle cx="738" cy="264" r="39"/><circle cx="738" cy="264" r="77"/><circle cx="738" cy="264" r="115"/>
+  </g>
+  <circle cx="738" cy="264" r="10" fill="#e7b36d"/>
+</svg>

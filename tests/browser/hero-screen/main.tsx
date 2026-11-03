@@ -28,13 +28,14 @@ document.documentElement.classList.toggle(
 document.body.classList.add("font-sans");
 const root = createRoot(document.getElementById("root")!);
 const query = parse(PAGE_QUERY);
-const baseSlides = scenario === "tour" ? tourSlides : pharmacySlides;
+const selected = tourSlides.find((slide) => slide.scene === params.get("scene"));
+const baseSlides = selected ? [selected] : scenario === "tour" ? tourSlides : pharmacySlides;
 const fixture = {
   _type: classic ? "hero-1" : "hero-2",
   _key: "hero",
   layout: params.get("layout"),
   image: heroImage,
-  baseScene: scenario === "tour" ? "office" : "pharmacy",
+  baseScene: selected?.scene ?? (scenario === "tour" ? "office" : "pharmacy"),
   slides:
     scenario === "empty"
       ? []
