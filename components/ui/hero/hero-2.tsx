@@ -9,6 +9,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { localizeHref } from "@/i18n/routing";
 import { urlFor } from "@/sanity/lib/image";
+import { cn } from "@/lib/utils";
 import {
   getDesktopReleaseFromLookup,
   getDesktopReleaseTargetFromContent,
@@ -23,8 +24,10 @@ import {
 } from "@/lib/hero-screen";
 import ScreenCarousel from "./screen-carousel";
 import ScreenRooms from "./screen-rooms";
+import styles from "./layout.module.css";
 
 type Props = {
+  layout?: Sanity.HeroLayout | null;
   tagLine?: string;
   title?: string;
   body?: PortableTextProps["value"];
@@ -47,6 +50,7 @@ function templateUrl(assetRef?: string | null) {
 }
 
 export default function Hero2({
+  layout,
   tagLine,
   title,
   body,
@@ -57,6 +61,11 @@ export default function Hero2({
   locale = "es",
   isFirstBlock = false,
 }: Props) {
+  const textAbove = stegaClean(layout) === "vertical";
+  const desktopSizes = textAbove
+    ? "(min-width: 1280px) 841px, (min-width: 1024px) 701px"
+    : "(min-width: 1280px) 474px, (min-width: 1024px) 392px";
+  const screenSizes = `${desktopSizes}, (min-width: 768px) 514px, (min-width: 640px) 421px, calc(75vw - 24px)`;
   const dictionary = getDictionary(locale);
   const base = stegaClean(baseScene);
   const scene = isHeroScene(base) ? base : DEFAULT_HERO_SCENE;
@@ -106,8 +115,14 @@ export default function Hero2({
 
   return (
     <SectionContainer className="py-14 sm:py-20 lg:py-28">
-      <div className="grid items-center gap-8 lg:grid-cols-[5fr_7fr] lg:gap-10">
-        <div className="min-w-0">
+      <div
+        className={
+          textAbove
+            ? styles.textAbove
+            : "grid items-center gap-8 lg:grid-cols-[5fr_7fr] lg:gap-10"
+        }
+      >
+        <div className={cn(styles.intro, "min-w-0")}>
           {tagLine && (
             <span className="font-pixel text-base font-semibold uppercase tracking-wide text-muted-foreground">
               {tagLine}
@@ -124,10 +139,13 @@ export default function Hero2({
             </div>
           )}
           {buttons.some(Boolean) && (
-            <div className="mt-8 flex flex-wrap gap-4">{buttons}</div>
+            <div className={cn(styles.actions, "mt-8 flex flex-wrap gap-4")}>
+              {buttons}
+            </div>
           )}
         </div>
         <ScreenCarousel
+          sizes={screenSizes}
           slides={images}
           baseScene={scene}
           messages={dictionary.heroScreen}

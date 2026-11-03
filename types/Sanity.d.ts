@@ -137,6 +137,8 @@ declare global {
       }>;
 
     // objects
+    type HeroLayout = "horizontal" | "vertical";
+
     type Block<T = string> = {
       _type: T;
       _key: string;

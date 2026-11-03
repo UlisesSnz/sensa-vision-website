@@ -75,7 +75,9 @@ export default async function Blocks({
         return (
           <Component
             {...block}
-            {...(block._type === "hero-2" && { isFirstBlock: index === 0 })}
+            {...((block._type === "hero-1" || block._type === "hero-2") && {
+              isFirstBlock: index === 0,
+            })}
             key={block._key}
             locale={locale}
             formMessages={dictionary.forms}

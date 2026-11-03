@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
 
+export const FULL_SECTION_IMAGE_SIZES =
+  "(min-width: 1280px) 1152px, (min-width: 1024px) 960px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
+
 export const DEFAULT_PADDING = {
   top: true,
   bottom: true,

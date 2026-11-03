@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import type { PortableTextProps } from "@portabletext/react";
 import Link from "next/link";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
@@ -10,6 +11,9 @@ import DesktopDownloadButton, {
   type DesktopDownloadMessages,
 } from "@/components/ui/desktop-download-button";
 import { DEFAULT_DESKTOP_RELEASE_TARGET } from "@/lib/desktop-release";
+import { cn } from "@/lib/utils";
+import { FULL_SECTION_IMAGE_SIZES } from "@/components/ui/section-container";
+import styles from "./layout.module.css";
 import {
   getDesktopReleaseFromLookup,
   getDesktopReleaseTargetFromContent,
@@ -17,6 +21,7 @@ import {
 } from "@/lib/desktop-release-content";
 
 export default function Hero1({
+  layout,
   tagLine,
   title,
   body,
@@ -25,20 +30,28 @@ export default function Hero1({
   desktopReleases,
   downloadMessages,
   locale = "es",
+  isFirstBlock = false,
 }: Partial<{
+  layout: Sanity.HeroLayout | null;
   tagLine: string;
   title: string;
-  body: any;
+  body: PortableTextProps["value"];
   image: Sanity.Image;
   links: Sanity.Link[];
   desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
   locale: Locale;
+  isFirstBlock: boolean;
 }>) {
+  const textAbove = stegaClean(layout) === "vertical";
   return (
     <div className="container dark:bg-background py-20 lg:pt-40">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="flex min-w-0 flex-col justify-center">
+      <div
+        className={
+          textAbove ? styles.textAbove : "grid grid-cols-1 lg:grid-cols-2 gap-10"
+        }
+      >
+        <div className={cn(styles.intro, "flex min-w-0 flex-col justify-center")}>
           {tagLine && (
             <span className="text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground">
               {tagLine}
@@ -51,7 +64,7 @@ export default function Hero1({
             </div>
           )}
           {links && links.length > 0 && (
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className={cn(styles.actions, "mt-10 flex flex-wrap gap-4")}>
               {links.map((link, index) => {
                 const key = link._key || `${link.title}-${index}`;
 
@@ -99,11 +112,14 @@ export default function Hero1({
         <div className="flex flex-col justify-center">
           {image && image.asset?._id && (
             <Image
-              className="rounded-xl"
+              className={cn("rounded-xl", textAbove && "h-auto w-full")}
               src={urlFor(image.asset).url()}
               alt={image.alt || ""}
               width={image.asset?.metadata?.dimensions?.width || 800}
               height={image.asset?.metadata?.dimensions?.height || 800}
+              sizes={textAbove ? FULL_SECTION_IMAGE_SIZES : undefined}
+              loading={isFirstBlock ? "eager" : "lazy"}
+              fetchPriority={isFirstBlock ? "high" : undefined}
               placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
               blurDataURL={image?.asset?.metadata?.lqip || ""}
               quality={100}

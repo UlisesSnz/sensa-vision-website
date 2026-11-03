@@ -60,6 +60,72 @@ const first = "Horario de la farmacia";
 const second = "Turno de atención";
 const third = "Servicios de la farmacia";
 
+async function verifyHeroLayouts(page) {
+  for (const [device, width] of [
+    ["desktop", 1440], ["wide", 1920], ["mobile", 375], ["small", 320],
+  ]) {
+    await page.setViewportSize({ width, height: 850 });
+    for (const hero of [1, 2]) {
+      await page.goto(`${origin}/?hero=${hero}&layout=vertical`);
+      const img = await image(page, hero === 1 ? "Café de la casa" : first);
+      await page.evaluate(() => document.fonts.ready);
+      assert(await img.evaluate((el) =>
+        Number(new URL(el.currentSrc).searchParams.get("w")) >= el.clientWidth,
+      ), "The browser requests an image large enough for this layout");
+      const media = hero === 1 ? img : page.locator("[data-scene]");
+      const box = await media.boundingBox();
+      const heading = page.getByRole("heading", { level: 1 });
+      const title = await heading.boundingBox();
+      const container = await page.locator(".container").evaluate((el) => {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return {
+          left: rect.left + parseFloat(style.paddingLeft),
+          right: rect.right - parseFloat(style.paddingRight),
+        };
+      });
+      const center = (container.left + container.right) / 2;
+      assert(Math.abs(box.x - container.left) < 1);
+      assert(Math.abs(box.x + box.width - container.right) < 1);
+      assert(Math.abs(title.x + title.width / 2 - center) < 1);
+      assert.equal(await heading.evaluate((el) => getComputedStyle(el).textAlign), "center");
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
+      const links = await page.getByRole("link").all();
+      assert.equal(links.length, 2);
+      const rows = new Map();
+      for (const link of links) {
+        const rect = await link.boundingBox();
+        assert(rect.y + rect.height < box.y);
+        const row = rows.get(rect.y) ?? [];
+        row.push(rect);
+        rows.set(rect.y, row);
+      }
+      for (const row of rows.values()) {
+        const last = row.at(-1);
+        assert(Math.abs((row[0].x + last.x + last.width) / 2 - center) < 1);
+      }
+      if (device === "desktop" || device === "mobile") {
+        await page.locator("main").screenshot({
+          path: `${output}/hero-${hero}-text-above-${device}.png`,
+        });
+      }
+      if (hero === 2) {
+        await button(page, "Plantilla siguiente").click();
+        await image(page, second);
+        const after = await media.boundingBox();
+        assert.equal(after.x, box.x);
+        assert.equal(after.width, box.width);
+        assert.equal(after.height, box.height);
+      }
+    }
+  }
+  await page.setViewportSize({ width: 1440, height: 850 });
+  await page.goto(`${origin}/?hero=1`);
+  const classic = await (await image(page, "Café de la casa")).boundingBox();
+  const heading = await page.getByRole("heading", { level: 1 }).boundingBox();
+  assert(classic.x >= heading.x + heading.width, "An existing Hero 1 opens side by side");
+}
+
 try {
   server = await createServer({
     configFile: "tests/browser/hero-screen/vite.config.mts",
@@ -135,7 +201,7 @@ try {
         assert.equal(await page.getByRole("img").count(), 1);
       }
   }
-  await page.setViewportSize({ width: 1440, height: 850 });
+  await verifyHeroLayouts(page);
   await page.goto(`${origin}/?scenario=tour`);
   const tour = [
     ["office", "Agenda de recepción"],
@@ -355,7 +421,7 @@ try {
   assert.deepEqual(errors, []);
   assert.deepEqual(unexpected, []);
   console.log(
-    "Hero screen OK: 8 visual combinations, 5 animated scenes, playback, asset failures and local Studio editing.",
+    "Heroes OK: both layouts, responsive images, 8 visual combinations, 5 animated scenes, playback, asset failures and local Studio editing.",
   );
 } catch (error) {
   if (errors.length || unexpected.length) console.error({ errors, unexpected });

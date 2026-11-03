@@ -1,8 +1,9 @@
 import { ObjectInput, set, type ImageInputProps } from "sanity";
-import hero from "@/sanity/schemas/blocks/hero/hero-2";
+import hero1 from "@/sanity/schemas/blocks/hero/hero-1";
+import hero2 from "@/sanity/schemas/blocks/hero/hero-2";
 import link from "@/sanity/schemas/blocks/shared/link";
 import { buttonVariant } from "@/sanity/schemas/blocks/shared/button-variant";
-import { templates } from "@/tests/fixtures/hero-screen";
+import { heroImage, templates } from "@/tests/fixtures/hero-screen";
 import { openLocalStudioForm } from "../local-studio-form";
 import "../split-editor/style.css";
 
@@ -41,6 +42,8 @@ function LocalImage(props: ImageInputProps) {
   );
 }
 
+const classic = new URLSearchParams(location.search).get("hero") === "1";
+const hero = classic ? hero1 : hero2;
 await openLocalStudioForm({
   types: [
     link,
@@ -49,9 +52,9 @@ await openLocalStudioForm({
     { name: "heroScreenEditor", type: "document", fields: hero.fields },
   ],
   schemaName: "heroScreenEditor",
-  title: "Template Screen · Local Studio",
+  title: `${hero.title} · Local Studio`,
   label: "Hero templates",
-  storageKey: "hero-screen-document",
+  storageKey: classic ? "hero-image-document" : "hero-screen-document",
   document: (initial) => ({
     ...initial,
     _id: "local-hero",
@@ -60,10 +63,11 @@ await openLocalStudioForm({
     _createdAt: "2026-11-02T00:00:00Z",
     _updatedAt: "2026-11-02T00:00:00Z",
     title: "Plantillas de la farmacia",
+    ...(classic && { image: heroImage }),
   }),
   components: {
     field: (props) =>
-      props.path.length === 1 && !["slides", "baseScene"].includes(props.name)
+      props.path.length === 1 && !["layout", "slides", "baseScene"].includes(props.name)
         ? null
         : props.renderDefault(props),
     input: (props) =>

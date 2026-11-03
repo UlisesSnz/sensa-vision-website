@@ -1,0 +1,24 @@
+.textAbove {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.textAbove > .intro {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.textAbove .intro h1 {
+  text-wrap: balance;
+}
+
+.textAbove .actions {
+  justify-content: center;
+}
+
+.textAbove > :empty {
+  display: none;
+}

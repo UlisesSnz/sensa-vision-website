@@ -2,6 +2,8 @@
 
 En Studio, abre una página y añade el bloque **Hero · Template Screen**. Puedes preparar el texto, hasta dos botones y las plantillas de cada idioma en su propia página. Los botones admiten enlaces y descargas de SensaVision Desktop.
 
+**Hero 1** y **Hero · Template Screen** comparten el campo **Layout**. Elige **Text above** para centrar el texto y los botones arriba. Debajo, la imagen de Hero 1 o la escena animada ocupa todo el ancho del contenido de la página. **Side by side** sitúa el texto a la izquierda en escritorio y arriba en móvil. Es la composición predeterminada, también para los bloques creados antes de añadir el campo.
+
 1. Elige el ambiente en **Default scene**. El valor inicial es *Office or reception*.
 2. En **Templates**, añade una imagen y describe su mensaje en **Alt text**. Para publicar el bloque hace falta al menos una plantilla con imagen y texto alternativo.
 3. Para una página de farmacias, elige *Pharmacy* como ambiente del bloque y deja vacío **Scene** en las imágenes. Para mostrar varios negocios en el home, elige el ambiente correspondiente en cada plantilla.
@@ -30,6 +32,10 @@ npm run test:hero-screen
 La prueba de navegador utiliza plantillas sintéticas, el componente real, los estilos del sitio y la consulta de páginas. El formulario de Studio usa referencias de imágenes locales y guarda el documento en el navegador. La vista previa recibe las ediciones en otra pestaña. El cargador de imágenes de prueba sustituye el servicio remoto de optimización.
 
 Para recorrer la demostración a mano, ejecuta `npx vite --config tests/browser/hero-screen/vite.config.mts --port 4184` y abre el [recorrido por los cinco ambientes](http://127.0.0.1:4184/?scenario=tour) o la [farmacia con tres plantillas](http://127.0.0.1:4184/). Puedes añadir `theme=dark` y `locale=en` a la URL.
+
+Para ver el texto arriba, abre las demos de [Hero 1](http://127.0.0.1:4184/?hero=1&layout=vertical) y del [hero con pantalla](http://127.0.0.1:4184/?layout=vertical&scenario=tour).
+
+![Hero 1 y Hero · Template Screen con el texto y los enlaces centrados sobre la imagen y la escena](hero-screen/text-above.webp)
 
 Las capturas reproducibles de los ocho cruces de idioma, tema y tamaño y de los cinco ambientes quedan en `output/playwright/hero-screen/`.
 

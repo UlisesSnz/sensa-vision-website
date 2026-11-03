@@ -1,8 +1,11 @@
 import { createRoot } from "react-dom/client";
 import { evaluate, parse } from "groq-js";
+import Hero1 from "@/components/ui/hero/hero-1";
 import Hero2 from "@/components/ui/hero/hero-2";
+import { getDictionary } from "@/i18n/dictionaries";
 import { PAGE_QUERY } from "@/sanity/queries/page";
 import {
+  heroImage,
   pharmacySlides,
   tourSlides,
   templates,
@@ -16,6 +19,7 @@ const params = new URLSearchParams(location.search);
 const locale = params.get("locale") === "en" ? "en" : "es";
 const en = locale === "en";
 const scenario = params.get("scenario");
+const classic = params.get("hero") === "1";
 document.documentElement.lang = locale;
 document.documentElement.classList.toggle(
   "dark",
@@ -26,8 +30,10 @@ const root = createRoot(document.getElementById("root")!);
 const query = parse(PAGE_QUERY);
 const baseSlides = scenario === "tour" ? tourSlides : pharmacySlides;
 const fixture = {
-  _type: "hero-2",
+  _type: classic ? "hero-1" : "hero-2",
   _key: "hero",
+  layout: params.get("layout"),
+  image: heroImage,
   baseScene: scenario === "tour" ? "office" : "pharmacy",
   slides:
     scenario === "empty"
@@ -65,9 +71,10 @@ let revision = 0;
 async function renderPage() {
   const current = ++revision;
   const saved =
-    scenario === "saved" && localStorage.getItem("hero-screen-document");
+    scenario === "saved" &&
+    localStorage.getItem(classic ? "hero-image-document" : "hero-screen-document");
   const block = saved
-    ? { ...JSON.parse(saved), _type: "hero-2", _key: "hero" }
+    ? { ...JSON.parse(saved), _type: fixture._type, _key: "hero" }
     : fixture;
   const page = {
     _type: "page",
@@ -81,12 +88,14 @@ async function renderPage() {
     params: { locale, slug: "index" },
   });
   const { blocks } = await result.get();
+  const Hero = classic ? Hero1 : Hero2;
   if (current === revision)
     root.render(
-      <Hero2
+      <Hero
         key={blocks[0]._key}
         {...blocks[0]}
         locale={locale}
+        downloadMessages={getDictionary(locale).downloads}
         isFirstBlock
         desktopReleases={{
           "win32/x64": releaseFixture({

@@ -154,6 +154,22 @@ describe("Hero con pantalla", () => {
     expect(await html([old])).toContain("Hero original");
   });
 
+  it.each([legacy, screen])(
+    "preserves the layout choice and accepts older $_type blocks",
+    async (block) => {
+      expect(await validationPaths([
+        block,
+        { ...block, _key: "stacked", layout: "vertical" },
+      ])).toEqual([]);
+      for (const layout of ["horizontal", "vertical"]) {
+        const [projected] = await project([{ ...block, layout }]);
+        expect(projected.layout).toBe(layout);
+      }
+      const [older] = await project([block]);
+      expect(older.layout).toBeNull();
+    },
+  );
+
   it("renders only the first image in server HTML, with localized links and the resolved Desktop download", async () => {
     vi.mocked(fetchLatestDesktopRelease).mockResolvedValue(
       releaseFixture({ platform: "win32", architecture: "x64" }),
@@ -186,6 +202,22 @@ describe("Hero con pantalla", () => {
     const lowerHero = await html(await project([legacy, screen]));
     expect(lowerHero).toMatch(/<img\b[^>]*loading="lazy"/i);
     expect(lowerHero).not.toMatch(/fetchpriority="high"/i);
+  });
+
+  it("requests a full-width Hero 1 image eagerly only when it leads the page", async () => {
+    const imageHero = {
+      ...legacy,
+      _key: "image-hero",
+      layout: "vertical",
+      image: { asset: templates[3], alt: templates[3].alt },
+    };
+    const leading = await html([imageHero]);
+    expect(leading).toMatch(/<img\b[^>]*loading="eager"/i);
+    expect(leading).toMatch(/<img\b[^>]*fetchpriority="high"/i);
+    expect(leading).toContain("(min-width: 1280px) 1152px");
+    const lower = await html([legacy, imageHero]);
+    expect(lower).toMatch(/<img\b[^>]*loading="lazy"/i);
+    expect(lower).not.toMatch(/fetchpriority="high"/i);
   });
 
   it("keeps the copy and a static screen for missing references and partial drafts", async () => {

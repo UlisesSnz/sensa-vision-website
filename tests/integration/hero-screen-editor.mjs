@@ -44,6 +44,18 @@ export async function verifyStudio(context, origin, output) {
   await image(labels[1]).waitFor();
   const startingKeys = (await doc()).slides.map((slide) => slide._key);
 
+  const sideBySide = editor.getByRole("radio", { name: "Side by side", exact: true });
+  const textAbove = editor.getByRole("radio", { name: "Text above", exact: true });
+  const waitForAlignment = (centered) =>
+    preview.waitForFunction((expected) => {
+      const heading = document.querySelector("h1");
+      return heading && (getComputedStyle(heading).textAlign === "center") === expected;
+    }, centered);
+  assert(await sideBySide.isChecked());
+  await textAbove.check();
+  await waitForAlignment(true);
+  await image(labels[1]).waitFor();
+
   // Use the same grab handles that an editor drags in Studio.
   await editor.bringToFront();
   const handles = editor.locator('button[aria-roledescription="sortable"]');
@@ -77,6 +89,7 @@ export async function verifyStudio(context, origin, output) {
   const before = (await doc()).slides;
   await editor.reload();
   await editor.getByText("Café de la casa", { exact: true }).waitFor();
+  assert(await textAbove.isChecked());
   assert.deepEqual((await doc()).slides, before);
   await preview.reload();
   await image("Café de la casa").waitFor();
@@ -91,4 +104,18 @@ export async function verifyStudio(context, origin, output) {
   await editor.reload();
   await editor.getByText(labels[0], { exact: true }).waitFor();
   assert.equal((await doc()).slides.length, 2);
+
+  await editor.goto(`${origin}/studio.html?hero=1`);
+  await sideBySide.waitFor();
+  assert(await sideBySide.isChecked());
+  await preview.goto(`${origin}/?hero=1&scenario=saved`);
+  await image("Café de la casa").waitFor();
+  await textAbove.check();
+  await waitForAlignment(true);
+  await editor.reload();
+  await textAbove.waitFor();
+  assert(await textAbove.isChecked());
+  await sideBySide.check();
+  await waitForAlignment(false);
+  await image("Café de la casa").waitFor();
 }

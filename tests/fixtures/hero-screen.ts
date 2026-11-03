@@ -18,6 +18,7 @@ export const templates = catalog.map(([name, alt, scene]) => ({
   scene,
   _id: `image-${name.padEnd(40, "0")}-960x540-png`,
   _type: "sanity.imageAsset",
+  metadata: { dimensions: { width: 960, height: 540, aspectRatio: 16 / 9 } },
   url: `https://cdn.sanity.io/images/localqa/local/${name.padEnd(40, "0")}-960x540.png`,
 }));
 
@@ -37,3 +38,9 @@ export const pharmacySlides = [templates[2], templates[5], templates[6]].map(
 export const tourSlides = templates
   .slice(0, 5)
   .map((asset) => slide(asset, asset.scene));
+
+export const heroImage = {
+  _type: "image",
+  alt: templates[3].alt,
+  asset: { _type: "reference", _ref: templates[3]._id },
+};

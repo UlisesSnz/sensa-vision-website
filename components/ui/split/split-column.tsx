@@ -5,7 +5,10 @@ import PortableTextRenderer from "@/components/portable-text-renderer";
 import { stegaClean } from "next-sanity";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import type { ISectionContainer } from "../section-container";
+import {
+  FULL_SECTION_IMAGE_SIZES,
+  type ISectionContainer,
+} from "../section-container";
 import type { Locale } from "@/i18n/config";
 import { localizeHref } from "@/i18n/routing";
 import DesktopDownloadButton, {
@@ -29,8 +32,6 @@ export interface ISplitColumn extends SplitColumnContent {
   downloadMessages?: DesktopDownloadMessages;
 }
 
-const fullImageSizes =
-  "(min-width: 1280px) 1152px, (min-width: 1024px) 960px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
 const narrowImageSizes =
   "(min-width: 1024px) 768px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
 const halfImageSizes =
@@ -106,7 +107,7 @@ export default function SplitColumn(props: ISplitColumn) {
               ? halfImageSizes
               : vertical && options.sectionWidth === "narrow"
                 ? narrowImageSizes
-                : fullImageSizes
+                : FULL_SECTION_IMAGE_SIZES
           }
           quality={100}
         />

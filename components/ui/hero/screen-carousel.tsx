@@ -43,12 +43,14 @@ function resolveSlide(
 }
 
 export default function ScreenCarousel({
+  sizes,
   slides,
   baseScene,
   messages,
   isFirstBlock,
   children,
 }: {
+  sizes: string;
   slides: ScreenSlide[];
   baseScene: HeroScene;
   messages: UiDictionary["heroScreen"];
@@ -235,7 +237,7 @@ export default function ScreenCarousel({
                     fill
                     loading={active && !leading ? "lazy" : "eager"}
                     fetchPriority={leading ? "high" : preparingNext ? "low" : undefined}
-                    sizes="(min-width: 1280px) 474px, (min-width: 1024px) 392px, (min-width: 768px) 514px, (min-width: 640px) 421px, calc(75vw - 24px)"
+                    sizes={sizes}
                     className="object-contain"
                     onLoad={() => mark(slide.src, "ready")}
                     onError={() => mark(slide.src, "failed")}
