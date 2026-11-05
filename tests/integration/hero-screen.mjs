@@ -398,21 +398,26 @@ try {
     );
     const carousel = page.getByRole("group", { name: "Plantillas de Sensa", exact: true });
     assert.equal(await carousel.getByText(/^(Recepción|Tienda|Farmacia|Cafetería|Escaparate|Home|Education|Manufacturing|Healthcare)$/).count(), 0);
-    if (scene === "office") {
-      const inFront = await page.locator("[data-room=office] [data-room-poster] path[fill]").evaluate((leaves) => {
+    if (scene === "office" || scene === "window") {
+      const silhouettes = scene === "office"
+        ? "[data-room=office] [data-room-poster] path[fill]"
+        : "[data-room=window] > svg g > path[fill]";
+      const inFront = await page.locator(silhouettes).evaluateAll((shapes) => {
         const screen = document.querySelector("[data-visible=true]").getBoundingClientRect();
-        const bounds = leaves.getBoundingClientRect();
-        leaves.style.pointerEvents = "visiblePainted";
-        try {
-          for (let x = Math.max(bounds.left, screen.left) + 1; x < Math.min(bounds.right, screen.right); x++)
-            for (let y = Math.max(bounds.top, screen.top) + 1; y < Math.min(bounds.bottom, screen.bottom); y++)
-              if (document.elementFromPoint(x, y) === leaves) return true;
-          return false;
-        } finally {
-          leaves.style.removeProperty("pointer-events");
-        }
+        return shapes.some((shape) => {
+          const bounds = shape.getBoundingClientRect();
+          shape.style.pointerEvents = "visiblePainted";
+          try {
+            for (let x = Math.max(bounds.left, screen.left) + 1; x < Math.min(bounds.right, screen.right); x++)
+              for (let y = Math.max(bounds.top, screen.top) + 1; y < Math.min(bounds.bottom, screen.bottom); y++)
+                if (document.elementFromPoint(x, y) === shape) return true;
+            return false;
+          } finally {
+            shape.style.removeProperty("pointer-events");
+          }
+        });
       });
-      assert(inFront, "A leaf is painted in front of the lower-left corner of the screen");
+      assert(inFront, `The ${scene === "office" ? "plant" : "mannequin"} overlaps the screen in the foreground`);
     }
     await page
       .getByRole("group", { name: "Plantillas de Sensa", exact: true })
@@ -451,6 +456,21 @@ try {
     "The touch control sits under the display, clear of the shelving");
   await pauseMotion.tap();
   await button(compact, "Reproducir animación").waitFor();
+  await compact.goto(`${origin}/?scene=restaurant`);
+  await image(compact, "Café de la casa");
+  const cafe = compact.locator("[data-room=restaurant][data-animated=true]");
+  await cafe.waitFor();
+  const clearWall = await cafe.evaluate((room) => {
+    const screen = document.querySelector("[data-visible=true]").getBoundingClientRect();
+    const props = room.querySelectorAll(":scope > svg path, :scope > svg circle, div svg path[stroke]");
+    return [...props].every((prop) => {
+      const box = prop.getBoundingClientRect();
+      // Leave 3px of wall around the 4px bezel and the short drop shadow.
+      return box.right <= screen.left - 7 || box.left >= screen.right + 8 ||
+        box.bottom <= screen.top - 7 || box.top >= screen.bottom + 10;
+    });
+  });
+  assert(clearWall, "The café lamp, tableware and steam clear the screen at 320px");
   await touch.close();
 
   const motion = await context();

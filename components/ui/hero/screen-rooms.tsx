@@ -129,28 +129,32 @@ function Pharmacy() {
 function Restaurant() {
   return (
     <>
-      <path d="M57 40v80" />
-      <path fill={wash} d="M51 120h12v11H51z" />
-      <path fill={paper} d="M25 153q6-23 31-25 25 1 32 25z" />
-      <path d="M22 154h69m-41 2q7 10 14 0" />
-      <path fill={wash} d="M148 336h356l9 7H140z" />
-      <path fill={paper} d="M148 343h358v43H148z" />
+      <g transform="translate(-6 6) scale(0.85)">
+        <path d="M57 40v80" />
+        <path fill={wash} d="M51 120h12v11H51z" />
+        <path fill={paper} d="M25 153q6-23 31-25 25 1 32 25z" />
+        <path d="M22 154h69m-41 2q7 10 14 0" />
+      </g>
+      <path fill={wash} d="M148 351h356l9 7H140z" />
+      <path fill={paper} d="M148 358h358v28H148z" />
       <path fill={wash} d="M153 386h348v6H153z" />
       <g className={styles.detail}>
         {Array.from({ length: 23 }, (_, i) => (
-          <path key={i} d={`M${161 + i * 15} 350v29`} />
+          <path key={i} d={`M${161 + i * 15} 363v16`} />
         ))}
       </g>
-      <path fill={paper} d="M342 327q4-27 38-29 30 1 38 29z" />
-      <circle fill={wash} cx="380" cy="294" r="4" />
-      <path fill={wash} d="M333 328h92l-6 6h-79z" />
-      <path className={styles.detail} d="M351 320q7-11 18-15" />
-      <path
-        fill={paper}
-        d="M201 318h25l-2 10q-2 6-10 6t-11-6zm25 2h4q7 0 3 6-2 3-9 2"
-      />
-      <path d="M196 334h37" />
-      <path data-room-poster="" d="M207 315c-5-4 2-7 1-11 0-2-2-3-3-5m12 16c-3-4 2-6 2-9 0-2-1-3-2-4" />
+      <g className={styles.tableware}>
+        <path fill={paper} d="M342 327q4-27 38-29 30 1 38 29z" />
+        <circle fill={wash} cx="380" cy="294" r="4" />
+        <path fill={wash} d="M333 328h92l-6 6h-79z" />
+        <path className={styles.detail} d="M351 320q7-11 18-15" />
+        <path
+          fill={paper}
+          d="M201 318h25l-2 10q-2 6-10 6t-11-6zm25 2h4q7 0 3 6-2 3-9 2"
+        />
+        <path d="M196 334h37" />
+        <path data-room-poster="" d="M207 315c-5-4 2-7 1-11 0-2-2-3-3-5m12 16c-3-4 2-6 2-9 0-2-1-3-2-4" />
+      </g>
     </>
   );
 }
@@ -163,31 +167,34 @@ function ShopWindow() {
         d="M17 88v292m4-20v19h31"
       />
       <path className={styles.detail} d="M590 54l30-30m-29 46 33-33m-17 37 14-14" />
-      <path fill={wash} d="m24 367 11-7h75l7 7v22H24z" />
-      <path fill={paper} d="M24 367h93v22H24z" />
-      <path d="M71 304v55m-12 1h24" />
-      <path
-        fill={wash}
-        d="m62 218 3-10h12l3 10 16 7-6 23-5 11q-2 7 2 19l6 23q-19 10-43 0l6-25q3-12 1-17l-6-14-5-20z"
-      />
-      <path fill={paper} d="M65 204h12v5H65z" />
-      <circle fill={paper} cx="71" cy="200" r="4" />
+      <g className={styles.mannequin}>
+        <path fill={wash} d="m24 367 11-7h75l7 7v22H24z" />
+        <path fill={paper} d="M24 367h93v22H24z" />
+        <path className={styles.detail} d="M36 375h22" />
+        <path d="M71 304v55m-12 1h24" />
+        <path
+          fill={wash}
+          d="m62 218 3-10h12l3 10 16 7-6 23-5 11q-2 7 2 19l6 23q-19 10-43 0l6-25q3-12 1-17l-6-14-5-20z"
+        />
+        <path fill={paper} d="M65 204h12v5H65z" />
+        <circle fill={paper} cx="71" cy="200" r="4" />
+        <path
+          className={styles.detail}
+          d="M71 221v79m-14-39q13 4 28 0m-36-33 9 14"
+        />
+        <path
+          className={styles.detail}
+          data-room-poster=""
+          d="M43 267l30-30m-29 46 33-33m-17 37 14-14"
+        />
+      </g>
+      <path fill={wash} d="m390 367 11-7h96l10 7v22H390z" />
+      <path fill={paper} d="M390 367h117v22H390z" />
+      <path fill={wash} d="m420 364 2-26h34l4 26z" />
+      <path d="M429 339v-6q0-11 10-11t10 11v6" />
       <path
         className={styles.detail}
-        d="M71 221v79m-14-39q13 4 28 0m-36-33 9 14"
-      />
-      <path
-        className={styles.detail}
-        data-room-poster=""
-        d="M43 267l30-30m-29 46 33-33m-17 37 14-14"
-      />
-      <path fill={wash} d="m390 356 11-8h96l10 8v33H390z" />
-      <path fill={paper} d="M390 356h117v33H390z" />
-      <path fill={wash} d="m420 352 2-26h34l4 26z" />
-      <path d="M429 327v-6q0-11 10-11t10 11v6" />
-      <path
-        className={styles.detail}
-        d="m468 330 12-12m-4 17 11-11M36 375h22"
+        d="m468 342 12-12m-4 17 11-11"
       />
     </>
   );

@@ -29,7 +29,8 @@
 .drawing {
   pointer-events: none;
 }
-.drawing [data-room="office"] {
+.drawing [data-room="office"],
+.drawing [data-room="window"] {
   z-index: 1;
 }
 /* Keep the pot, the still leaves and the animated leaves on the same floor mark. */
@@ -38,6 +39,19 @@
   transform-box: view-box;
   transform-origin: 20% 95.61%;
   transform: scale(0.8);
+}
+/* Move the mannequin and its glass reflection together across the left bezel. */
+.mannequin,
+.drawing [data-room="window"] > .roomPlayer {
+  transform-box: view-box;
+  transform: translateX(1.5%);
+}
+/* Scale the dishes and live steam together so the tray sits on the counter. */
+.tableware,
+.drawing [data-room="restaurant"] > .roomPlayer {
+  transform-box: view-box;
+  transform-origin: center bottom;
+  transform: scale(0.72);
 }
 .drawing svg {
   fill: none;
