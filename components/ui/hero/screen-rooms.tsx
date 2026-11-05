@@ -183,11 +183,11 @@ function ShopWindow() {
       />
       <path fill={wash} d="m390 356 11-8h96l10 8v33H390z" />
       <path fill={paper} d="M390 356h117v33H390z" />
-      <path fill={wash} d="m420 340 2-26h34l4 26z" />
-      <path d="M429 315v-6q0-11 10-11t10 11v6m-28 25h41" />
+      <path fill={wash} d="m420 352 2-26h34l4 26z" />
+      <path d="M429 327v-6q0-11 10-11t10 11v6" />
       <path
         className={styles.detail}
-        d="m468 318 12-12m-4 17 11-11M36 375h22"
+        d="m468 330 12-12m-4 17 11-11M36 375h22"
       />
     </>
   );
@@ -265,10 +265,16 @@ function Education() {
         <g key={x} transform={`translate(${x} 0)`}>
           <path fill={wash} d="m2 333 9-5h123l7 5v6H2z" />
           <path d="M11 339 7 391m121-52 4 52M13 348h111" />
-          <path fill={paper} d="M38 321q0-4 4-4h43q4 0 4 4l-2 19q0 4-4 4H44q-4 0-4-4z" />
-          <path fill={wash} d="m39 360 7-6h39l7 6v4H39z" />
-          <path d="m45 344 2 10m35-10-1 10m-37 10-4 27m45-27 5 27" />
-          <path className={styles.detail} d="M48 323h31m19 5 7-5 13 1 9-2 5 5m-14-3 1 3" />
+          <path className={styles.detail} d="m98 328 7-5 13 1 9-2 5 5m-14-3 1 3" />
+          {/* The chair faces the desk. Its rear uprights overlap the seat and backrest. */}
+          <g transform="translate(71.5 0)">
+            <path d="M-12 346l-2 35M12 346l2 35" />
+            <path fill={wash} d="M-16 344h32q2 0 3 3l4 10q1 3-3 3h-40q-4 0-3-3l4-10q1-3 3-3z" />
+            <path fill={paper} d="M-25 324q0-5 5-5h40q5 0 5 5l-2 20q0 5-5 5h-36q-5 0-5-5z" />
+            <path d="M-17 336v24l-4 32M17 336v24l4 32" />
+            <circle cx="-17" cy="336" r="1.5" fill={ink} />
+            <circle cx="17" cy="336" r="1.5" fill={ink} />
+          </g>
         </g>
       ))}
     </>
