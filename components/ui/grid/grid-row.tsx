@@ -33,6 +33,28 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
   "grid-post": GridPost,
 };
 
+function getGridCardImageSizes(gridColumns?: Grid1Props["gridColumns"]) {
+  const columnCount =
+    gridColumns === "grid-cols-2"
+      ? 2
+      : gridColumns === "grid-cols-3"
+        ? 3
+        : gridColumns === "grid-cols-4"
+          ? 4
+          : 1;
+  // SectionContainer content widths, gap-6, and p-4 + 1px card borders.
+  const imageWidth = (contentWidth: number) =>
+    (contentWidth - 24 * (columnCount - 1)) / columnCount - 34;
+
+  return [
+    `(min-width: 1280px) ${imageWidth(1152)}px`,
+    `(min-width: 1024px) ${imageWidth(960)}px`,
+    "(min-width: 768px) 670px",
+    "(min-width: 640px) 542px",
+    "calc(100vw - 4rem - 2px)",
+  ].join(", ");
+}
+
 export default function GridRow({
   padding,
   colorVariant,
@@ -42,6 +64,8 @@ export default function GridRow({
   pricingMessages,
 }: Partial<Grid1Props>) {
   const color = stegaClean(colorVariant);
+  const cleanGridColumns = stegaClean(gridColumns);
+  const imageSizes = getGridCardImageSizes(cleanGridColumns);
 
   return (
     <SectionContainer color={color} padding={padding}>
@@ -49,7 +73,7 @@ export default function GridRow({
         <div
           className={cn(
             `grid grid-cols-1 gap-6`,
-            `lg:${stegaClean(gridColumns)}`,
+            cleanGridColumns ? `lg:${cleanGridColumns}` : undefined,
           )}
         >
           {columns.map((block: Sanity.Block) => {
@@ -61,6 +85,7 @@ export default function GridRow({
             return (
               <Component
                 {...block}
+                {...(block._type === "grid-card" ? { imageSizes } : {})}
                 color={color}
                 key={block._key}
                 locale={locale}

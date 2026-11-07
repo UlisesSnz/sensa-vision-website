@@ -11,6 +11,40 @@ import { localizeHref } from "@/i18n/routing";
 import { hasPortableTextTable } from "@/lib/portable-text-table";
 import { hasPortableTextCode } from "@/lib/portable-text-code";
 
+const fallbackImageDimensions = { width: 800, height: 800 };
+
+function getImageDimensions(image?: Sanity.Image) {
+  if (image?.asset?._id === "static") return fallbackImageDimensions;
+
+  const dimensions = image?.asset?.metadata?.dimensions;
+  if (
+    dimensions &&
+    Number.isSafeInteger(dimensions.width) &&
+    dimensions.width > 0 &&
+    Number.isSafeInteger(dimensions.height) &&
+    dimensions.height > 0
+  ) {
+    return { width: dimensions.width, height: dimensions.height };
+  }
+
+  // Sanity asset IDs retain the original dimensions when metadata is absent.
+  const match = image?.asset?._id?.match(/^image-.+-(\d+)x(\d+)-[^-]+$/);
+  if (match) {
+    const width = Number(match[1]);
+    const height = Number(match[2]);
+    if (
+      Number.isSafeInteger(width) &&
+      width > 0 &&
+      Number.isSafeInteger(height) &&
+      height > 0
+    ) {
+      return { width, height };
+    }
+  }
+
+  return fallbackImageDimensions;
+}
+
 interface GridCardProps {
   color:
     | "primary"
@@ -23,6 +57,7 @@ interface GridCardProps {
   title: string;
   excerpt?: PortableTextProps["value"] | string;
   image: Sanity.Image;
+  imageSizes?: string;
   link?: {
     title?: string;
     href?: string;
@@ -45,9 +80,11 @@ export default function GridCard({
   title,
   excerpt,
   image,
+  imageSizes = "100vw",
   link,
   locale = "es",
 }: GridCardProps) {
+  const imageDimensions = getImageDimensions(image);
   const linkHref = typeof link?.href === "string" ? link.href.trim() : "";
   const hasLink = linkHref.length > 0;
   const hasButtonTitle =
@@ -72,7 +109,7 @@ export default function GridCard({
     >
       <div>
         {image && image.asset?._id && (
-          <div className="mb-4 relative h-[15rem] sm:h-[20rem] md:h-[25rem] lg:h-[9.5rem] xl:h-[12rem] rounded-2xl overflow-hidden">
+          <div className="mb-4 rounded-2xl overflow-hidden">
             <Image
               src={
                 image.asset?._id === "static"
@@ -82,9 +119,10 @@ export default function GridCard({
               alt={image.alt || ""}
               placeholder={image?.asset?.metadata?.lqip ? "blur" : undefined}
               blurDataURL={image?.asset?.metadata?.lqip || ""}
-              fill
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              className="object-cover"
+              width={imageDimensions.width}
+              height={imageDimensions.height}
+              sizes={imageSizes}
+              className="object-contain block w-full h-auto"
               quality={100}
             />
           </div>

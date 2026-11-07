@@ -125,6 +125,14 @@ grid grid-cols-1 gap-6
 
 - Always `rounded-lg overflow-hidden` for media containers
 - Images: `object-cover` + responsive height classes
+- Exception: `GridCard` shows the complete original asset with `object-contain`,
+  `w-full h-auto`, and intrinsic `width`/`height`; do not add fixed heights or `fill`.
+  Use valid asset metadata dimensions, then dimensions from the Sanity asset ID,
+  with an 800 × 800 fallback (also used for the static placeholder).
+  `GridRow` supplies `imageSizes` for its container width, card padding/borders,
+  and two, three, or four columns from `lg`; below `lg`, cards use one column.
+  Standalone cards default to `100vw`. Different image ratios may have different
+  heights; preserve their original proportions rather than cropping them.
 - Quality: `quality={100}`
 - Placeholder: `placeholder="blur"` with `blurDataURL` when lqip available
 
