@@ -34,7 +34,7 @@ const ctaBodyComponents: PortableTextComponents = {
   block: {
     normal: ({ children, value }) =>
       isEmptyPortableTextBlock(value) ? (
-        <div aria-hidden="true" className="h-7" />
+        <div aria-hidden="true" className="h-8 xl:h-12" />
       ) : (
         <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
           {children}

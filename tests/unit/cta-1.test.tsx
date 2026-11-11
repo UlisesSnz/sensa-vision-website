@@ -106,7 +106,7 @@ describe("CTA1 layout", () => {
     expect(html).toContain(
       '<p class="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">El espacio donde creas contenido.</p>',
     );
-    expect(html).toContain('aria-hidden="true" class="h-7"');
+    expect(html).toContain('aria-hidden="true" class="h-8 xl:h-12"');
     expect(html).toContain("space-y-4");
     expect(html.indexOf("Vista de Sensa Studio")).toBeGreaterThan(
       html.indexOf('aria-hidden="true"'),
