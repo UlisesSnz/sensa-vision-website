@@ -52,7 +52,7 @@ export default function Cta1({
     <SectionContainer color={color} padding={padding}>
       <div
         className={cn(
-          align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,
+          align === "center" ? "text-center" : undefined,
           isNarrow ? "max-w-[48rem] mx-auto" : undefined,
         )}
       >
@@ -64,7 +64,7 @@ export default function Cta1({
               {tagLine}
             </span>
           )}
-          <h2 className="mb-4">{title}</h2>
+          <h2 className="text-3xl md:text-5xl mb-4">{title}</h2>
           {body && <PortableTextRenderer value={body} locale={locale} />}
         </div>
         {links && links.length > 0 && (
