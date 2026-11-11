@@ -1,4 +1,8 @@
 import { cn } from "@/lib/utils";
+import type {
+  PortableTextBlock,
+  PortableTextComponents,
+} from "@portabletext/react";
 import { Button } from "@/components/ui/button";
 import SectionContainer, {
   ISectionContainer,
@@ -18,6 +22,26 @@ import {
   getDesktopReleaseTargetFromContent,
   type DesktopReleaseLookup,
 } from "@/lib/desktop-release-content";
+
+function isEmptyPortableTextBlock(value: PortableTextBlock) {
+  return value.children.every(
+    (child) =>
+      child._type === "span" && !stegaClean(child.text).trim(),
+  );
+}
+
+const ctaBodyComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children, value }) =>
+      isEmptyPortableTextBlock(value) ? (
+        <div aria-hidden="true" className="h-7" />
+      ) : (
+        <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
+          {children}
+        </p>
+      ),
+  },
+};
 
 export default function Cta1({
   padding,
@@ -65,7 +89,15 @@ export default function Cta1({
             </span>
           )}
           <h2 className="text-3xl md:text-5xl mb-4">{title}</h2>
-          {body && <PortableTextRenderer value={body} locale={locale} />}
+          {body && (
+            <div className="space-y-4 [&>img]:block">
+              <PortableTextRenderer
+                value={body}
+                locale={locale}
+                components={ctaBodyComponents}
+              />
+            </div>
+          )}
         </div>
         {links && links.length > 0 && (
           <div

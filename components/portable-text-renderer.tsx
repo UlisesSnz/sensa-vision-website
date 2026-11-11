@@ -1,4 +1,11 @@
-import { PortableText, type PortableTextProps } from "@portabletext/react";
+import {
+  defaultComponents,
+  mergeComponents,
+  PortableText,
+  type PortableTextComponents,
+  type PortableTextProps,
+  type PortableTextReactComponents,
+} from "@portabletext/react";
 import Image from "next/image";
 import Link from "next/link";
 import PortableTextTable from "@/components/portable-text-table";
@@ -16,7 +23,7 @@ const listBaseStyles = {
 
 function createPortableTextComponents(
   locale: Locale,
-): PortableTextProps["components"] {
+): PortableTextComponents {
   return {
     types: {
       code: ({ value }) => <PortableTextCodeBlock value={value} locale={locale} />,
@@ -85,22 +92,28 @@ function createPortableTextComponents(
 }
 
 // Stable component types preserve focus and scroll during live preview updates.
-const componentsByLocale: Record<Locale, PortableTextProps["components"]> = {
-  es: createPortableTextComponents("es"),
-  en: createPortableTextComponents("en"),
+const componentsByLocale: Record<Locale, PortableTextReactComponents> = {
+  es: mergeComponents(defaultComponents, createPortableTextComponents("es")),
+  en: mergeComponents(defaultComponents, createPortableTextComponents("en")),
 };
 
 export default function PortableTextRenderer({
   value,
   locale,
+  components,
 }: {
   value: PortableTextProps["value"];
   locale: Locale;
+  components?: PortableTextComponents;
 }) {
+  const resolvedComponents = components
+    ? mergeComponents(componentsByLocale[locale], components)
+    : componentsByLocale[locale];
+
   return (
     <PortableText
       value={value}
-      components={componentsByLocale[locale]}
+      components={resolvedComponents}
     />
   );
 }
