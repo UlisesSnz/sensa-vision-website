@@ -37,6 +37,7 @@ export function TableWithCaption(props: ContainerRenderProps) {
           <TextInput
             id={captionId}
             readOnly={props.readOnly}
+            style={{ zIndex: 3 }}
             value={
               typeof props.node.caption === "string" ? props.node.caption : ""
             }
