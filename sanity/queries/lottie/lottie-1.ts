@@ -6,6 +6,7 @@ export const lottie1Query = groq`
     padding,
     colorVariant,
     body,
+    links,
     textPosition,
     lottieFile{
       asset->{

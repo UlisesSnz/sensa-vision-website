@@ -1,19 +1,11 @@
 import type { PortableTextProps } from "@portabletext/react";
 import { stegaClean } from "next-sanity";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import PortableTextRenderer from "@/components/portable-text-renderer";
-import { Button } from "@/components/ui/button";
-import DesktopDownloadButton, {
-  type DesktopDownloadMessages,
-} from "@/components/ui/desktop-download-button";
+import ActionLinks from "@/components/ui/action-links";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
-import { localizeHref } from "@/i18n/routing";
-import {
-  getDesktopReleaseFromLookup,
-  getDesktopReleaseTargetFromContent,
-  type DesktopReleaseLookup,
-} from "@/lib/desktop-release-content";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 import { cn } from "@/lib/utils";
 import styles from "./layout.module.css";
 
@@ -42,35 +34,6 @@ export default function HeroLayout({
 }: HeroContentProps & { textAbove: boolean; children: ReactNode }) {
   const isNarrow =
     textAbove && stegaClean(contentWidth) === "narrow";
-  const buttons = (links ?? []).map((link, index) => {
-    if (!link) return null;
-    const key = link._key ?? index;
-    if (stegaClean(link.targetType) === "desktopDownload" && downloadMessages) {
-      return (
-        <DesktopDownloadButton
-          key={key}
-          title={link.title}
-          variant={link.buttonVariant}
-          target={getDesktopReleaseTargetFromContent(link)}
-          release={getDesktopReleaseFromLookup(desktopReleases, link)}
-          messages={downloadMessages}
-        />
-      );
-    }
-    const href = stegaClean(link.href)?.trim();
-    if (!href || !stegaClean(link.title)?.trim()) return null;
-    return (
-      <Button key={key} asChild variant={stegaClean(link.buttonVariant)}>
-        <Link
-          href={localizeHref(href, locale)}
-          target={link.target ? "_blank" : undefined}
-          rel={link.target ? "noopener noreferrer" : undefined}
-        >
-          {link.title}
-        </Link>
-      </Button>
-    );
-  });
 
   return (
     <div className="container dark:bg-background py-20 lg:pt-40">
@@ -94,11 +57,13 @@ export default function HeroLayout({
               <PortableTextRenderer value={body} locale={locale} />
             </div>
           )}
-          {buttons.some(Boolean) && (
-            <div className={cn(styles.actions, "mt-10 flex flex-wrap gap-4")}>
-              {buttons}
-            </div>
-          )}
+          <ActionLinks
+            className={styles.actions}
+            links={links}
+            desktopReleases={desktopReleases}
+            downloadMessages={downloadMessages}
+            locale={locale}
+          />
         </div>
         <div className="flex min-w-0 flex-col justify-center">{children}</div>
       </div>

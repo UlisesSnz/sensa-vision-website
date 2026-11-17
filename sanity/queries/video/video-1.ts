@@ -6,6 +6,7 @@ export const video1Query = groq`
     padding,
     colorVariant,
     body,
+    links,
     textPosition,
     videoType,
     youtubeUrl,

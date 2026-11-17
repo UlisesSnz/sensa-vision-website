@@ -3,25 +3,16 @@ import type {
   PortableTextBlock,
   PortableTextComponents,
 } from "@portabletext/react";
-import { Button } from "@/components/ui/button";
 import SectionContainer, {
   ISectionContainer,
   ISectionPadding,
 } from "@/components/ui/section-container";
 import { stegaClean } from "next-sanity";
-import Link from "next/link";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import ActionLinks from "@/components/ui/action-links";
 import type { Locale } from "@/i18n/config";
-import { localizeHref } from "@/i18n/routing";
-import DesktopDownloadButton, {
-  type DesktopDownloadMessages,
-} from "@/components/ui/desktop-download-button";
-import { DEFAULT_DESKTOP_RELEASE_TARGET } from "@/lib/desktop-release";
-import {
-  getDesktopReleaseFromLookup,
-  getDesktopReleaseTargetFromContent,
-  type DesktopReleaseLookup,
-} from "@/lib/desktop-release-content";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 
 function isEmptyPortableTextBlock(value: PortableTextBlock) {
   return value.children.every(
@@ -99,53 +90,13 @@ export default function Cta1({
             </div>
           )}
         </div>
-        {links && links.length > 0 && (
-          <div
-            className={cn(
-              "mt-10 flex flex-wrap gap-4",
-              align === "center" ? "justify-center" : undefined,
-            )}
-          >
-            {links.map((link, index) => {
-              const key = link._key || `${link.title}-${index}`;
-
-              if (link.targetType === "desktopDownload" && downloadMessages) {
-                const target =
-                  getDesktopReleaseTargetFromContent(link) ||
-                  DEFAULT_DESKTOP_RELEASE_TARGET;
-
-                return (
-                  <DesktopDownloadButton
-                    key={key}
-                    messages={downloadMessages}
-                    release={getDesktopReleaseFromLookup(desktopReleases, link)}
-                    target={target}
-                    title={link.title}
-                    variant={link.buttonVariant}
-                  />
-                );
-              }
-
-              if (!link.href) return null;
-
-              return (
-                <Button
-                  asChild
-                  key={key}
-                  variant={stegaClean(link.buttonVariant)}
-                >
-                  <Link
-                    href={localizeHref(link.href, locale)}
-                    rel={link.target ? "noopener noreferrer" : undefined}
-                    target={link.target ? "_blank" : undefined}
-                  >
-                    {link.title}
-                  </Link>
-                </Button>
-              );
-            })}
-          </div>
-        )}
+        <ActionLinks
+          align={align === "center" ? "center" : "left"}
+          links={links}
+          desktopReleases={desktopReleases}
+          downloadMessages={downloadMessages}
+          locale={locale}
+        />
       </div>
     </SectionContainer>
   );

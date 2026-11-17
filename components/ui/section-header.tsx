@@ -5,19 +5,11 @@ import SectionContainer, {
 } from "@/components/ui/section-container";
 import { stegaClean } from "next-sanity";
 import { vercelStegaSplit } from "@vercel/stega";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import DesktopDownloadButton, {
-  type DesktopDownloadMessages,
-} from "@/components/ui/desktop-download-button";
+import ActionLinks from "@/components/ui/action-links";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
-import { localizeHref } from "@/i18n/routing";
 import { normalizeSectionAnchor } from "@/lib/section-anchors";
-import {
-  getDesktopReleaseFromLookup,
-  getDesktopReleaseTargetFromContent,
-  type DesktopReleaseLookup,
-} from "@/lib/desktop-release-content";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 
 export default function SectionHeader({
   padding,
@@ -50,11 +42,6 @@ export default function SectionHeader({
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
   const sectionId = normalizeSectionAnchor(uid);
-  const visibleLinks = (links || []).filter((link) =>
-    stegaClean(link.targetType) === "desktopDownload"
-      ? Boolean(downloadMessages)
-      : Boolean(stegaClean(link.href)?.trim() && stegaClean(link.title)?.trim()),
-  );
   // Keep Sanity's edit annotations on every paragraph after splitting the text.
   const { cleaned, encoded } = vercelStegaSplit(description ?? "");
   const paragraphs = cleaned
@@ -98,43 +85,13 @@ export default function SectionHeader({
             ))}
           </div>
         )}
-        {visibleLinks.length > 0 && (
-          <div
-            className={cn(
-              "mt-10 flex flex-wrap gap-4",
-              align === "center" ? "justify-center" : undefined,
-            )}
-          >
-            {visibleLinks.map((link, index) => {
-              const key = link._key || `${link.title}-${index}`;
-
-              if (stegaClean(link.targetType) === "desktopDownload" && downloadMessages) {
-                return (
-                  <DesktopDownloadButton
-                    key={key}
-                    messages={downloadMessages}
-                    release={getDesktopReleaseFromLookup(desktopReleases, link)}
-                    target={getDesktopReleaseTargetFromContent(link)}
-                    title={link.title}
-                    variant={link.buttonVariant}
-                  />
-                );
-              }
-
-              return (
-                <Button asChild key={key} variant={stegaClean(link.buttonVariant)}>
-                  <Link
-                    href={localizeHref(stegaClean(link.href!), locale)}
-                    rel={link.target ? "noopener noreferrer" : undefined}
-                    target={link.target ? "_blank" : undefined}
-                  >
-                    {link.title}
-                  </Link>
-                </Button>
-              );
-            })}
-          </div>
-        )}
+        <ActionLinks
+          align={align === "center" ? "center" : "left"}
+          links={links}
+          desktopReleases={desktopReleases}
+          downloadMessages={downloadMessages}
+          locale={locale}
+        />
       </div>
     </SectionContainer>
   );

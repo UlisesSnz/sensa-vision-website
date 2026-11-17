@@ -46,6 +46,12 @@ export default defineType({
       description: "Optional companion text displayed alongside the animation",
     }),
     defineField({
+      name: "links",
+      type: "array",
+      of: [{ type: "link" }],
+      validation: (rule) => rule.max(2),
+    }),
+    defineField({
       name: "textPosition",
       title: "Text Position",
       type: "string",

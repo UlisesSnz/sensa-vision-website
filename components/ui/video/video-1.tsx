@@ -4,8 +4,11 @@ import SectionContainer, {
   ISectionPadding,
 } from "@/components/ui/section-container";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import ActionLinks from "@/components/ui/action-links";
 import { stegaClean } from "next-sanity";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 
 function extractYouTubeId(url: string): string | null {
   try {
@@ -42,6 +45,9 @@ export default function Video1({
   videoAspectRatio = "16/9",
   videoLoop = false,
   videoControls = true,
+  links,
+  desktopReleases,
+  downloadMessages,
   locale = "es",
   mediaMessages = {
     youtubeTitle: "Video de YouTube",
@@ -65,6 +71,9 @@ export default function Video1({
   videoAspectRatio: string;
   videoLoop: boolean;
   videoControls: boolean;
+  links: (Sanity.Link | null)[];
+  desktopReleases: DesktopReleaseLookup;
+  downloadMessages: DesktopDownloadMessages;
   locale: Locale;
   mediaMessages: {
     youtubeTitle: string;
@@ -129,9 +138,16 @@ export default function Video1({
     </div>
   );
 
-  const textBlock = body ? (
+  const hasBody = Array.isArray(body) ? body.length > 0 : Boolean(body);
+  const textBlock = hasBody ? (
     <div className={cn(color === "primary" ? "text-background" : undefined)}>
       <PortableTextRenderer value={body} locale={locale} />
+      <ActionLinks
+        links={links}
+        desktopReleases={desktopReleases}
+        downloadMessages={downloadMessages}
+        locale={locale}
+      />
     </div>
   ) : null;
 
@@ -139,7 +155,16 @@ export default function Video1({
   if (!textBlock) {
     return (
       <SectionContainer color={color} padding={padding}>
-        <div className="max-w-4xl mx-auto">{videoBlock}</div>
+        <div className="max-w-4xl mx-auto">
+          {videoBlock}
+          <ActionLinks
+            align="center"
+            links={links}
+            desktopReleases={desktopReleases}
+            downloadMessages={downloadMessages}
+            locale={locale}
+          />
+        </div>
       </SectionContainer>
     );
   }

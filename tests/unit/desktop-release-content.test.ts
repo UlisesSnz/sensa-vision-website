@@ -75,12 +75,38 @@ describe("desktop release content targeting", () => {
         _key: "legacy-cta",
         links: [{ title: "Windows", targetType: "desktopDownload" }],
       },
+      {
+        _type: "video-1",
+        _key: "video",
+        links: [
+          {
+            title: "Windows ARM",
+            targetType: "desktopDownload",
+            downloadPlatform: "win32",
+            downloadArchitecture: "arm64",
+          },
+        ],
+      },
+      {
+        _type: "lottie-1",
+        _key: "lottie",
+        links: [
+          {
+            title: "Mac Intel",
+            targetType: "desktopDownload",
+            downloadPlatform: "darwin",
+            downloadArchitecture: "x64",
+          },
+        ],
+      },
     ] as unknown as Sanity.Block[];
 
     expect(collectDesktopReleaseTargets(blocks)).toEqual([
       { platform: "darwin", architecture: "arm64" },
       { platform: "linux", architecture: "x64" },
       { platform: "win32", architecture: "x64" },
+      { platform: "win32", architecture: "arm64" },
+      { platform: "darwin", architecture: "x64" },
     ]);
   });
 

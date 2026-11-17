@@ -4,9 +4,12 @@ import SectionContainer, {
   ISectionPadding,
 } from "@/components/ui/section-container";
 import PortableTextRenderer from "@/components/portable-text-renderer";
+import ActionLinks from "@/components/ui/action-links";
 import { stegaClean } from "next-sanity";
 import LottiePlayer from "./lottie-player";
+import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
+import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 
 // Standalone sizes (center, vertical, no-body) — 4:3 aspect
 const LOTTIE_STANDALONE = {
@@ -36,6 +39,9 @@ export default function Lottie1({
   lottieLoop = true,
   lottieAutoplay = true,
   lottieFit = "hybrid",
+  links,
+  desktopReleases,
+  downloadMessages,
   locale = "es",
 }: Partial<{
   padding: ISectionPadding;
@@ -53,6 +59,9 @@ export default function Lottie1({
   lottieLoop: boolean;
   lottieAutoplay: boolean;
   lottieFit: LottieFitMode;
+  links: (Sanity.Link | null)[];
+  desktopReleases: DesktopReleaseLookup;
+  downloadMessages: DesktopDownloadMessages;
   locale: Locale;
 }>) {
   const color = stegaClean(colorVariant);
@@ -89,9 +98,16 @@ export default function Lottie1({
     layout: { fit, align: [0.5, 0.5] as [number, number] },
   };
 
-  const textBlock = body ? (
+  const hasBody = Array.isArray(body) ? body.length > 0 : Boolean(body);
+  const textBlock = hasBody ? (
     <div className={cn(color === "primary" ? "text-background" : undefined)}>
       <PortableTextRenderer value={body} locale={locale} />
+      <ActionLinks
+        links={links}
+        desktopReleases={desktopReleases}
+        downloadMessages={downloadMessages}
+        locale={locale}
+      />
     </div>
   ) : null;
 
@@ -110,6 +126,13 @@ export default function Lottie1({
             />
           </div>
         </div>
+        <ActionLinks
+          align="center"
+          links={links}
+          desktopReleases={desktopReleases}
+          downloadMessages={downloadMessages}
+          locale={locale}
+        />
       </SectionContainer>
     );
   }
