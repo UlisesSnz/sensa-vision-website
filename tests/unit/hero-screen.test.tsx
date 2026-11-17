@@ -173,18 +173,44 @@ describe("Hero con pantalla", () => {
   );
 
   it.each([legacy, screen])(
-    "preserves the layout choice and accepts older $_type blocks",
+    "preserves layout and text-width choices while accepting older $_type blocks",
     async (block) => {
       expect(await validationPaths([
         block,
-        { ...block, _key: "stacked", layout: "vertical" },
+        {
+          ...block,
+          _key: "stacked",
+          layout: "vertical",
+          contentWidth: "narrow",
+        },
       ])).toEqual([]);
       for (const layout of ["horizontal", "vertical"]) {
-        const [projected] = await project([{ ...block, layout }]);
+        const [projected] = await project([
+          { ...block, layout, contentWidth: "narrow" },
+        ]);
         expect(projected.layout).toBe(layout);
+        expect(projected.contentWidth).toBe("narrow");
       }
       const [older] = await project([block]);
       expect(older.layout).toBeNull();
+      expect(older.contentWidth).toBeNull();
+    },
+  );
+
+  it.each([hero1, hero2])(
+    "shows text-width controls only for the vertical layout",
+    (hero) => {
+      const field = hero.fields?.find((candidate) => candidate.name === "contentWidth");
+      const hidden = field && "hidden" in field ? field.hidden : undefined;
+      if (typeof hidden !== "function")
+        throw new Error("Missing text-width visibility rule");
+
+      expect(
+        hidden({ parent: { layout: "vertical" } } as Parameters<typeof hidden>[0]),
+      ).toBe(false);
+      expect(
+        hidden({ parent: { layout: "horizontal" } } as Parameters<typeof hidden>[0]),
+      ).toBe(true);
     },
   );
 

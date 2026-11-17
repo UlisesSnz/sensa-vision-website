@@ -4,6 +4,7 @@ export const hero1Query = groq`
   _type == "hero-1" => {
     _type,
     layout,
+    contentWidth,
     tagLine,
     title,
     body,

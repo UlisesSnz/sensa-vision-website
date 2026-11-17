@@ -6,9 +6,12 @@
 
 .textAbove > .intro {
   width: 100%;
-  max-width: 46rem;
   margin-inline: auto;
   text-align: center;
+}
+
+.textAboveNarrow > .intro {
+  max-width: 48rem;
 }
 
 .textAbove .intro h1 {

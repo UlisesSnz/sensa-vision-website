@@ -178,6 +178,15 @@ async function copyMetrics(page) {
   });
 }
 
+async function introMetrics(page) {
+  return page.getByRole("heading", { level: 1 }).evaluate((heading) => {
+    const intro = heading.parentElement;
+    if (!intro) throw new Error("Hero heading is missing its intro container");
+    const box = intro.getBoundingClientRect();
+    return { x: box.x, width: box.width, maxWidth: getComputedStyle(intro).maxWidth };
+  });
+}
+
 async function verifyHeroLayouts(page) {
   for (const [device, width] of [
     ["desktop", 1440], ["wide", 1920], ["mobile", 375], ["small", 320],
@@ -198,6 +207,7 @@ async function verifyHeroLayouts(page) {
       const box = await media.boundingBox();
       const heading = page.getByRole("heading", { level: 1 });
       const title = await heading.boundingBox();
+      const intro = await introMetrics(page);
       const container = await page.locator(".container").evaluate((el) => {
         const rect = el.getBoundingClientRect();
         const style = getComputedStyle(el);
@@ -207,8 +217,11 @@ async function verifyHeroLayouts(page) {
         };
       });
       const center = (container.left + container.right) / 2;
+      const availableWidth = container.right - container.left;
       assert(Math.abs(box.x - container.left) < 1);
       assert(Math.abs(box.x + box.width - container.right) < 1);
+      assert(Math.abs(intro.x - container.left) < 1);
+      assert(Math.abs(intro.width - availableWidth) < 1, "Default copy fills the content width");
       assert(Math.abs(title.x + title.width / 2 - center) < 1);
       assert.equal(await heading.evaluate((el) => getComputedStyle(el).textAlign), "center");
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
@@ -231,6 +244,20 @@ async function verifyHeroLayouts(page) {
           path: `${output}/hero-${hero}-text-above-${device}.png`,
         });
       }
+      await page.goto(`${origin}/?hero=${hero}&layout=vertical&contentWidth=narrow`);
+      const narrowImage = await image(page, hero === 1 ? "Café de la casa" : first);
+      const narrowMedia = hero === 1 ? narrowImage : page.locator("[data-scene]");
+      const narrowIntro = await introMetrics(page);
+      const narrowBox = await narrowMedia.boundingBox();
+      const narrowTitle = await page.getByRole("heading", { level: 1 }).boundingBox();
+      const maxWidth = Number.parseFloat(narrowIntro.maxWidth);
+      assert(Number.isFinite(maxWidth), "Narrow copy has a finite maximum width");
+      assert(Math.abs(narrowIntro.width - Math.min(maxWidth, availableWidth)) < 1);
+      assert(Math.abs(narrowIntro.x + narrowIntro.width / 2 - center) < 1);
+      assert(Math.abs(narrowTitle.x + narrowTitle.width / 2 - center) < 1);
+      assert(Math.abs(narrowBox.x - box.x) < 1);
+      assert(Math.abs(narrowBox.width - box.width) < 1);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
       if (hero === 2) {
         await button(page, "Plantilla siguiente").click();
         await image(page, second);

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import styles from "./layout.module.css";
 
 export type HeroContentProps = {
+  contentWidth?: "default" | "narrow" | null;
   tagLine?: string;
   title?: string;
   body?: PortableTextProps["value"];
@@ -29,6 +30,7 @@ export type HeroContentProps = {
 
 export default function HeroLayout({
   textAbove,
+  contentWidth,
   tagLine,
   title,
   body,
@@ -38,6 +40,8 @@ export default function HeroLayout({
   locale = "es",
   children,
 }: HeroContentProps & { textAbove: boolean; children: ReactNode }) {
+  const isNarrow =
+    textAbove && stegaClean(contentWidth) === "narrow";
   const buttons = (links ?? []).map((link, index) => {
     if (!link) return null;
     const key = link._key ?? index;
@@ -73,7 +77,9 @@ export default function HeroLayout({
       <div
         data-hero-content={textAbove ? "vertical" : "horizontal"}
         className={
-          textAbove ? styles.textAbove : "grid grid-cols-1 gap-10 lg:grid-cols-2"
+          textAbove
+            ? cn(styles.textAbove, isNarrow && styles.textAboveNarrow)
+            : "grid grid-cols-1 gap-10 lg:grid-cols-2"
         }
       >
         <div className={cn(styles.intro, "flex min-w-0 flex-col justify-center")}>

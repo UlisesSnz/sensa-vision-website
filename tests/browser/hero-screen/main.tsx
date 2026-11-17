@@ -34,6 +34,8 @@ const fixture = {
   _type: classic ? "hero-1" : "hero-2",
   _key: "hero",
   layout: params.get("layout"),
+  contentWidth:
+    params.get("contentWidth") === "narrow" ? "narrow" : undefined,
   image: heroImage,
   baseScene: selected?.scene ?? (scenario === "tour" ? "office" : "pharmacy"),
   slides:

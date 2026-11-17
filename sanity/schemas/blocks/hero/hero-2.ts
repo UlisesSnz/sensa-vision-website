@@ -6,7 +6,7 @@ import {
   HERO_SCENES,
   isHeroScene,
 } from "@/lib/hero-screen";
-import { heroLayoutField } from "./layout";
+import { heroContentWidthField, heroLayoutField } from "./layout";
 
 const sceneOptions = {
   list: HERO_SCENES.map(({ title, value }) => ({ title, value })),
@@ -22,6 +22,7 @@ export default defineType({
   icon: MonitorPlay,
   fields: [
     heroLayoutField,
+    heroContentWidthField,
     defineField({ name: "tagLine", title: "Tagline", type: "string" }),
     defineField({ name: "title", title: "Heading", type: "string" }),
     defineField({ name: "body", title: "Body", type: "block-content" }),

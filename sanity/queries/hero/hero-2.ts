@@ -2,7 +2,7 @@ import { groq } from "next-sanity";
 
 export const hero2Query = groq`
   _type == "hero-2" => {
-    _type, layout, tagLine, title, body, links[defined(@)], baseScene,
+    _type, layout, contentWidth, tagLine, title, body, links[defined(@)], baseScene,
     slides[]{ _key, alt, scene, "assetRef": asset._ref }
   },
 `;

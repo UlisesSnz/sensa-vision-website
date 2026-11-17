@@ -1,6 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { LayoutTemplate } from "lucide-react";
-import { heroLayoutField } from "./layout";
+import { heroContentWidthField, heroLayoutField } from "./layout";
 
 export default defineType({
   name: "hero-1",
@@ -9,6 +9,7 @@ export default defineType({
   icon: LayoutTemplate,
   fields: [
     heroLayoutField,
+    heroContentWidthField,
     defineField({
       name: "tagLine",
       type: "string",
