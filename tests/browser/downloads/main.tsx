@@ -28,6 +28,7 @@ createRoot(document.getElementById("root")!).render(<main>
   <section data-testid="installation"><SectionHeader {...installationHeader} locale={locale} /></section>
   <section data-testid="baseline"><SectionHeader {...installationHeader} uid="baseline" links={undefined} locale={locale} /></section>
   <section data-testid="centered"><SectionHeader {...installationHeader} uid="centered" stackAlign="center" sectionWidth="narrow" locale={locale} /></section>
+  <section data-testid="centered-default"><SectionHeader {...installationHeader} uid="centered-default" stackAlign="center" sectionWidth="default" locale={locale} /></section>
   <section data-testid="empty-title"><SectionHeader title=" " description="Encabezado opcional sin título vacío." /></section>
   <section data-testid="downloads">
     <div data-testid="web"><SectionHeader title="Navegador web" description="Administra tus pantallas desde el navegador." padding={common.padding} /></div>

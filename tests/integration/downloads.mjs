@@ -49,6 +49,8 @@ try {
           assert(await installationLink.evaluate((el) => el === document.activeElement));
           await page.keyboard.press("Tab");
           assert(await page.getByTestId("centered").getByRole("link").evaluate((el) => el === document.activeElement));
+          await page.keyboard.press("Tab");
+          assert(await page.getByTestId("centered-default").getByRole("link").evaluate((el) => el === document.activeElement));
           if (available) {
             await page.keyboard.press("Tab");
             assert(await page.getByTestId("windows").getByRole("link").evaluate((el) => el === document.activeElement));
@@ -65,12 +67,26 @@ try {
             const paragraphs = document.querySelectorAll('[data-testid="installation"] p');
             const centered = document.querySelector('[data-testid="centered"] a');
             const centerHeading = document.querySelector('[data-testid="centered"] h2');
+            const centeredLayout = (id) => {
+              const section = document.querySelector(`[data-testid="${id}"]`);
+              const container = section.querySelector(".container");
+              const content = container.firstElementChild;
+              const box = rect(container);
+              const style = getComputedStyle(container);
+              return {
+                content: rect(content),
+                left: box.left + parseFloat(style.paddingLeft),
+                right: box.right - parseFloat(style.paddingRight),
+              };
+            };
             return {
               overflow: document.documentElement.scrollWidth > innerWidth,
               emptyHeadings: [...document.querySelectorAll("h1,h2,h3")].some((el) => !el.textContent.trim()),
               fakeLinks: document.querySelectorAll('a[href="#"]').length,
               heading: rect(heading), button: rect(button), lastParagraph: rect(paragraphs[paragraphs.length - 1]),
               centered: rect(centered), centerHeading: rect(centerHeading),
+              centeredNarrow: centeredLayout("centered"),
+              centeredDefault: centeredLayout("centered-default"),
               installation: metrics("installation"), baseline: metrics("baseline"),
               downloadBoxes: [...document.querySelector('[data-testid="downloads"]').children].map(rect),
             };
@@ -82,6 +98,11 @@ try {
           assert(Math.abs(layout.heading.left - layout.button.left) < 1);
           assert(Math.abs(layout.button.top - layout.lastParagraph.bottom - 40) < 1);
           assert(Math.abs((layout.centered.left + layout.centered.right) - (layout.centerHeading.left + layout.centerHeading.right)) < 2);
+          for (const centered of [layout.centeredNarrow, layout.centeredDefault])
+            assert(Math.abs((centered.content.left + centered.content.right) - (centered.left + centered.right)) < 2);
+          assert(Math.abs(layout.centeredDefault.content.left - layout.centeredDefault.left) < 1);
+          assert(Math.abs(layout.centeredDefault.content.width - (layout.centeredDefault.right - layout.centeredDefault.left)) < 1);
+          assert(Math.abs(layout.centeredNarrow.content.width - Math.min(768, layout.centeredNarrow.right - layout.centeredNarrow.left)) < 1);
           layout.downloadBoxes.slice(1).forEach((box, i) => assert(box.top >= layout.downloadBoxes[i].bottom));
           await page.getByRole("link", { name: "Ir a requisitos" }).click();
           assert.equal(new URL(page.url()).hash, "#requisitos");

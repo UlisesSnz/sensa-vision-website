@@ -111,6 +111,27 @@ describe("SectionHeader descriptions", () => {
 });
 
 describe("SectionHeader optional links", () => {
+  it.each([
+    ["default", "left", false, false],
+    ["default", "center", true, false],
+    ["narrow", "left", false, true],
+    ["narrow", "center", true, true],
+  ] as const)(
+    "keeps %s width and %s alignment independent",
+    (sectionWidth, stackAlign, hasCenteredText, hasNarrowWidth) => {
+      const html = renderToStaticMarkup(
+        createElement(SectionHeader, {
+          ...installationHeader,
+          sectionWidth,
+          stackAlign,
+        }),
+      );
+
+      expect(html.includes("text-center")).toBe(hasCenteredText);
+      expect(html.includes("max-w-[48rem]")).toBe(hasNarrowWidth);
+    },
+  );
+
   it.each(["es", "en"] as const)("localizes %s links and preserves the anchor and layout", (locale) => {
     const html = renderToStaticMarkup(createElement(SectionHeader, { ...installationHeader, locale }));
     expect(html).toContain(`href="/${locale}/downloads"`);

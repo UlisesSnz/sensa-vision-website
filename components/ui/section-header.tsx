@@ -72,7 +72,7 @@ export default function SectionHeader({
     >
       <div
         className={cn(
-          align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,
+          align === "center" ? "text-center" : undefined,
           isNarrow ? "max-w-[48rem] mx-auto" : undefined
         )}
       >
