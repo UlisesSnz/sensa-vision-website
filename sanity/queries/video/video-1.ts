@@ -19,6 +19,7 @@ export const video1Query = groq`
     },
     videoAspectRatio,
     videoLoop,
+    videoAutoplay,
     videoControls,
   },
 `;

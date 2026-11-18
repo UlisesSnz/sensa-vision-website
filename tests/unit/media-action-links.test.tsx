@@ -13,6 +13,7 @@ import lottie1 from "@/sanity/schemas/blocks/lottie/lottie-1";
 import { buttonVariant } from "@/sanity/schemas/blocks/shared/button-variant";
 import link from "@/sanity/schemas/blocks/shared/link";
 import video1 from "@/sanity/schemas/blocks/video/video-1";
+import { buildYouTubeEmbedUrl } from "@/components/ui/video/video-utils";
 
 vi.mock("@/components/ui/lottie/lottie-player", () => ({
   default: ({ src }: { src?: string }) => <div data-lottie={src} />,
@@ -314,7 +315,12 @@ describe("Video and Lottie editorial links", () => {
 
   it("projects editorial links for both media blocks", async () => {
     const blocks = await project([
-      { _type: "video-1", _key: "video", links: mediaLinks },
+      {
+        _type: "video-1",
+        _key: "video",
+        links: mediaLinks,
+        videoAutoplay: true,
+      },
       {
         _type: "lottie-1",
         _key: "lottie",
@@ -324,8 +330,100 @@ describe("Video and Lottie editorial links", () => {
     ]);
 
     expect(blocks).toMatchObject([
-      { _type: "video-1", _key: "video", links: mediaLinks },
+      {
+        _type: "video-1",
+        _key: "video",
+        links: mediaLinks,
+        videoAutoplay: true,
+      },
       { _type: "lottie-1", _key: "lottie", links: mediaLinks },
     ]);
+  });
+});
+
+describe("video autoplay", () => {
+  it("keeps autoplay opt-in in the editor and explains its playback precedence", () => {
+    const autoplay = video1.fields?.find(
+      (field) => field.name === "videoAutoplay",
+    );
+    const loop = video1.fields?.find((field) => field.name === "videoLoop");
+    const controls = video1.fields?.find(
+      (field) => field.name === "videoControls",
+    );
+
+    expect(autoplay).toMatchObject({
+      name: "videoAutoplay",
+      title: "Autoplay",
+      type: "boolean",
+      initialValue: false,
+    });
+    expect(autoplay?.description).toContain("muted");
+    expect(loop?.description).toContain("after playback has started");
+    expect(controls?.description).toContain("always shown with autoplay");
+  });
+
+  it("keeps existing uploaded videos manual and makes autoplay videos muted with controls", () => {
+    const manual = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "upload",
+        videoControls: false,
+        uploadedVideo: {
+          asset: {
+            _id: "file-video",
+            url: "https://cdn.example.test/demo.mp4",
+            mimeType: "video/mp4",
+          },
+        },
+      }),
+    );
+    const autoplay = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "upload",
+        videoAutoplay: true,
+        videoControls: false,
+        uploadedVideo: {
+          asset: {
+            _id: "file-video",
+            url: "https://cdn.example.test/demo.mp4",
+            mimeType: "video/mp4",
+          },
+        },
+      }),
+    );
+
+    expect(manual).toContain("<video");
+    expect(manual).not.toContain("controls");
+    expect(manual).not.toContain("autoplay");
+    expect(autoplay).toContain("<video");
+    expect(autoplay).toContain("controls");
+    expect(autoplay).toContain("muted");
+    expect(autoplay).not.toContain("autoplay");
+  });
+
+  it("prepares autoplay YouTube embeds for the visible, muted player API flow", () => {
+    const src = buildYouTubeEmbedUrl({
+      youtubeId: "video-id",
+      loop: true,
+      controls: true,
+      enableJsApi: true,
+      playsInline: true,
+    });
+    const html = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "youtube",
+        youtubeUrl: "https://www.youtube.com/watch?v=video-id",
+        videoAutoplay: true,
+        videoControls: false,
+        videoLoop: true,
+      }),
+    );
+
+    expect(src).toContain("loop=1");
+    expect(src).toContain("playlist=video-id");
+    expect(src).toContain("enablejsapi=1");
+    expect(src).toContain("playsinline=1");
+    expect(html).toContain("enablejsapi=1");
+    expect(html).toContain("playsinline=1");
+    expect(html).not.toContain("controls=0");
   });
 });

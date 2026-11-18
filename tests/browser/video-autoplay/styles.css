@@ -1,0 +1,20 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+}
+
+.spacer {
+  display: grid;
+  min-height: 150vh;
+  place-items: center;
+}
+
+section {
+  width: min(100%, 640px);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+}

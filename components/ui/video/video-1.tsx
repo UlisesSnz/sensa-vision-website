@@ -9,30 +9,8 @@ import { stegaClean } from "next-sanity";
 import type { DesktopDownloadMessages } from "@/components/ui/desktop-download-button";
 import type { Locale } from "@/i18n/config";
 import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
-
-function extractYouTubeId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1);
-    }
-    if (
-      parsed.hostname === "www.youtube.com" ||
-      parsed.hostname === "youtube.com"
-    ) {
-      if (parsed.pathname === "/watch") {
-        return parsed.searchParams.get("v");
-      }
-      const embedMatch = parsed.pathname.match(/^\/embed\/([^/]+)/);
-      if (embedMatch) return embedMatch[1];
-      const shortsMatch = parsed.pathname.match(/^\/shorts\/([^/]+)/);
-      if (shortsMatch) return shortsMatch[1];
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
+import AutoplayVideo from "./autoplay-video";
+import { buildYouTubeEmbedUrl, extractYouTubeId } from "./video-utils";
 
 export default function Video1({
   padding,
@@ -44,6 +22,7 @@ export default function Video1({
   uploadedVideo,
   videoAspectRatio = "16/9",
   videoLoop = false,
+  videoAutoplay = false,
   videoControls = true,
   links,
   desktopReleases,
@@ -70,6 +49,7 @@ export default function Video1({
   };
   videoAspectRatio: string;
   videoLoop: boolean;
+  videoAutoplay: boolean;
   videoControls: boolean;
   links: (Sanity.Link | null)[];
   desktopReleases: DesktopReleaseLookup;
@@ -86,6 +66,7 @@ export default function Video1({
   const type = stegaClean(videoType);
   const aspect = stegaClean(videoAspectRatio);
   const loopVideo = stegaClean(videoLoop);
+  const autoplayVideo = stegaClean(videoAutoplay) === true;
   const showControls = stegaClean(videoControls);
 
   const isHorizontal = position === "left" || position === "right";
@@ -105,25 +86,47 @@ export default function Video1({
 
   const videoInner =
     type === "youtube" && youtubeId ? (
-      <iframe
-        src={`https://www.youtube-nocookie.com/embed/${youtubeId}?loop=${loopVideo ? 1 : 0}${loopVideo ? `&playlist=${youtubeId}` : ""}${showControls === false ? "&controls=0" : ""}`}
-        title={mediaMessages.youtubeTitle}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        className="w-full h-full border-0"
-        loading="lazy"
-      />
+      autoplayVideo ? (
+        <AutoplayVideo
+          type="youtube"
+          youtubeId={youtubeId}
+          loop={loopVideo === true}
+          title={mediaMessages.youtubeTitle}
+        />
+      ) : (
+        <iframe
+          src={buildYouTubeEmbedUrl({
+            youtubeId,
+            loop: loopVideo === true,
+            controls: showControls !== false,
+          })}
+          title={mediaMessages.youtubeTitle}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full border-0"
+          loading="lazy"
+        />
+      )
     ) : type === "upload" && videoUrl ? (
-      <video
-        src={videoUrl}
-        controls={showControls !== false}
-        loop={loopVideo === true}
-        playsInline
-        preload="metadata"
-        className="w-full h-full object-cover"
-      >
-        {mediaMessages.unsupportedVideo}
-      </video>
+      autoplayVideo ? (
+        <AutoplayVideo
+          type="upload"
+          src={videoUrl}
+          loop={loopVideo === true}
+          unsupportedMessage={mediaMessages.unsupportedVideo}
+        />
+      ) : (
+        <video
+          src={videoUrl}
+          controls={showControls !== false}
+          loop={loopVideo === true}
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover"
+        >
+          {mediaMessages.unsupportedVideo}
+        </video>
+      )
     ) : (
       <div className="w-full h-full bg-muted flex items-center justify-center">
         <span className="text-muted-foreground text-sm">
