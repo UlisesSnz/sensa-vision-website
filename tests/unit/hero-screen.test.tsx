@@ -264,6 +264,18 @@ describe("Hero con pantalla", () => {
     expect(lower).not.toMatch(/fetchpriority="high"/i);
   });
 
+  it("uses compact top spacing only when either hero leads the page", async () => {
+    const leadingClass =
+      'class="container dark:bg-background pt-16 pb-20 xl:pt-20"';
+    const followingClass =
+      'class="container dark:bg-background py-20 lg:pt-40"';
+
+    expect(await html([legacy])).toContain(leadingClass);
+    expect(await html([screen])).toContain(leadingClass);
+    expect(await html([legacy, screen])).toContain(followingClass);
+    expect(await html([screen, legacy])).toContain(followingClass);
+  });
+
   it("keeps the copy and a static screen for missing references and partial drafts", async () => {
     const output = await html(
       await project([

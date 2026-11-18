@@ -170,6 +170,25 @@ createRoot(document.getElementById("root")!).render(
           splitColumns={[designColumn, legacyColumn]}
         />
       </section>
+      <section data-testid="vertical-pair">
+        <SplitRow
+          padding={{ top: true, bottom: true }}
+          splitColumns={[
+            designColumn,
+            {
+              ...designColumn,
+              _key: "vertical-pair-second",
+              title: "Tu biblioteca de recursos",
+              body: [
+                splitParagraph(
+                  "Reúne los archivos de tu proyecto en la Biblioteca.",
+                  "vertical-pair-body",
+                ),
+              ],
+            },
+          ]}
+        />
+      </section>
       <section data-testid="empty">
         <SplitRow
           uid="empty"

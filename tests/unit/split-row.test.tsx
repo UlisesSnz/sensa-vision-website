@@ -246,7 +246,7 @@ describe("Split rendering and compatibility", () => {
     ).toContain("const screen = 1;");
   });
 
-  it("keeps the blur placeholder and legacy row spacing, opting into vertical spacing only for visible units", () => {
+  it("keeps the blur placeholder and applies feature spacing only to all-vertical rows", () => {
     const image = {
       ...editorImage,
       asset: {
@@ -270,6 +270,16 @@ describe("Split rendering and compatibility", () => {
         <SplitRow splitColumns={[legacyColumn, designColumn]} />,
       ),
     ).toContain("gap-16 xl:gap-20");
+    expect(
+      renderToStaticMarkup(
+        <SplitRow
+          splitColumns={[
+            designColumn,
+            { ...designColumn, _key: "second-vertical" },
+          ]}
+        />,
+      ),
+    ).toContain("gap-32 xl:gap-40");
   });
 });
 

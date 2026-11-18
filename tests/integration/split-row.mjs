@@ -142,6 +142,16 @@ try {
                 '[data-testid="mixed"] > div > .container > div',
               ).children,
             ].map(rect),
+            verticalPair: (() => {
+              const pair = document.querySelector(
+                '[data-testid="vertical-pair"] > div > .container > div',
+              );
+              const [first, second] = pair.children;
+              return {
+                firstImage: rect(first.querySelector("img")),
+                secondHeading: rect(second.querySelector("h2,h3")),
+              };
+            })(),
           };
         });
         assert.equal(metrics.overflow, false);
@@ -187,6 +197,12 @@ try {
           metrics.mixed[1].top - metrics.mixed[0].bottom,
           width >= 1280 ? 80 : 64,
           "Mixed row spacing",
+        );
+        near(
+          metrics.verticalPair.secondHeading.top -
+            metrics.verticalPair.firstImage.bottom,
+          width >= 1280 ? 160 : 128,
+          "Vertical feature separation",
         );
         for (const sectionWidth of ["default", "narrow"]) {
           for (const contentWidth of ["default", "narrow"]) {
@@ -400,6 +416,12 @@ try {
             await page
               .getByTestId("legacy-left")
               .screenshot({ path: `${output}/legacy-${width}-${theme}.png` });
+          if (width === 375 || width === 1280)
+            await page
+              .getByTestId("vertical-pair")
+              .screenshot({
+                path: `${output}/vertical-pair-${width}-${theme}.png`,
+              });
           if (width === 375 || width === 1280 || width === 1440) {
             for (const side of ["left", "right"]) {
               await page.getByTestId(`horizontal-design-${side}`).screenshot({

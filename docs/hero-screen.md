@@ -4,6 +4,11 @@ En Studio, abre una página y añade el bloque **Hero · Template Screen**. Pued
 
 **Hero 1** y **Hero · Template Screen** comparten el campo **Layout**. Elige **Text above** para centrar el texto y los botones arriba. En ese modo, **Text width** controla solo el copy: **Default** usa todo el ancho disponible y **Narrow** lo limita a 48rem; la imagen de Hero 1 o la escena animada sigue ocupando todo el ancho del contenido de la página. **Side by side** sitúa el texto a la izquierda en escritorio y arriba en móvil. Es la composición predeterminada, también para los bloques creados antes de añadir el campo.
 
+Cuando cualquiera de los dos Hero es el primer bloque de la página, comienza con 64 px
+de espacio superior, u 80 px desde `xl`; el espacio inferior permanece en 80 px. Los
+Hero que aparecen después conservan su espaciado anterior para marcar la separación
+entre secciones.
+
 1. **Default scene** define el ambiente que heredan las plantillas. El bloque nuevo ya trae *Office or reception*.
 2. En **Templates**, añade una imagen y describe su mensaje en **Alt text**. Para publicar el bloque hace falta al menos una plantilla con imagen y texto alternativo.
 3. Para una página de farmacias, elige *Pharmacy* una vez en el bloque. Cada plantilla mostrará **Use default (Pharmacy)**. Para abrir la portada con *Home*, abre la primera fila de **Templates** y elige **Home** en **Scene**. Cada fila admite su propio ambiente.

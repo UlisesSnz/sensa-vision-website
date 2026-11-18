@@ -70,6 +70,7 @@ export default function Hero2({
     <HeroLayout
       {...content}
       textAbove={textAbove}
+      isFirstBlock={isFirstBlock}
       locale={locale}
       downloadMessages={dictionary.downloads}
     >

@@ -40,6 +40,9 @@ export default function SplitRow({
   const hasVertical = columns.some(
     (column) => getSplitOptions(column).layout === "vertical",
   );
+  const allVertical = columns.every(
+    (column) => getSplitOptions(column).layout === "vertical",
+  );
 
   return (
     <SectionContainer
@@ -51,7 +54,11 @@ export default function SplitRow({
       <div
         className={cn(
           "grid grid-cols-1",
-          hasVertical ? "gap-16 xl:gap-20" : "gap-6 xl:gap-16",
+          allVertical
+            ? "gap-32 xl:gap-40"
+            : hasVertical
+              ? "gap-16 xl:gap-20"
+              : "gap-6 xl:gap-16",
         )}
       >
         {columns.map((column, index) => (

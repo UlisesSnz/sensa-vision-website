@@ -30,13 +30,23 @@ export default function HeroLayout({
   desktopReleases,
   downloadMessages,
   locale = "es",
+  isFirstBlock = false,
   children,
-}: HeroContentProps & { textAbove: boolean; children: ReactNode }) {
+}: HeroContentProps & {
+  textAbove: boolean;
+  isFirstBlock?: boolean;
+  children: ReactNode;
+}) {
   const isNarrow =
     textAbove && stegaClean(contentWidth) === "narrow";
 
   return (
-    <div className="container dark:bg-background py-20 lg:pt-40">
+    <div
+      className={cn(
+        "container dark:bg-background",
+        isFirstBlock ? "pt-16 pb-20 xl:pt-20" : "py-20 lg:pt-40",
+      )}
+    >
       <div
         data-hero-content={textAbove ? "vertical" : "horizontal"}
         className={

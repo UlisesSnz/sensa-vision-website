@@ -189,7 +189,11 @@ async function introMetrics(page) {
 
 async function verifyHeroLayouts(page) {
   for (const [device, width] of [
-    ["desktop", 1440], ["wide", 1920], ["mobile", 375], ["small", 320],
+    ["desktop", 1440],
+    ["wide", 1920],
+    ["tablet-landscape", 1024],
+    ["mobile", 375],
+    ["small", 320],
   ]) {
     await page.setViewportSize({ width, height: 850 });
     let classicCopy;
@@ -214,6 +218,7 @@ async function verifyHeroLayouts(page) {
         return {
           left: rect.left + parseFloat(style.paddingLeft),
           right: rect.right - parseFloat(style.paddingRight),
+          topPadding: parseFloat(style.paddingTop),
         };
       });
       const center = (container.left + container.right) / 2;
@@ -222,6 +227,11 @@ async function verifyHeroLayouts(page) {
       assert(Math.abs(box.x + box.width - container.right) < 1);
       assert(Math.abs(intro.x - container.left) < 1);
       assert(Math.abs(intro.width - availableWidth) < 1, "Default copy fills the content width");
+      assert.equal(
+        container.topPadding,
+        width >= 1280 ? 80 : 64,
+        "The leading hero uses compact top spacing",
+      );
       assert(Math.abs(title.x + title.width / 2 - center) < 1);
       assert.equal(await heading.evaluate((el) => getComputedStyle(el).textAlign), "center");
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);

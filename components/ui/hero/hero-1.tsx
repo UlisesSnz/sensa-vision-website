@@ -17,7 +17,11 @@ export default function Hero1({
 }) {
   const textAbove = stegaClean(layout) === "vertical";
   return (
-    <HeroLayout {...content} textAbove={textAbove}>
+    <HeroLayout
+      {...content}
+      textAbove={textAbove}
+      isFirstBlock={isFirstBlock}
+    >
       {image?.asset?._id && (
         <Image
           className={cn("rounded-xl", textAbove && "h-auto w-full")}
