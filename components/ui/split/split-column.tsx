@@ -231,7 +231,7 @@ export default function SplitColumn(props: ISplitColumn) {
         "grid grid-cols-1 min-w-0",
         twoColumns ? "lg:grid-cols-2" : undefined,
         twoColumns && natural ? "lg:items-center" : undefined,
-        vertical ? "w-full gap-6 lg:gap-8" : undefined,
+        vertical ? "w-full gap-16 xl:gap-20" : undefined,
         vertical && options.sectionWidth === "narrow"
           ? "max-w-[48rem] mx-auto"
           : undefined,

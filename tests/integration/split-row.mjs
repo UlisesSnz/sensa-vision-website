@@ -165,7 +165,7 @@ try {
         );
         near(
           metrics.image.top - metrics.paragraph.bottom,
-          width >= 1024 ? 32 : 24,
+          width >= 1280 ? 80 : 64,
           "Internal spacing",
         );
         near(
@@ -334,7 +334,7 @@ try {
             );
             near(
               imageBox.y - (buttonBox.y + buttonBox.height),
-              width >= 1024 ? 32 : 24,
+              width >= 1280 ? 80 : 64,
               "Desktop button to image spacing",
             );
           }

@@ -53,7 +53,7 @@ describe("Split rendering and compatibility", () => {
     },
   );
 
-  it("renders a complete image after its H2 and description with the original asset", () => {
+  it("renders a complete image after its H2 and description with section-scale spacing", () => {
     const image = {
       ...editorImage,
       crop: { top: 0.2, bottom: 0.2, left: 0.2, right: 0.2 },
@@ -67,6 +67,7 @@ describe("Split rendering and compatibility", () => {
     expect(html).toContain("object-contain block w-full h-auto");
     expect(html).toContain("text-3xl md:text-5xl");
     expect(html).toContain("text-lg leading-relaxed");
+    expect(html).toContain("gap-16 xl:gap-20");
     expect(html).not.toContain("lg:order-1");
     expect(html).not.toContain("h-[15rem]");
     expect(urlFor).toHaveBeenLastCalledWith(image.asset);

@@ -67,7 +67,8 @@ existente al editarlo. El título, la descripción, la imagen y el ancla se cons
 al vaciar el enlace. Las validaciones de los CTA y otros consumidores del tipo Link
 compartido mantienen sus requisitos. Los campos respetan el modo de solo lectura.
 
-La separación texto/imagen vertical es 24 px, o 32 px desde `lg`. Las filas con
+La separación texto/imagen vertical es 64 px, u 80 px desde `xl`, para mantener el
+ritmo visual de las secciones independientes. Las filas con
 alguna unidad vertical visible separan sus unidades por 64 px, u 80 px desde `xl`.
 Las filas exclusivamente horizontales mantienen sus espacios anteriores. El padding
 exterior sigue dependiendo de los controles de Split Row; no se añade margen negativo.
