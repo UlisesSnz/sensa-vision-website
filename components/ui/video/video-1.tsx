@@ -21,6 +21,7 @@ export default function Video1({
   youtubeUrl,
   uploadedVideo,
   videoAspectRatio = "16/9",
+  sectionWidth = "narrow",
   videoLoop = false,
   videoAutoplay = false,
   videoControls = true,
@@ -48,6 +49,7 @@ export default function Video1({
     };
   };
   videoAspectRatio: string;
+  sectionWidth: "default" | "narrow";
   videoLoop: boolean;
   videoAutoplay: boolean;
   videoControls: boolean;
@@ -65,6 +67,8 @@ export default function Video1({
   const position = stegaClean(textPosition);
   const type = stegaClean(videoType);
   const aspect = stegaClean(videoAspectRatio);
+  const standaloneWidth =
+    stegaClean(sectionWidth) === "default" ? "w-full" : "max-w-4xl mx-auto";
   const loopVideo = stegaClean(videoLoop);
   const autoplayVideo = stegaClean(videoAutoplay) === true;
   const showControls = stegaClean(videoControls);
@@ -158,7 +162,7 @@ export default function Video1({
   if (!textBlock) {
     return (
       <SectionContainer color={color} padding={padding}>
-        <div className="max-w-4xl mx-auto">
+        <div className={standaloneWidth}>
           {videoBlock}
           <ActionLinks
             align="center"

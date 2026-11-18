@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { Video } from "lucide-react";
+import { SECTION_WIDTH } from "../shared/layout-variants";
 
 const TEXT_POSITIONS = [
   { title: "Left", value: "left" },
@@ -97,6 +98,15 @@ export default defineType({
         layout: "radio",
       },
       initialValue: "16/9",
+    }),
+    defineField({
+      name: "sectionWidth",
+      title: "Section width",
+      type: "string",
+      description: "Choose how wide the standalone video appears.",
+      initialValue: "default",
+      options: { layout: "radio", list: SECTION_WIDTH },
+      hidden: ({ parent }) => Boolean(parent?.body?.length),
     }),
     defineField({
       name: "videoLoop",

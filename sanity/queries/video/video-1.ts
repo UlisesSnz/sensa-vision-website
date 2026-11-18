@@ -18,6 +18,7 @@ export const video1Query = groq`
       }
     },
     videoAspectRatio,
+    sectionWidth,
     videoLoop,
     videoAutoplay,
     videoControls,

@@ -264,6 +264,57 @@ describe("media action placement", () => {
   });
 });
 
+describe("standalone video width", () => {
+  const uploadedVideo = {
+    asset: {
+      _id: "file-video",
+      url: "https://cdn.example.test/demo.mp4",
+      mimeType: "video/mp4",
+    },
+  };
+
+  it("preserves the contained width for existing video documents", () => {
+    const html = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "upload",
+        uploadedVideo,
+      }),
+    );
+
+    expect(html).toContain('class="max-w-4xl mx-auto"');
+  });
+
+  it("uses the full section container for newly configured standalone videos", () => {
+    const html = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "upload",
+        uploadedVideo,
+        sectionWidth: "default",
+        links: mediaLinks,
+      }),
+    );
+
+    expect(html).toContain('class="w-full"');
+    expect(html).not.toContain("max-w-4xl");
+    expect(html).toContain("justify-center");
+  });
+
+  it("does not constrain videos that already have companion text", () => {
+    const html = renderToStaticMarkup(
+      createElement(Video1, {
+        videoType: "upload",
+        uploadedVideo,
+        body: textBody,
+        textPosition: "bottom",
+        sectionWidth: "narrow",
+      }),
+    );
+
+    expect(html).toContain('class="mt-6"');
+    expect(html).not.toContain("max-w-4xl");
+  });
+});
+
 describe("Video and Lottie editorial links", () => {
   it("uses the established Links field convention", () => {
     for (const block of [video1, lottie1]) {
@@ -320,6 +371,7 @@ describe("Video and Lottie editorial links", () => {
         _key: "video",
         links: mediaLinks,
         videoAutoplay: true,
+        sectionWidth: "default",
       },
       {
         _type: "lottie-1",
@@ -335,6 +387,7 @@ describe("Video and Lottie editorial links", () => {
         _key: "video",
         links: mediaLinks,
         videoAutoplay: true,
+        sectionWidth: "default",
       },
       { _type: "lottie-1", _key: "lottie", links: mediaLinks },
     ]);
@@ -425,5 +478,37 @@ describe("video autoplay", () => {
     expect(html).toContain("enablejsapi=1");
     expect(html).toContain("playsinline=1");
     expect(html).not.toContain("controls=0");
+  });
+});
+
+describe("video standalone width editor control", () => {
+  it("reuses the section-width options and only appears without companion text", () => {
+    const width = video1.fields?.find(
+      (field) => field.name === "sectionWidth",
+    );
+    const hidden = width && "hidden" in width ? width.hidden : undefined;
+
+    expect(width).toMatchObject({
+      name: "sectionWidth",
+      title: "Section width",
+      type: "string",
+      initialValue: "default",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Default", value: "default" },
+          { title: "Narrow", value: "narrow" },
+        ],
+      },
+    });
+    if (typeof hidden !== "function")
+      throw new Error("Missing standalone-video width visibility rule");
+
+    expect(
+      hidden({ parent: { body: [] } } as Parameters<typeof hidden>[0]),
+    ).toBe(false);
+    expect(
+      hidden({ parent: { body: textBody } } as Parameters<typeof hidden>[0]),
+    ).toBe(true);
   });
 });
