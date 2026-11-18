@@ -40,8 +40,8 @@ function createPortableTextComponents(
             width={dimensions?.width ?? 800}
             height={dimensions?.height ?? 600}
             {...(lqip ? { placeholder: "blur", blurDataURL: lqip } : {})}
+            className="rounded-2xl"
             style={{
-              borderRadius: "1rem",
               marginLeft: "auto",
               marginRight: "auto",
             }}

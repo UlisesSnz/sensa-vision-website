@@ -264,6 +264,101 @@ describe("media action placement", () => {
   });
 });
 
+describe("media frame radius", () => {
+  const uploadedVideo = {
+    asset: {
+      _id: "file-video",
+      url: "https://cdn.example.test/demo.mp4",
+      mimeType: "video/mp4",
+    },
+  };
+  const lottieFile = {
+    asset: {
+      _id: "file-lottie",
+      url: "https://cdn.example.test/demo.lottie",
+      mimeType: "application/json",
+    },
+  };
+
+  it("uses the editorial media radius in every Video layout", () => {
+    const markups = [
+      renderToStaticMarkup(
+        createElement(Video1, { videoType: "upload", uploadedVideo, body: [] }),
+      ),
+      renderToStaticMarkup(
+        createElement(Video1, {
+          videoType: "upload",
+          uploadedVideo,
+          body: textBody,
+          textPosition: "left",
+        }),
+      ),
+      renderToStaticMarkup(
+        createElement(Video1, {
+          videoType: "upload",
+          uploadedVideo,
+          body: textBody,
+          textPosition: "top",
+        }),
+      ),
+      renderToStaticMarkup(
+        createElement(Video1, {
+          videoType: "upload",
+          uploadedVideo,
+          body: textBody,
+          textPosition: "bottom",
+        }),
+      ),
+    ];
+
+    for (const markup of markups) {
+      expect(markup).toContain(
+        'class="w-full overflow-hidden rounded-2xl aspect-video"',
+      );
+      expect(markup).not.toContain("rounded-lg");
+    }
+  });
+
+  it("uses the editorial media radius in every Lottie layout", () => {
+    const markups = [
+      renderToStaticMarkup(createElement(Lottie1, { lottieFile, body: [] })),
+      renderToStaticMarkup(
+        createElement(Lottie1, {
+          lottieFile,
+          body: textBody,
+          textPosition: "center",
+        }),
+      ),
+      renderToStaticMarkup(
+        createElement(Lottie1, {
+          lottieFile,
+          body: textBody,
+          textPosition: "left",
+        }),
+      ),
+      renderToStaticMarkup(
+        createElement(Lottie1, {
+          lottieFile,
+          body: textBody,
+          textPosition: "top",
+        }),
+      ),
+      renderToStaticMarkup(
+        createElement(Lottie1, {
+          lottieFile,
+          body: textBody,
+          textPosition: "bottom",
+        }),
+      ),
+    ];
+
+    for (const markup of markups) {
+      expect(markup).toContain("overflow-hidden rounded-2xl");
+      expect(markup).not.toContain("rounded-lg");
+    }
+  });
+});
+
 describe("standalone video width", () => {
   const uploadedVideo = {
     asset: {

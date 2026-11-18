@@ -79,7 +79,7 @@ export default function SplitColumn(props: ISplitColumn) {
     hasImage && image ? (
       <div
         className={cn(
-          "relative min-w-0 rounded-lg overflow-hidden",
+          "relative min-w-0 rounded-2xl overflow-hidden",
           !natural
             ? "h-[15rem] sm:h-[20rem] md:h-[25rem] lg:h-[30rem]"
             : undefined,

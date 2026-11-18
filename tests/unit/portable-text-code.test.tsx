@@ -68,6 +68,30 @@ describe("Portable Text code rendering", () => {
   });
 });
 
+describe("Portable Text media styling", () => {
+  it("uses the shared editorial media radius for embedded images", () => {
+    const markup = renderToStaticMarkup(
+      <PortableTextRenderer
+        locale="es"
+        value={[
+          {
+            _type: "image",
+            _key: "editorial-image",
+            alt: "Imagen editorial",
+            asset: {
+              url: "/images/placeholder.svg",
+              metadata: { dimensions: { width: 800, height: 600 } },
+            },
+          },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain('class="rounded-2xl"');
+    expect(markup).not.toContain("border-radius");
+  });
+});
+
 describe("native Sanity code schema", () => {
   const schema = createSchema({ name: "code-test", types: [codeSchema, table, tableCellContent, blockContent,
     { name: "codeTest", type: "document", fields: [{ name: "body", type: "block-content" }] },

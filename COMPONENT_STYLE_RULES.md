@@ -123,7 +123,14 @@ grid grid-cols-1 gap-6
 
 ## 6. Image / Media Styling
 
-- Always `rounded-lg overflow-hidden` for media containers
+- Editorial media containers (Split Row, Video, and Lottie) use
+  `rounded-2xl overflow-hidden` (16 px); direct Portable Text images use
+  `rounded-2xl`.
+- Editorial card shells (Grid and Post) use `rounded-3xl`; their nested media
+  stays at `rounded-2xl`. Compact card shells, such as pricing, may use
+  `rounded-2xl`.
+- Compact controls and structural UI may use the base `rounded-lg` or smaller
+  radii. Device or product-screen mockups retain the radius of the depicted UI.
 - Images: `object-cover` + responsive height classes
 - Exception: `GridCard` shows the complete original asset with `object-contain`,
   `w-full h-auto`, and intrinsic `width`/`height`; do not add fixed heights or `fill`.

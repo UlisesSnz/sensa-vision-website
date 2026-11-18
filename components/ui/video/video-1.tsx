@@ -12,6 +12,8 @@ import type { DesktopReleaseLookup } from "@/lib/desktop-release-content";
 import AutoplayVideo from "./autoplay-video";
 import { buildYouTubeEmbedUrl, extractYouTubeId } from "./video-utils";
 
+const videoFrameClass = "w-full overflow-hidden rounded-2xl";
+
 export default function Video1({
   padding,
   colorVariant,
@@ -140,7 +142,7 @@ export default function Video1({
     );
 
   const videoBlock = (
-    <div className={cn("w-full rounded-lg overflow-hidden", aspectClass)}>
+    <div className={cn(videoFrameClass, aspectClass)}>
       {videoInner}
     </div>
   );
@@ -188,7 +190,7 @@ export default function Video1({
             )}
           >
             <div
-              className={cn("w-full rounded-lg overflow-hidden", aspectClass)}
+              className={cn(videoFrameClass, aspectClass)}
             >
               {videoInner}
             </div>

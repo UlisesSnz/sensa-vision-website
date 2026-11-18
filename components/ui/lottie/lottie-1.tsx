@@ -28,6 +28,7 @@ const LOTTIE_MIN_HEIGHTS: Record<string, number> = {
 };
 
 type LottieFitMode = "hybrid" | "contain" | "cover";
+const lottieFrameClass = "overflow-hidden rounded-2xl";
 
 export default function Lottie1({
   padding,
@@ -117,7 +118,7 @@ export default function Lottie1({
       <SectionContainer color={color} padding={padding}>
         <div className="flex justify-center">
           <div
-            className="overflow-hidden rounded-lg"
+            className={lottieFrameClass}
             style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
           >
             <LottiePlayer
@@ -143,7 +144,7 @@ export default function Lottie1({
       <SectionContainer color={color} padding={padding}>
         <div className="flex flex-col items-center">
           <div
-            className="overflow-hidden rounded-lg"
+            className={lottieFrameClass}
             style={{ width: dims.width, height: dims.height, maxWidth: "100%" }}
           >
             <LottiePlayer
@@ -164,7 +165,7 @@ export default function Lottie1({
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div
             className={cn(
-              "overflow-hidden rounded-lg",
+              lottieFrameClass,
               position === "left" ? "lg:order-1" : undefined,
             )}
             style={{
@@ -191,7 +192,7 @@ export default function Lottie1({
         <>
           <div className="flex justify-center">
             <div
-              className="overflow-hidden rounded-lg"
+              className={lottieFrameClass}
               style={{
                 width: dims.width,
                 height: dims.height,
@@ -211,7 +212,7 @@ export default function Lottie1({
           <div className="mb-6">{textBlock}</div>
           <div className="flex justify-center">
             <div
-              className="overflow-hidden rounded-lg"
+              className={lottieFrameClass}
               style={{
                 width: dims.width,
                 height: dims.height,

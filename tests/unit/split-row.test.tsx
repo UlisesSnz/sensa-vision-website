@@ -43,6 +43,7 @@ describe("Split rendering and compatibility", () => {
       expect(html).toContain(
         "h-[15rem] sm:h-[20rem] md:h-[25rem] lg:h-[30rem]",
       );
+      expect(html).toContain("relative min-w-0 rounded-2xl overflow-hidden");
       expect(html).toContain("object-cover");
       expect(html).toContain('data-nimg="fill"');
       expect(html).toContain("px-4 py-6 lg:px-16 xl:px-20");
