@@ -67,13 +67,16 @@ existente al editarlo. El título, la descripción, la imagen y el ancla se cons
 al vaciar el enlace. Las validaciones de los CTA y otros consumidores del tipo Link
 compartido mantienen sus requisitos. Los campos respetan el modo de solo lectura.
 
-La separación texto/imagen dentro de una unidad vertical es 64 px, u 80 px desde
-`xl`. Cuando una fila está formada exclusivamente por unidades verticales, sus
-unidades se separan por 128 px, u 160 px desde `xl`, para conservar cada conjunto de
-título, copy e imagen como una característica reconocible. Las filas mixtas conservan
-64 px, u 80 px desde `xl`, y las exclusivamente horizontales mantienen sus espacios
-anteriores. El padding exterior sigue dependiendo de los controles de Split Row; no se
-añade margen negativo.
+La separación texto/imagen de una unidad vertical y entre las dos columnas de una
+unidad horizontal es 64 px, u 80 px desde `xl`. El copy horizontal ocupa toda su
+columna útil; no añade relleno lateral propio ni se justifica el texto. Su cuerpo usa la
+misma tipografía y color atenuado que el layout vertical y los demás componentes.
+
+La separación entre unidades sigue la jerarquía editorial en ambos layouts: dos
+subtítulos H3 consecutivos se separan 64 px, u 80 px desde `xl`; una frontera que
+incluye un título de sección H2 se separa 128 px, u 160 px. El primer y último bloque
+no añaden margen: el padding exterior sigue dependiendo de los controles de Split Row,
+sin márgenes negativos. Un H2 vacío no crea una separación de sección.
 
 ## Compatibilidad y anclas
 

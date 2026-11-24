@@ -2,12 +2,18 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { vercelStegaCombine, vercelStegaSplit } from "@vercel/stega";
 import SplitRow from "@/components/ui/split/split-row";
-import SplitColumn from "@/components/ui/split/split-column";
+import SplitColumn, {
+  type ISplitColumn,
+} from "@/components/ui/split/split-column";
 import SectionHeader from "@/components/ui/section-header";
 import Blocks from "@/components/blocks";
 import { getDictionary } from "@/i18n/dictionaries";
 import { withUniqueSectionAnchors } from "@/lib/section-anchors";
-import { getSplitOptions, type SplitColumnContent } from "@/lib/split-content";
+import {
+  getSplitOptions,
+  isSplitSectionHeading,
+  type SplitColumnContent,
+} from "@/lib/split-content";
 import { urlFor } from "@/sanity/lib/image";
 import {
   designColumn,
@@ -25,7 +31,7 @@ vi.mock("@/sanity/lib/content", () => ({
   fetchLatestDesktopRelease: vi.fn().mockResolvedValue(null),
 }));
 
-const renderColumn = (props: SplitColumnContent) =>
+const renderColumn = (props: ISplitColumn) =>
   renderToStaticMarkup(<SplitColumn {...props} />);
 const annotate = (text: string) =>
   vercelStegaCombine(
@@ -46,7 +52,9 @@ describe("Split rendering and compatibility", () => {
       expect(html).toContain("relative min-w-0 rounded-2xl overflow-hidden");
       expect(html).toContain("object-cover");
       expect(html).toContain('data-nimg="fill"');
-      expect(html).toContain("px-4 py-6 lg:px-16 xl:px-20");
+      expect(html).toContain("py-6 lg:py-0 flex flex-col justify-center");
+      expect(html).toContain("lg:grid-cols-2 lg:gap-16 xl:gap-20");
+      expect(html).not.toContain("lg:px-16");
       expect(html).toMatch(/<h3[^>]*>Característica horizontal<\/h3>/);
       expect(html.indexOf("<img")).toBeLessThan(html.indexOf("<h3"));
       expect(html.includes("lg:order-1")).toBe(position);
@@ -99,6 +107,20 @@ describe("Split rendering and compatibility", () => {
     expect(html).toContain("<h3");
     expect(html).toContain("object-cover");
     expect(html.indexOf("<h3")).toBeLessThan(html.indexOf("<img"));
+  });
+
+  it("uses the standard body style in every layout and color variant", () => {
+    const bodyOnly = renderColumn({
+      body: [splitParagraph("Descripción estándar")],
+    });
+    expect(bodyOnly).toContain("text-lg leading-relaxed");
+    expect(bodyOnly).toContain("text-muted-foreground");
+    expect(
+      renderColumn({
+        body: [splitParagraph("Descripción sobre fondo primario")],
+        colorVariant: "primary",
+      }),
+    ).toContain("text-background/80");
   });
 
   it("normalizes missing, null and unsupported options to the same defaults", () => {
@@ -246,7 +268,7 @@ describe("Split rendering and compatibility", () => {
     ).toContain("const screen = 1;");
   });
 
-  it("keeps the blur placeholder and applies feature spacing only to all-vertical rows", () => {
+  it("keeps the blur placeholder and applies semantic spacing between features", () => {
     const image = {
       ...editorImage,
       asset: {
@@ -260,26 +282,41 @@ describe("Split rendering and compatibility", () => {
     expect(renderColumn({ ...designColumn, image })).toContain(
       "background-image:",
     );
+    const secondH3 = { ...legacyColumn, _key: "second-h3" };
+    const secondH2 = { ...designColumn, _key: "second-h2" };
+
     expect(
       renderToStaticMarkup(
-        <SplitRow splitColumns={[legacyColumn, { layout: "vertical" }]} />,
+        <SplitRow splitColumns={[legacyColumn, secondH3]} />,
       ),
-    ).toContain("gap-6 xl:gap-16");
+    ).toContain("mb-16 xl:mb-20");
     expect(
       renderToStaticMarkup(
         <SplitRow splitColumns={[legacyColumn, designColumn]} />,
       ),
-    ).toContain("gap-16 xl:gap-20");
+    ).toContain("mb-32 xl:mb-40");
+    expect(
+      renderToStaticMarkup(
+        <SplitRow splitColumns={[designColumn, secondH2]} />,
+      ),
+    ).toContain("mb-32 xl:mb-40");
     expect(
       renderToStaticMarkup(
         <SplitRow
           splitColumns={[
-            designColumn,
-            { ...designColumn, _key: "second-vertical" },
+            { headingLevel: "h2", body: [splitParagraph("Sin título")] },
+            legacyColumn,
           ]}
         />,
       ),
-    ).toContain("gap-32 xl:gap-40");
+    ).toContain("mb-16 xl:mb-20");
+    expect(isSplitSectionHeading(designColumn)).toBe(true);
+    expect(
+      isSplitSectionHeading({
+        headingLevel: "h2",
+        body: [splitParagraph("Sin título")],
+      }),
+    ).toBe(false);
   });
 });
 

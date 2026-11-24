@@ -84,14 +84,24 @@ try {
           const paragraph = split.querySelector("p");
           const measure = (id) => {
             const el = document.querySelector(`[data-testid="${id}"]`);
+            const row = el.querySelector(":scope > div > .container > div");
             const img = el.querySelector("img");
             const h = el.querySelector("h2,h3");
             const p = el.querySelector("p");
             return {
+              row: row ? rect(row) : null,
               image: img ? rect(img) : null,
               heading: h ? rect(h) : null,
               text: h ? rect(h.parentElement.parentElement) : null,
               paragraph: p ? rect(p) : null,
+              paragraphStyle: p
+                ? {
+                    color: getComputedStyle(p).color,
+                    size: getComputedStyle(p).fontSize,
+                    line: getComputedStyle(p).lineHeight,
+                  }
+                : null,
+              sizes: img?.getAttribute("sizes") ?? null,
               fit: img ? getComputedStyle(img).objectFit : null,
               align: h ? getComputedStyle(h).textAlign : null,
               tag: h?.tagName,
@@ -133,7 +143,9 @@ try {
               [...document.querySelectorAll("section[data-testid]")]
                 .filter(
                   (s) =>
-                    !["primary", "mixed", "empty"].includes(s.dataset.testid),
+                    !["primary", "mixed", "heading-rhythm", "empty"].includes(
+                      s.dataset.testid,
+                    ),
                 )
                 .map((s) => [s.dataset.testid, measure(s.dataset.testid)]),
             ),
@@ -150,6 +162,15 @@ try {
               return {
                 firstImage: rect(first.querySelector("img")),
                 secondHeading: rect(second.querySelector("h2,h3")),
+              };
+            })(),
+            headingRhythm: (() => {
+              const row = document.querySelector(
+                '[data-testid="heading-rhythm"] > div > .container > div',
+              );
+              return {
+                row: rect(row),
+                children: [...row.children].map(rect),
               };
             })(),
           };
@@ -195,7 +216,7 @@ try {
         );
         near(
           metrics.mixed[1].top - metrics.mixed[0].bottom,
-          width >= 1280 ? 80 : 64,
+          width >= 1280 ? 160 : 128,
           "Mixed row spacing",
         );
         near(
@@ -203,6 +224,34 @@ try {
             metrics.verticalPair.firstImage.bottom,
           width >= 1280 ? 160 : 128,
           "Vertical feature separation",
+        );
+        const featureGap = width >= 1280 ? 80 : 64;
+        const sectionGap = featureGap * 2;
+        const rhythm = metrics.headingRhythm;
+        near(
+          rhythm.children[1].top - rhythm.children[0].bottom,
+          featureGap,
+          "Consecutive subheadings use feature spacing",
+        );
+        near(
+          rhythm.children[2].top - rhythm.children[1].bottom,
+          sectionGap,
+          "A section heading starts after section spacing",
+        );
+        near(
+          rhythm.children[3].top - rhythm.children[2].bottom,
+          sectionGap,
+          "A section heading ends with section spacing",
+        );
+        near(
+          rhythm.children[0].top,
+          rhythm.row.top,
+          "The first feature adds no outer spacing",
+        );
+        near(
+          rhythm.children.at(-1).bottom,
+          rhythm.row.bottom,
+          "The last feature adds no outer spacing",
         );
         for (const sectionWidth of ["default", "narrow"]) {
           for (const contentWidth of ["default", "narrow"]) {
@@ -252,6 +301,53 @@ try {
                 : item.image.right <= item.heading.left,
             );
         }
+        for (const [id, side] of [
+          ["legacy-left", "left"],
+          ["legacy-right", "right"],
+          ["horizontal-contain", "right"],
+          ["horizontal-design-left", "left"],
+          ["horizontal-design-right", "right"],
+          ["horizontal-short-left", "left"],
+          ["horizontal-short-right", "right"],
+          ["horizontal-long-left", "left"],
+          ["horizontal-long-right", "right"],
+        ]) {
+          const item = metrics.cases[id];
+          assert.equal(
+            item.sizes,
+            "(min-width: 1280px) 536px, (min-width: 1024px) 448px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)",
+            "Horizontal image sizes match the grid",
+          );
+          if (width >= 1024) {
+            if (side === "left") {
+              near(item.text.left, item.row.left, "Text aligns to the outer edge");
+              near(item.image.right, item.row.right, "Image aligns to the outer edge");
+              near(
+                item.image.left - item.text.right,
+                featureGap,
+                "Horizontal columns have one intentional gap",
+              );
+            } else {
+              near(item.image.left, item.row.left, "Image aligns to the outer edge");
+              near(item.text.right, item.row.right, "Text aligns to the outer edge");
+              near(
+                item.text.left - item.image.right,
+                featureGap,
+                "Horizontal columns have one intentional gap",
+              );
+            }
+          } else {
+            near(
+              item.heading.left,
+              item.image.left,
+              "Mobile copy aligns with the image",
+            );
+          }
+        }
+        assert.deepEqual(
+          metrics.cases["horizontal-design-left"].paragraphStyle,
+          metrics.cases["default-default-left"].paragraphStyle,
+        );
         for (const id of [
           "horizontal-contain",
           "image-only",

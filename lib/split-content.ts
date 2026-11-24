@@ -92,6 +92,13 @@ export function getSplitContent(column: SplitColumnContent) {
   };
 }
 
+export function isSplitSectionHeading(column: SplitColumnContent) {
+  return (
+    Boolean(cleanSplitText(column.title)) &&
+    getSplitOptions(column).headingLevel === "h2"
+  );
+}
+
 export function getRenderableSplitColumns(
   columns?: (SplitColumnContent | null)[] | null,
 ) {

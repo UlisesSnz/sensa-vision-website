@@ -189,6 +189,21 @@ createRoot(document.getElementById("root")!).render(
           ]}
         />
       </section>
+      <section data-testid="heading-rhythm">
+        <SplitRow
+          padding={{ top: true, bottom: true }}
+          splitColumns={[
+            { _key: "rhythm-h3-first", title: "Primer subtítulo" },
+            { _key: "rhythm-h3-second", title: "Segundo subtítulo" },
+            {
+              _key: "rhythm-h2",
+              headingLevel: "h2",
+              title: "Título principal",
+            },
+            { _key: "rhythm-h3-last", title: "Tercer subtítulo" },
+          ]}
+        />
+      </section>
       <section data-testid="empty">
         <SplitRow
           uid="empty"

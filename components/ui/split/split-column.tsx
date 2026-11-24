@@ -26,6 +26,7 @@ import {
 } from "@/lib/split-content";
 
 export interface ISplitColumn extends SplitColumnContent {
+  className?: string;
   colorVariant?: ISectionContainer["color"] | null;
   locale?: Locale;
   desktopReleases?: DesktopReleaseLookup;
@@ -35,10 +36,11 @@ export interface ISplitColumn extends SplitColumnContent {
 const narrowImageSizes =
   "(min-width: 1024px) 768px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
 const halfImageSizes =
-  "(min-width: 1280px) 576px, (min-width: 1024px) 480px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
+  "(min-width: 1280px) 536px, (min-width: 1024px) 448px, (min-width: 768px) 704px, (min-width: 640px) 576px, calc(100vw - 2rem)";
 
 export default function SplitColumn(props: ISplitColumn) {
   const {
+    className,
     colorVariant,
     position,
     tagLine,
@@ -114,6 +116,17 @@ export default function SplitColumn(props: ISplitColumn) {
       </div>
     ) : null;
 
+  const bodyContent = body.length ? (
+    <div
+      className={cn(
+        "text-lg leading-relaxed [&>*:last-child]:mb-0",
+        color === "primary" ? "text-background/80" : "text-muted-foreground",
+      )}
+    >
+      <PortableTextRenderer value={body} locale={locale} />
+    </div>
+  ) : null;
+
   const content = hasText ? (
     <div
       className={cn(
@@ -121,8 +134,10 @@ export default function SplitColumn(props: ISplitColumn) {
         vertical
           ? "w-full"
           : twoColumns && natural
-            ? "px-4 py-6 lg:py-0 lg:px-16 xl:px-20"
-            : "px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center",
+            ? "py-6 lg:py-0"
+            : twoColumns
+              ? "py-6 lg:py-0 flex flex-col justify-center"
+              : "px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center",
         vertical && options.contentWidth === "narrow"
           ? "max-w-[48rem] mx-auto"
           : undefined,
@@ -170,22 +185,7 @@ export default function SplitColumn(props: ISplitColumn) {
                 {title}
               </Heading>
             ) : null}
-            {body.length ? (
-              vertical ? (
-                <div
-                  className={cn(
-                    "text-lg leading-relaxed [&>*:last-child]:mb-0",
-                    color === "primary"
-                      ? "text-background/80"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <PortableTextRenderer value={body} locale={locale} />
-                </div>
-              ) : (
-                <PortableTextRenderer value={body} locale={locale} />
-              )
-            ) : null}
+            {bodyContent}
           </div>
         ) : null}
         {hasLink && isDesktopDownload && downloadMessages && link ? (
@@ -229,12 +229,13 @@ export default function SplitColumn(props: ISplitColumn) {
     <div
       className={cn(
         "grid grid-cols-1 min-w-0",
-        twoColumns ? "lg:grid-cols-2" : undefined,
+        twoColumns ? "lg:grid-cols-2 lg:gap-16 xl:gap-20" : undefined,
         twoColumns && natural ? "lg:items-center" : undefined,
         vertical ? "w-full gap-16 xl:gap-20" : undefined,
         vertical && options.sectionWidth === "narrow"
           ? "max-w-[48rem] mx-auto"
           : undefined,
+        className,
       )}
     >
       {vertical ? (

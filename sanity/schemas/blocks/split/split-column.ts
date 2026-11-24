@@ -68,7 +68,8 @@ export default defineType({
       name: "headingLevel",
       title: "Heading",
       type: "string",
-      description: "Use a section heading for a main feature.",
+      description:
+        "Use a section heading for a main feature; it adds more space around adjacent features.",
       initialValue: "h3",
       options: {
         layout: "radio",
