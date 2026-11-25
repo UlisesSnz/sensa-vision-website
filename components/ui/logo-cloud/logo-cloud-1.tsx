@@ -21,6 +21,7 @@ interface LogoCloud1Props {
     | "transparent";
   title: string;
   images: Sanity.Image[];
+  compactTop?: boolean;
 }
 
 export default function LogoCloud1({
@@ -28,6 +29,7 @@ export default function LogoCloud1({
   colorVariant,
   title,
   images,
+  compactTop = false,
 }: Partial<LogoCloud1Props>) {
   const color = stegaClean(colorVariant);
 
@@ -35,6 +37,7 @@ export default function LogoCloud1({
     <SectionContainer
       color={color}
       padding={padding}
+      compactTop={compactTop}
       className="overflow-hidden"
     >
       {title && (

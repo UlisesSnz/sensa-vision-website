@@ -29,6 +29,7 @@ interface FAQProps {
     body: any;
   }[];
   locale: Locale;
+  compactTop?: boolean;
 }
 
 export default function FAQs({
@@ -36,10 +37,11 @@ export default function FAQs({
   colorVariant,
   faqs,
   locale = "es",
+  compactTop = false,
 }: Partial<FAQProps>) {
   const color = stegaClean(colorVariant);
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {faqs && faqs?.length > 0 && (
         <Accordion className="space-y-4" type="multiple">
           {faqs.map((faq, index) => (

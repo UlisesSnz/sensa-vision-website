@@ -39,6 +39,7 @@ interface Carousel2Props {
     rating: number;
   }[];
   locale: Locale;
+  compactTop?: boolean;
 }
 
 export default function Carousel2({
@@ -46,11 +47,12 @@ export default function Carousel2({
   colorVariant,
   testimonial,
   locale = "es",
+  compactTop = false,
 }: Partial<Carousel2Props>) {
   const color = stegaClean(colorVariant);
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {testimonial && testimonial.length > 0 && (
         <Carousel>
           <CarouselContent>

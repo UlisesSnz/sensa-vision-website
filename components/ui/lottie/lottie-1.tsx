@@ -43,6 +43,7 @@ export default function Lottie1({
   links,
   desktopReleases,
   downloadMessages,
+  compactTop = false,
   locale = "es",
 }: Partial<{
   padding: ISectionPadding;
@@ -63,6 +64,7 @@ export default function Lottie1({
   links: (Sanity.Link | null)[];
   desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
+  compactTop: boolean;
   locale: Locale;
 }>) {
   const color = stegaClean(colorVariant);
@@ -115,7 +117,7 @@ export default function Lottie1({
   // No body: lottie centered (standalone)
   if (!textBlock) {
     return (
-      <SectionContainer color={color} padding={padding}>
+      <SectionContainer color={color} padding={padding} compactTop={compactTop}>
         <div className="flex justify-center">
           <div
             className={lottieFrameClass}
@@ -141,7 +143,7 @@ export default function Lottie1({
   // Center layout: lottie on top, text below
   if (isCenter) {
     return (
-      <SectionContainer color={color} padding={padding}>
+      <SectionContainer color={color} padding={padding} compactTop={compactTop}>
         <div className="flex flex-col items-center">
           <div
             className={lottieFrameClass}
@@ -161,7 +163,7 @@ export default function Lottie1({
   // Horizontal layout — lottie fills entire grid cell (like split-column image)
   if (isHorizontal) {
     return (
-      <SectionContainer color={color} padding={padding}>
+      <SectionContainer color={color} padding={padding} compactTop={compactTop}>
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div
             className={cn(
@@ -187,7 +189,7 @@ export default function Lottie1({
 
   // Vertical layout (top/bottom)
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {lottieFirst ? (
         <>
           <div className="flex justify-center">

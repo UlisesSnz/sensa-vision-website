@@ -8,7 +8,9 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import SectionContainer from "@/components/ui/section-container";
+import SectionContainer, {
+  hasSectionTopSpacing,
+} from "@/components/ui/section-container";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -39,6 +41,8 @@ interface FormNewsletterProps {
     invalidEmail: string;
     newsletterError: string;
   };
+  compactTop?: boolean;
+  trimTopInset?: boolean;
 }
 
 export default function FormNewsletter({
@@ -47,6 +51,8 @@ export default function FormNewsletter({
   consentText,
   buttonText,
   successMessage,
+  compactTop = false,
+  trimTopInset = false,
   formMessages = {
     emailPlaceholder: "Ingresa tu correo electrónico",
     emailRequired: "Ingresa tu correo electrónico",
@@ -108,11 +114,16 @@ export default function FormNewsletter({
   }
 
   const color = stegaClean(colorVariant);
+  const ownsTopSpacing =
+    hasSectionTopSpacing(padding, compactTop) || trimTopInset;
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       <Form {...form}>
-        <form className="pt-8" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className={ownsTopSpacing ? undefined : "pt-8"}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="flex gap-4">
             <FormField
               control={form.control}

@@ -17,6 +17,7 @@
     "test:pricing": "node tests/integration/pricing-card.mjs",
     "test:downloads": "node tests/integration/downloads.mjs",
     "test:split": "node tests/integration/split-row.mjs",
+    "test:section-joins": "node tests/integration/section-joins.mjs",
     "test:video-autoplay": "node tests/integration/video-autoplay.mjs",
     "test:split:studio": "node tests/integration/split-link-editor.mjs",
     "test:hero-screen": "node tests/integration/hero-screen.mjs",

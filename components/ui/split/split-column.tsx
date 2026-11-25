@@ -31,6 +31,10 @@ export interface ISplitColumn extends SplitColumnContent {
   locale?: Locale;
   desktopReleases?: DesktopReleaseLookup;
   downloadMessages?: DesktopDownloadMessages;
+  /** Removes text-only section-edge space when the parent owns that edge. */
+  trimTopInset?: boolean;
+  /** Removes text-only section-edge space when the parent owns that edge. */
+  trimBottomInset?: boolean;
 }
 
 const narrowImageSizes =
@@ -49,6 +53,8 @@ export default function SplitColumn(props: ISplitColumn) {
     link,
     desktopReleases,
     downloadMessages,
+    trimTopInset = false,
+    trimBottomInset = false,
     locale = "es",
   } = props;
   const options = getSplitOptions(props);
@@ -137,7 +143,11 @@ export default function SplitColumn(props: ISplitColumn) {
             ? "py-6 lg:py-0"
             : twoColumns
               ? "py-6 lg:py-0 flex flex-col justify-center"
-              : "px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center",
+              : cn(
+                  "px-4 lg:px-16 xl:px-20 flex flex-col justify-center",
+                  trimTopInset ? "pt-0" : "pt-6",
+                  trimBottomInset ? "pb-0" : "pb-6",
+                ),
         vertical && options.contentWidth === "narrow"
           ? "max-w-[48rem] mx-auto"
           : undefined,
@@ -169,7 +179,7 @@ export default function SplitColumn(props: ISplitColumn) {
                   color === "primary" && vertical
                     ? "text-background/80"
                     : "text-muted-foreground",
-                  !vertical ? "mb-4" : undefined,
+                  !vertical && (hasTitle || body.length > 0) ? "mb-4" : undefined,
                 )}
               >
                 {tagLine}
@@ -179,7 +189,7 @@ export default function SplitColumn(props: ISplitColumn) {
               <Heading
                 className={cn(
                   Heading === "h2" ? "text-3xl md:text-5xl" : "font-semibold",
-                  !vertical ? "mb-4" : undefined,
+                  !vertical && body.length > 0 ? "mb-4" : undefined,
                 )}
               >
                 {title}

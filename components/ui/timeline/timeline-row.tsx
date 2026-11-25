@@ -11,16 +11,18 @@ export default function TimelineRow({
   colorVariant,
   timelines,
   locale = "es",
+  compactTop = false,
 }: Partial<{
   padding: ISectionPadding;
   colorVariant: ISectionContainer["color"];
   timelines: Array<Omit<Timeline1Props, "locale">>;
   locale: Locale;
+  compactTop: boolean;
 }>) {
   const color = stegaClean(colorVariant);
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {timelines && timelines?.length > 0 && (
         <div className="max-w-[48rem] mx-auto">
           {timelines?.map((timeline, index) => (

@@ -111,6 +111,22 @@ describe("SectionHeader descriptions", () => {
 });
 
 describe("SectionHeader optional links", () => {
+  it("uses title margins only before a description, not as section-edge space", () => {
+    const titleOnly = renderToStaticMarkup(
+      createElement(SectionHeader, { title: "Encabezado" }),
+    );
+    const withDescription = renderToStaticMarkup(
+      createElement(SectionHeader, {
+        title: "Encabezado",
+        description: "Contexto del encabezado.",
+      }),
+    );
+
+    expect(titleOnly).toContain('class="text-3xl md:text-5xl"');
+    expect(titleOnly).not.toContain('class="text-3xl md:text-5xl mb-4"');
+    expect(withDescription).toContain('class="text-3xl md:text-5xl mb-4"');
+  });
+
   it.each([
     ["default", "left", false, false],
     ["default", "center", true, false],

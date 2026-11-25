@@ -49,6 +49,11 @@ export default function SectionHeader({
     .split(/\n(?:[ \t]*\n)+/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
+  const hasTagLine = Boolean(stegaClean(tagLine)?.trim());
+  const hasTitle = Boolean(stegaClean(title)?.trim());
+  const hasDescription = paragraphs.length > 0;
+  const tagLineNeedsMargin = hasTitle || hasDescription;
+  const titleNeedsMargin = hasDescription;
 
   return (
     <SectionContainer
@@ -66,11 +71,25 @@ export default function SectionHeader({
         <div
           className={cn(color === "primary" ? "text-background" : undefined)}
         >
-          {tagLine && (
-            <span className="block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4">{tagLine}</span>
+          {hasTagLine && (
+            <span
+              className={cn(
+                "block text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground",
+                tagLineNeedsMargin ? "mb-4" : undefined,
+              )}
+            >
+              {tagLine}
+            </span>
           )}
-          {stegaClean(title)?.trim() && (
-            <h2 className="text-3xl md:text-5xl mb-4">{title}</h2>
+          {hasTitle && (
+            <h2
+              className={cn(
+                "text-3xl md:text-5xl",
+                titleNeedsMargin ? "mb-4" : undefined,
+              )}
+            >
+              {title}
+            </h2>
           )}
         </div>
         {paragraphs.length > 0 && (

@@ -19,6 +19,15 @@ Every block component wraps its content in `<SectionContainer>`:
 - `padding` is `{ top: boolean, bottom: boolean }`:
   - top → `pt-16 xl:pt-20`
   - bottom → `pb-16 xl:pb-20`
+- In page blocks, missing, `null`, and `false` mean the standard edge padding is
+  disabled. Only an explicit `true` enables the 64/80 px token.
+- A CTA-less `SectionHeader` followed immediately by a compatible content block
+  with the same normalized background gets a 24 px compact join when both
+  adjoining padding switches are disabled. CTA headers, color changes, Heroes,
+  Footer, and consecutive headers do not opt into that rule.
+- Content-owned spacing must not compound a container-owned edge. In particular,
+  a text-only Split Row removes its first/last internal 24 px inset whenever its
+  own or the preceding section edge already supplies compact or standard spacing.
 - The container adds `.container` which handles max-width + horizontal padding
 
 The shared footer reuses `section-padding` in Site Settings (`footerPadding`).
@@ -39,11 +48,13 @@ Always the same class string:
 ```
 text-base font-semibold font-pixel tracking-wide uppercase text-muted-foreground mb-4
 ```
-Rendered as a `<span className="block ...">`.
+Rendered as a `<span className="block ...">`; apply `mb-4` only when another
+text element follows it inside the same block, never as trailing section space.
 
 ### Titles
 - `h1`: used only in Hero. Class: `mt-4 font-bold leading-[1.1]`
-- `h2`: section-level titles. Class: `text-3xl md:text-5xl mb-4`
+- `h2`: section-level titles. Class: `text-3xl md:text-5xl`; add `mb-4` only
+  before a description in the same block.
 - `h3`: sub-section titles (split-column, grids). Class: `mb-4 font-semibold`
 
 ### Body Text (PortableText)
@@ -89,7 +100,9 @@ grid grid-cols-1 lg:grid-cols-2
 ```
 - **NO gap on the grid** — the text column's padding handles all spacing
 - **Media column**: full width, responsive height
-- **Text column**: `px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center`
+- **Text column**: `px-4 py-6 lg:px-16 xl:px-20 flex flex-col justify-center`.
+  Its outer `py-6` is a fallback only when the section has no top/bottom edge
+  spacing; do not stack it with a SectionContainer token.
 - This matches `split-column` exactly
 
 ### Vertical (stacked: top/bottom)

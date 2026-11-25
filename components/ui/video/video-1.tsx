@@ -30,6 +30,7 @@ export default function Video1({
   links,
   desktopReleases,
   downloadMessages,
+  compactTop = false,
   locale = "es",
   mediaMessages = {
     youtubeTitle: "Video de YouTube",
@@ -58,6 +59,7 @@ export default function Video1({
   links: (Sanity.Link | null)[];
   desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
+  compactTop: boolean;
   locale: Locale;
   mediaMessages: {
     youtubeTitle: string;
@@ -163,7 +165,7 @@ export default function Video1({
   // No body: video centered
   if (!textBlock) {
     return (
-      <SectionContainer color={color} padding={padding}>
+      <SectionContainer color={color} padding={padding} compactTop={compactTop}>
         <div className={standaloneWidth}>
           {videoBlock}
           <ActionLinks
@@ -181,7 +183,7 @@ export default function Video1({
   // Horizontal layout — media and text center each other
   if (isHorizontal) {
     return (
-      <SectionContainer color={color} padding={padding}>
+      <SectionContainer color={color} padding={padding} compactTop={compactTop}>
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div
             className={cn(
@@ -205,7 +207,7 @@ export default function Video1({
 
   // Vertical layout (top/bottom)
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {videoFirst ? (
         <>
           {videoBlock}

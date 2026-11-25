@@ -45,6 +45,7 @@ export default function Cta1({
   links,
   desktopReleases,
   downloadMessages,
+  compactTop = false,
   locale = "es",
 }: Partial<{
   padding: ISectionPadding;
@@ -58,13 +59,14 @@ export default function Cta1({
   desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
   locale: Locale;
+  compactTop: boolean;
 }>) {
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
   const color = stegaClean(colorVariant);
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       <div
         className={cn(
           align === "center" ? "text-center" : undefined,

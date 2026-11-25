@@ -43,6 +43,7 @@ interface Carousel1Props {
   size: CarouselSize;
   indicators: "none" | "dots" | "count";
   images?: Sanity.Image[];
+  compactTop?: boolean;
 }
 
 export default function Carousel1({
@@ -51,12 +52,13 @@ export default function Carousel1({
   size = "one",
   indicators = "none",
   images,
+  compactTop = false,
 }: Partial<Carousel1Props>) {
   const color = stegaClean(colorVariant);
   const stegaIndicators = stegaClean(indicators);
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {images && images.length > 0 && (
         <Carousel>
           <CarouselContent>

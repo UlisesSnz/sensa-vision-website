@@ -24,6 +24,8 @@ interface Grid1Props {
   columns: Sanity.Block[];
   locale: Locale;
   pricingMessages: { monthly: string; annual: string };
+  /** Internal renderer hint for a compact Section Header → Grid Row join. */
+  compactTop?: boolean;
 }
 
 // map all components you need
@@ -62,13 +64,14 @@ export default function GridRow({
   columns,
   locale = "es",
   pricingMessages,
+  compactTop = false,
 }: Partial<Grid1Props>) {
   const color = stegaClean(colorVariant);
   const cleanGridColumns = stegaClean(gridColumns);
   const imageSizes = getGridCardImageSizes(cleanGridColumns);
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       {columns && columns?.length > 0 && (
         <div
           className={cn(

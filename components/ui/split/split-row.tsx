@@ -1,4 +1,6 @@
 import SectionContainer, {
+  hasSectionBottomSpacing,
+  hasSectionTopSpacing,
   type ISectionContainer,
   type ISectionPadding,
 } from "@/components/ui/section-container";
@@ -22,6 +24,10 @@ export interface ISplitRow {
   locale?: Locale;
   desktopReleases?: DesktopReleaseLookup;
   downloadMessages?: DesktopDownloadMessages;
+  /** Internal renderer hint for a compact Section Header → Split Row join. */
+  compactTop?: boolean;
+  /** The previous section already owns the visible leading spacing. */
+  trimTopInset?: boolean;
 }
 
 export default function SplitRow({
@@ -31,17 +37,23 @@ export default function SplitRow({
   splitColumns,
   desktopReleases,
   downloadMessages,
+  compactTop = false,
+  trimTopInset = false,
   locale = "es",
 }: ISplitRow) {
   const columns = getRenderableSplitColumns(splitColumns);
   if (!columns.length) return null;
   const sectionId = normalizeSectionAnchor(uid);
+  const hasTopSpacing =
+    hasSectionTopSpacing(padding, compactTop) || trimTopInset;
+  const hasBottomSpacing = hasSectionBottomSpacing(padding);
 
   return (
     <SectionContainer
       id={sectionId}
       color={stegaClean(colorVariant) ?? undefined}
       padding={padding}
+      compactTop={compactTop}
       className={sectionId ? "scroll-mt-20" : undefined}
     >
       <div className="grid grid-cols-1">
@@ -67,6 +79,8 @@ export default function SplitRow({
               locale={locale}
               desktopReleases={desktopReleases}
               downloadMessages={downloadMessages}
+              trimTopInset={index === 0 && hasTopSpacing}
+              trimBottomInset={index === columns.length - 1 && hasBottomSpacing}
             />
           );
         })}

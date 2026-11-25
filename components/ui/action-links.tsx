@@ -13,6 +13,7 @@ import {
   getDesktopReleaseTargetFromContent,
   type DesktopReleaseLookup,
 } from "@/lib/desktop-release-content";
+import { getRenderableActionLinkKind } from "@/lib/action-links";
 import { cn } from "@/lib/utils";
 
 type ActionLinksProps = {
@@ -39,11 +40,12 @@ export default function ActionLinks({
   const actions = (links ?? []).reduce<ReactNode[]>((items, link, index) => {
     if (!link) return items;
 
+    const kind = getRenderableActionLinkKind(link, Boolean(downloadMessages));
+    if (!kind) return items;
+
     const key = link._key ?? `${stegaClean(link.title) || "link"}-${index}`;
 
-    if (stegaClean(link.targetType) === "desktopDownload") {
-      if (!downloadMessages) return items;
-
+    if (kind === "desktopDownload" && downloadMessages) {
       items.push(
         <DesktopDownloadButton
           key={key}
@@ -58,7 +60,7 @@ export default function ActionLinks({
     }
 
     const href = stegaClean(link.href)?.trim();
-    if (!href || !stegaClean(link.title)?.trim()) return items;
+    if (!href) return items;
 
     items.push(
       <Button key={key} asChild variant={stegaClean(link.buttonVariant)}>

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import SectionContainer, {
+  hasSectionTopSpacing,
   ISectionContainer,
   ISectionPadding,
 } from "@/components/ui/section-container";
@@ -53,6 +54,8 @@ interface FormEmailJsProps {
   buttonText: string;
   successMessage: string;
   errorMessage: string;
+  compactTop: boolean;
+  trimTopInset: boolean;
   formMessages: {
     required: string;
     invalidEmail: string;
@@ -155,6 +158,8 @@ export default function FormEmailJs({
   buttonText,
   successMessage,
   errorMessage,
+  compactTop = false,
+  trimTopInset = false,
   formMessages = {
     required: "es obligatorio",
     invalidEmail: "Ingresa un correo electrónico válido",
@@ -179,6 +184,9 @@ export default function FormEmailJs({
     stegaClean(errorMessage) || formMessages.contactError;
   const cleanTemplateKey = stegaClean(templateKey) || "contact";
   const cleanInternalName = stegaClean(internalName) || "form-emailjs";
+  const hasIntro = Boolean(cleanTitle || cleanDescription);
+  const ownsTopSpacing =
+    hasSectionTopSpacing(padding, compactTop) || trimTopInset;
 
   const normalizedFields = useMemo(() => {
     const mapped = (fields || [])
@@ -285,7 +293,7 @@ export default function FormEmailJs({
   }
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       <div
         className={cn(
           align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,
@@ -306,7 +314,7 @@ export default function FormEmailJs({
 
         <Form {...form}>
           <form
-            className="pt-8"
+            className={!ownsTopSpacing || hasIntro ? "pt-8" : undefined}
             onSubmit={form.handleSubmit(onSubmit)}
             noValidate
           >

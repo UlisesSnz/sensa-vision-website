@@ -31,6 +31,7 @@ export default function DesktopDownload({
   buttonVariant,
   desktopReleases,
   downloadMessages,
+  compactTop = false,
   locale = "es",
 }: Partial<{
   padding: ISectionPadding;
@@ -47,6 +48,7 @@ export default function DesktopDownload({
   desktopReleases: DesktopReleaseLookup;
   downloadMessages: DesktopDownloadMessages;
   locale: Locale;
+  compactTop: boolean;
 }>) {
   const isNarrow = stegaClean(sectionWidth) === "narrow";
   const align = stegaClean(stackAlign);
@@ -69,7 +71,7 @@ export default function DesktopDownload({
   if (!downloadMessages) return null;
 
   return (
-    <SectionContainer color={color} padding={padding}>
+    <SectionContainer color={color} padding={padding} compactTop={compactTop}>
       <div
         className={cn(
           align === "center" ? "max-w-[48rem] text-center mx-auto" : undefined,

@@ -23,6 +23,7 @@ import {
 import { getDesktopReleaseTargetKey } from "@/lib/desktop-release";
 import { fetchLatestDesktopRelease } from "@/sanity/lib/content";
 import { withUniqueSectionAnchors } from "@/lib/section-anchors";
+import { getSectionJoinProps } from "@/lib/section-joins";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   "hero-1": Hero1,
@@ -68,6 +69,11 @@ export default async function Blocks({
     <>
       {visibleBlocks.map((block: Sanity.Block, index) => {
         const Component = componentMap[block._type];
+        const { compactTop, trimTopInset } = getSectionJoinProps(
+          visibleBlocks,
+          index,
+          Boolean(dictionary.downloads),
+        );
         if (!Component) {
           // Fallback for unknown block types to debug
           return <div data-type={block._type} key={block._key} />;
@@ -78,6 +84,8 @@ export default async function Blocks({
             {...((block._type === "hero-1" || block._type === "hero-2") && {
               isFirstBlock: index === 0,
             })}
+            {...(compactTop && { compactTop: true })}
+            {...(trimTopInset && { trimTopInset: true })}
             key={block._key}
             locale={locale}
             formMessages={dictionary.forms}
