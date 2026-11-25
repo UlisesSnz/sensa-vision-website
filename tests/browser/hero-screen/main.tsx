@@ -20,6 +20,7 @@ const locale = params.get("locale") === "en" ? "en" : "es";
 const en = locale === "en";
 const scenario = params.get("scenario");
 const classic = params.get("hero") === "1";
+const singleCta = params.get("cta") === "single";
 document.documentElement.lang = locale;
 document.documentElement.classList.toggle(
   "dark",
@@ -61,12 +62,14 @@ const fixture = {
       title: en ? "Explore templates" : "Explorar plantillas",
       href: "/features",
     },
-    {
-      _key: "download",
-      title: en ? "Download Sensa" : "Descargar Sensa",
-      targetType: "desktopDownload",
-      buttonVariant: "outline",
-    },
+    ...(singleCta
+      ? []
+      : [{
+          _key: "download",
+          title: en ? "Download Sensa" : "Descargar Sensa",
+          targetType: "desktopDownload",
+          buttonVariant: "outline",
+        }]),
   ],
 };
 

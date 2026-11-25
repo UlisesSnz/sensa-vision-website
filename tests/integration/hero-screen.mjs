@@ -66,6 +66,7 @@ async function image(page, name) {
 const first = "Horario de la farmacia";
 const second = "Turno de atención";
 const third = "Servicios de la farmacia";
+const singleActionCopyGap = 48;
 
 async function waitForControls(page, shown) {
   await page.waitForFunction((visible) => {
@@ -197,6 +198,71 @@ async function visualMediaGap(page, media) {
     throw new Error("Hero actions or media are not visible");
 
   return mediaBox.y - Math.max(...actionBoxes.map((box) => box.y + box.height));
+}
+
+async function actionRhythm(page, media) {
+  const [copyBox, actionBox] = await Promise.all([
+    page.locator("[data-hero-content] p").first().boundingBox(),
+    page.getByRole("link", { name: "Explorar plantillas", exact: true }).boundingBox(),
+  ]);
+  if (!copyBox || !actionBox)
+    throw new Error("Hero copy or action is not visible");
+
+  return {
+    copyToAction: actionBox.y - (copyBox.y + copyBox.height),
+    actionToMedia: await visualMediaGap(page, media),
+  };
+}
+
+async function verifySingleActionRhythm(page) {
+  for (const [device, width] of [
+    ["desktop", 1440],
+    ["wide", 1920],
+    ["tablet-landscape", 1024],
+    ["mobile", 375],
+    ["small", 320],
+  ]) {
+    await page.setViewportSize({ width, height: 850 });
+    for (const contentWidth of ["default", "narrow"]) {
+      const widthQuery = contentWidth === "narrow" ? "&contentWidth=narrow" : "";
+      let classicRhythm;
+      for (const hero of [1, 2]) {
+        await page.goto(`${origin}/?hero=${hero}&layout=vertical&cta=single${widthQuery}`);
+        const media = await image(page, hero === 1 ? "Café de la casa" : first);
+        assert.equal(
+          await page.getByRole("link").count(),
+          1,
+          "The one-action fixture renders one CTA",
+        );
+        const rhythm = await actionRhythm(page, media);
+        assert(
+          Math.abs(rhythm.copyToAction - singleActionCopyGap) < 1,
+          `One CTA stays ${singleActionCopyGap}px below the copy at ${width}px with ${contentWidth} copy`,
+        );
+        if (hero === 1) {
+          classicRhythm = rhythm;
+          continue;
+        }
+
+        assert(
+          Math.abs(rhythm.copyToAction - classicRhythm.copyToAction) < 2,
+          `One CTA keeps the copy-to-action rhythm for ${device} ${contentWidth} copy`,
+        );
+        const screenOffset = await page.locator('[data-hero-media="screen"]').evaluate(
+          (el) => parseFloat(getComputedStyle(el).marginBlockStart),
+        );
+        if (width >= 1024) {
+          assert(screenOffset < 0, "The desktop screen keeps its visual compensation");
+          assert(
+            Math.abs(rhythm.actionToMedia - classicRhythm.actionToMedia) < 2,
+            `One CTA keeps the action-to-media rhythm for ${device} ${contentWidth} copy`,
+          );
+        } else {
+          assert.equal(screenOffset, 0, "The mobile screen keeps its natural composition");
+        }
+      }
+    }
+  }
 }
 
 async function verifyHeroLayouts(page) {
@@ -435,6 +501,7 @@ try {
   const visual = await context({ reducedMotion: "reduce", hasTouch: true });
   const page = await visual.newPage();
   await verifyHeroLayouts(page);
+  await verifySingleActionRhythm(page);
   await page.goto(`${origin}/?scenario=tour`);
   const tour = [
     ["office", "Agenda de recepción"],
