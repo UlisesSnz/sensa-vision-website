@@ -71,6 +71,7 @@ export default function Hero2({
       {...content}
       textAbove={textAbove}
       isFirstBlock={isFirstBlock}
+      mediaKind="screen"
       locale={locale}
       downloadMessages={dictionary.downloads}
     >

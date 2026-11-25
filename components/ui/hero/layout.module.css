@@ -27,6 +27,12 @@
 }
 
 @media (min-width: 1024px) {
+  /* A screen begins 7% down a 64/41 stage. Lift only this vertical media so its
+     visible edge follows the same rhythm as the Hero 1 image. */
+  .textAbove > [data-hero-media="screen"] {
+    margin-block-start: -4.5%;
+  }
+
   [data-hero-content="horizontal"] > .intro > :first-child {
     margin-block-start: 0;
   }

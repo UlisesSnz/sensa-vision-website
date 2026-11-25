@@ -31,10 +31,12 @@ export default function HeroLayout({
   downloadMessages,
   locale = "es",
   isFirstBlock = false,
+  mediaKind,
   children,
 }: HeroContentProps & {
   textAbove: boolean;
   isFirstBlock?: boolean;
+  mediaKind?: "screen";
   children: ReactNode;
 }) {
   const isNarrow =
@@ -75,7 +77,12 @@ export default function HeroLayout({
             locale={locale}
           />
         </div>
-        <div className="flex min-w-0 flex-col justify-center">{children}</div>
+        <div
+          data-hero-media={mediaKind}
+          className="flex min-w-0 flex-col justify-center"
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

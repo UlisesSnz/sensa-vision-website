@@ -187,6 +187,18 @@ async function introMetrics(page) {
   });
 }
 
+async function visualMediaGap(page, media) {
+  const actions = await page.getByRole("link").all();
+  const [mediaBox, ...actionBoxes] = await Promise.all([
+    media.boundingBox(),
+    ...actions.map((action) => action.boundingBox()),
+  ]);
+  if (!mediaBox || actionBoxes.some((box) => !box))
+    throw new Error("Hero actions or media are not visible");
+
+  return mediaBox.y - Math.max(...actionBoxes.map((box) => box.y + box.height));
+}
+
 async function verifyHeroLayouts(page) {
   for (const [device, width] of [
     ["desktop", 1440],
@@ -197,6 +209,7 @@ async function verifyHeroLayouts(page) {
   ]) {
     await page.setViewportSize({ width, height: 850 });
     let classicCopy;
+    let classicVisibleGap;
     for (const hero of [1, 2]) {
       await page.goto(`${origin}/?hero=${hero}&layout=vertical`);
       const img = await image(page, hero === 1 ? "Café de la casa" : first);
@@ -209,6 +222,8 @@ async function verifyHeroLayouts(page) {
       ), "The browser requests an image large enough for this layout");
       const media = hero === 1 ? img : page.locator("[data-scene]");
       const box = await media.boundingBox();
+      const visibleBox = await img.boundingBox();
+      assert(visibleBox, "Hero visual image is visible");
       const heading = page.getByRole("heading", { level: 1 });
       const title = await heading.boundingBox();
       const intro = await introMetrics(page);
@@ -240,7 +255,7 @@ async function verifyHeroLayouts(page) {
       const rows = new Map();
       for (const link of links) {
         const rect = await link.boundingBox();
-        assert(rect.y + rect.height < box.y);
+        assert(rect.y + rect.height < visibleBox.y);
         const row = rows.get(rect.y) ?? [];
         row.push(rect);
         rows.set(rect.y, row);
@@ -248,6 +263,24 @@ async function verifyHeroLayouts(page) {
       for (const row of rows.values()) {
         const last = row.at(-1);
         assert(Math.abs((row[0].x + last.x + last.width) / 2 - center) < 1);
+      }
+      const visibleGap = await visualMediaGap(page, img);
+      if (hero === 2) {
+        const screenOffset = await page.locator('[data-hero-media="screen"]').evaluate(
+          (el) => parseFloat(getComputedStyle(el).marginBlockStart),
+        );
+        if (width >= 1024)
+          assert(screenOffset < 0, "Only the desktop screen scene receives the visual offset");
+        else assert.equal(screenOffset, 0, "The mobile screen scene keeps its natural composition");
+      }
+      if (width >= 1024) {
+        if (hero === 1) classicVisibleGap = visibleGap;
+        else {
+          assert(
+            Math.abs(visibleGap - classicVisibleGap) < 2,
+            "The visible screen starts with the same vertical rhythm as the Hero 1 image",
+          );
+        }
       }
       if (device === "desktop" || device === "mobile") {
         await page.locator("main").screenshot({
@@ -267,6 +300,12 @@ async function verifyHeroLayouts(page) {
       assert(Math.abs(narrowTitle.x + narrowTitle.width / 2 - center) < 1);
       assert(Math.abs(narrowBox.x - box.x) < 1);
       assert(Math.abs(narrowBox.width - box.width) < 1);
+      if (width >= 1024) {
+        assert(
+          Math.abs((await visualMediaGap(page, narrowImage)) - classicVisibleGap) < 2,
+          "Text width does not alter the vertical media rhythm",
+        );
+      }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
       if (hero === 2) {
         await button(page, "Plantilla siguiente").click();

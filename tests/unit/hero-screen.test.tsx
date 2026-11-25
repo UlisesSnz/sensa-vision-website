@@ -234,6 +234,7 @@ describe("Hero con pantalla", () => {
       ]),
     );
     expect(output).toContain('data-scene="office"');
+    expect(output).toContain('data-hero-media="screen"');
     expect(output.match(/<img\b/g)).toHaveLength(1);
     expect(output).toContain(encodeURIComponent(templates[2].url));
     expect(output).toMatch(/<img\b[^>]*fetchpriority="high"/i);
@@ -246,6 +247,7 @@ describe("Hero con pantalla", () => {
     const lowerHero = await html(await project([legacy, screen]));
     expect(lowerHero).toMatch(/<img\b[^>]*loading="lazy"/i);
     expect(lowerHero).not.toMatch(/fetchpriority="high"/i);
+    expect(await html([legacy])).not.toContain("data-hero-media");
   });
 
   it("requests a full-width Hero 1 image eagerly only when it leads the page", async () => {
